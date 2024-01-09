@@ -1,7 +1,8 @@
 from Card import *
+from RegionCard import *
+from Board import *
 
 import sys
-
 
 
 class Player:
@@ -14,22 +15,32 @@ class Player:
         self.revealedCards = []
         self.sanctuaryCards = []
         self.id = id
-        print("The player " + str(id) + " has been successfully inialized.")
     
     
+    """
+    Adding the card to the player's hand
+    Can raise an Error
     
-    def addCardToHand(x):
+    
+    """
+    def addCardToHand(self, x):
         if type(x) != RegionCard:  #Trying to add something that is not a region card in the player hand
             print("Error : cannot add anything but a region card in the player's hand.")
-            sys.exit()
+            return
         
         if len(self.hand) < NBCARDSINHAND :
                 self.hand.append(x)
         else:
             print("Error : the hand of the player " + str(self.id) + " is full.")
 
+
     
-    def 
+    def revealCard(index): #The index choosed cannot be 0 (starting at 1)
+        if index <= 0 or index > len(self.hand):
+            print("Error : the index choosed in incorrect, please retry.")
+            sys.exit()
+            
+        
 
 
     def canRevealCard():
@@ -41,6 +52,5 @@ class Player:
             
             
             
-players = [Player(i+1) for i in range(4)]
-cards = [Card(i) for i in range(5)]        
-            
+player = Player(1)    
+regionCard = RegionCard(1)
