@@ -17,12 +17,6 @@ class Player:
         self.id = id
     
     
-    """
-    Adding the card to the player's hand
-    Can raise an Error
-    
-    
-    """
     def addCardToHand(self, x):
         if type(x) != RegionCard:  #Trying to add something that is not a region card in the player hand
             print("Error : cannot add anything but a region card in the player's hand.")
@@ -44,13 +38,6 @@ class Player:
 
 
     def canRevealCard():
-        return len(self.revealed_cards) < NBCARDSTOREVEAL
+        return len(self.revealedCards) < NBCARDSTOREVEAL
             
             
-            
-            
-            
-            
-            
-player = Player(1)    
-regionCard = RegionCard(1)

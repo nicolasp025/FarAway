@@ -2,13 +2,18 @@ from Board import *
 from Player import *
 
 import sys
+import time
+
+
+#time.sleep(seconds)
+
 
 def play():
-    board = Board()
     
     MINIMUMPLAYERS = 2
     MAXIMUMPLAYERS = 6
     
+    # Getting the number of players
     print("How many players do you want to play with ?")
     nbPlayers = int(input("Number of players should be between "+ str(MINIMUMPLAYERS) + " and " + str(MAXIMUMPLAYERS) + " : "))
     
@@ -16,11 +21,14 @@ def play():
         print("Error: the specified number of players is incorrect, please restart.")
         return
     
+    # Generate all the players
     players = []
     for i in range(nbPlayers):
         players.append(Player(i))
-    print("The players has been successfully created.")
+    print("The " + str(nbPlayers) + " players has been successfully created.")
     
+    board = Board(players)
+    board.play()
     
 
 if __name__ == "__main__":
