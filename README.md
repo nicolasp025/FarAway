@@ -6,6 +6,10 @@
 https://www.play-in.com/pdf/rules_games/faraway_-_regles_fr.pdf
 
 
+#### UML :
+https://lucid.app/lucidchart/f1e853e6-7e75-4ef3-9053-b722b3483ab9/edit?invitationId=inv_6565462c-3992-430f-b5cd-513f6364a41f
+
+
 ### Structure de données :
 - Listes (Les cartes disponibles sur le plateau) 
 - Piles (la main du joueur / la pioche)

@@ -4,5 +4,6 @@ class Color(Enum):
     RED = 1
     BLUE = 2
     GREEN = 3
+    GREY = -1
     
     
