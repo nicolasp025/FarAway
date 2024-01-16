@@ -1,4 +1,5 @@
 from Player import *
+from RegionCard import *
 
 class Board:
     
@@ -19,7 +20,7 @@ class Board:
         for i in range(NBOFREGIONCARDS):
             
             self.regionCards.append(RegionCard(i+1))
-        print(self.regionCards)
+        map(RegionCard.toString, self.regionCards)
         # Initializing the sanctuary cards
         
     def play(self):
