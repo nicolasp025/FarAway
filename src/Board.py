@@ -27,29 +27,28 @@ class Board:
         self.initializeSanctuaryCards()
 
     def initializeSanctuaryCards(self):
-        f = open("../data/SanctuaryCards.json", )
-        data = json.load(f)
-        i = 0
-        for line in data['sanctuaryCards']:
-            i += 1
-            id = str(line['id']).replace("sanctuary-", "")
-            quest = Quest([], line['points'], line['conditionMode'], line['condition'])
-            self.sanctuaryCards.append(SanctuaryCard(id, line['color'], quest, line['stones'], line['map'], line['night']))
-        print(str(i) + " sanctuary cards has been successfully generated.")
-        f.close()
+        with open("../data/SanctuaryCards.json") as f:
+            data = json.load(f)
+            i = 0
+            for line in data['sanctuaryCards']:
+                i += 1
+                id = str(line['id']).replace("sanctuary-", "")
+                quest = Quest([], line['points'], line['conditionMode'], line['condition'])
+                self.sanctuaryCards.append(SanctuaryCard(id, line['color'], quest, line['stones'], line['map'], line['night']))
+            print(str(i) + " sanctuary cards has been successfully generated.")
 
 
     def initializeRegionCards(self):
-        f = open("../data/RegionCards.json", )
-        data = json.load(f)
-        i = 0
-        for line in data['regionCards']:
-            i += 1
-            id = str(line['id']).replace("region-", "")
-            quest = Quest(line['require'], line['points'], line['conditionMode'], line['condition'])
-            self.regionCards.append(RegionCard(id, line['color'], quest, line['stones'], line['map'], line['day']))
-        print(str(i) + " region cards has been successfully generated.")
-        f.close()
+        with open("../data/RegionCards.json") as f:
+            data = json.load(f)
+            i = 0
+            for line in data['regionCards']:
+                i += 1
+                id = str(line['id']).replace("region-", "")
+                quest = Quest(line['require'], line['points'], line['conditionMode'], line['condition'])
+                self.regionCards.append(RegionCard(id, line['color'], quest, line['stones'], line['map'], line['day']))
+            print(str(i) + " region cards has been successfully generated.")
+        
 
 
     def play(self):
