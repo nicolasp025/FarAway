@@ -1,5 +1,11 @@
-from Board import *
-from Player import *
+import sys
+sys.path.append('../game')
+import Board
+from Board import Board
+
+sys.path.append('../player')
+import Player
+from Player import Player
 
 import sys
 import time

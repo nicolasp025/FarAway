@@ -1,4 +1,4 @@
-from Enum import *
+from enum import *
 
 class Stones(Enum):
     SAPHIR = 1

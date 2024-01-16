@@ -1,8 +1,8 @@
-from Player import *
-from RegionCard import *
+from player.Player import *
+from card.RegionCard import *
 import json
-from SanctuaryCard import SanctuaryCard
-from Quest import Quest
+from card.SanctuaryCard import SanctuaryCard
+from card.Quest import Quest
 
 class Board:
     

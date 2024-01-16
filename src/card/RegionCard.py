@@ -1,4 +1,4 @@
-from Colors import *
+from enum.Colors import *
 from Card import *
 
 import random

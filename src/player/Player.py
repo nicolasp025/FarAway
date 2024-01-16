@@ -1,6 +1,6 @@
-from Card import *
-from RegionCard import *
-from Board import *
+from card.Card import *
+from card.RegionCard import *
+from game.Board import *
 
 import sys
 
