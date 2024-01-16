@@ -9,3 +9,10 @@ class ConditionModes(Enum):
     COLOR = 5
     SOMECOLOR = 6
     
+    @classmethod
+    def castToMode(cls, x):
+        for mode in cls:
+            if mode.name == x:
+                return mode
+        raise ValueError()
+    

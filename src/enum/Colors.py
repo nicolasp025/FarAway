@@ -7,3 +7,9 @@ class Colors(Enum):
     GREEN = 3
     YELLOW = 4
     
+    @classmethod
+    def castToColor(cls, color_str):
+        for color in cls:
+            if color.name == color_str:
+                return color
+        raise ValueError()
