@@ -1,3 +1,8 @@
+import sys 
+sys.path.append("../enum/")
+
+from ConditionModes import ConditionModes
+
 
 class Quest:
 
@@ -8,4 +13,23 @@ class Quest:
         self.condition = condition
 
     def toString(self):
-        return "Quest require : " + str(self.require) + " for " + str(self.points) + " points with condition mode : " + str(self.conditionMode) + " you need the condition : " + str(self.condition) + "\n"
+        res = ""
+        if self.points != "0":
+            res += "quest : "
+            if self.conditionMode == "NOTHING":
+                res +="no require, gain " + self.points + " points"
+            else:
+              res += "gain " + self.points + " points"
+              if self.conditionMode == "NIGHT":
+                res += " for each night card"
+              elif self.conditionMode == "MAP":
+                res += " for each map"
+              elif self.conditionMode == "STONE":
+                res += " for each " + self.condition[0]
+              elif self.conditionMode == "COLOR":
+                res += " for each card with a color within " + str(self.condition)
+              else:
+                res += " for each combo of cards of all colors in " + str(self.condition)
+        else:
+           res += "no quest"
+        return res

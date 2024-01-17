@@ -15,3 +15,17 @@ class Card:
         self.day = day
         self.map = map
         
+    def toString(self):
+        res = "Card number " + str(self.id) 
+        if len(self.stones) > 0:
+            res += ", with stones : " + str(self.stones)
+        if self.day:
+            res += ", day card"
+        else:
+            res += ", night card" 
+        if self.map:
+            res += ", contains a map"
+        if self.quest != None:
+            res += " with " + self.quest.toString()
+        res += "\n"
+        return res

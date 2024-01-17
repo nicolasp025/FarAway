@@ -1,8 +1,8 @@
 import sys
 sys.path.append("../enum")
-sys.path.append("../enum")
-from Colors import *
-from Card import *
+sys.path.append("../card")
+from Colors import Colors
+from Card import Card
 
 import random
 
@@ -15,4 +15,4 @@ class RegionCard(Card):
 
 
     def toString(self):
-        print("RegionCard id : " + str(self.id) + " | quest : " + self.quest.toString() + " | stones : " + str(self.stones) + " | day : " + str(self.day) + " | map : " + str(self.map) + "\n")
+        return "Region"+super().toString()

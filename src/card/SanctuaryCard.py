@@ -12,4 +12,4 @@ class SanctuaryCard(Card):
 
 
     def toString(self):
-        print("SanctuaryCard id : " + str(self.id) + " | quest : " + self.quest.toString() + " | stones : " + str(self.stones) + " | day : " + str(self.day) + " | map : " + str(self.map) + "\n")
+        return "Sanctuary"+super().toString()
