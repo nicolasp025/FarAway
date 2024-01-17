@@ -1,8 +1,8 @@
 import sys
 import json
 
-sys.path.append("/home/nathsign/Documents/COURS/L3/S6/PROJET/projet-far-away/src/player")
-sys.path.append("/home/nathsign/Documents/COURS/L3/S6/PROJET/projet-far-away/src/card/")
+sys.path.append("../player")
+sys.path.append("../card/")
 from Player import Player
 from RegionCard import RegionCard
 from SanctuaryCard import SanctuaryCard

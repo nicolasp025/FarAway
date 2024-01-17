@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-from enum import *
-=======
 from enum import Enum
->>>>>>> c090fe1 (update des enum pour cast)
 
 class Stones(Enum):
     SAPHYR = 1

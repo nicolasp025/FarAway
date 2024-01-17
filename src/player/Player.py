@@ -1,7 +1,7 @@
 import sys
 
-sys.path.append("/home/nathsign/Documents/COURS/L3/S6/PROJET/projet-far-away/src/card")
-sys.path.append("/home/nathsign/Documents/COURS/L3/S6/PROJET/projet-far-away/src/game")
+sys.path.append("../card")
+sys.path.append("../game")
 
 from Card import *
 

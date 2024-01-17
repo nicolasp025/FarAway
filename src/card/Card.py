@@ -1,5 +1,5 @@
 import sys
-sys.path.append("/home/nathsign/Documents/COURS/L3/S6/PROJET/projet-far-away/src/enum")
+sys.path.append("../enum")
 
 
 from Colors import *
