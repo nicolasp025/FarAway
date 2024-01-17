@@ -1,8 +1,12 @@
-from player.Player import *
-from card.RegionCard import *
+import sys
 import json
-from card.SanctuaryCard import SanctuaryCard
-from card.Quest import Quest
+
+sys.path.append("/home/nathsign/Documents/COURS/L3/S6/PROJET/projet-far-away/src/player")
+sys.path.append("/home/nathsign/Documents/COURS/L3/S6/PROJET/projet-far-away/src/card/")
+from Player import Player
+from RegionCard import RegionCard
+from SanctuaryCard import SanctuaryCard
+from Quest import Quest
 
 class Board:
     
@@ -27,7 +31,7 @@ class Board:
         self.initializeSanctuaryCards()
 
     def initializeSanctuaryCards(self):
-        with open("../data/SanctuaryCards.json") as f:
+        with open("../../data/SanctuaryCards.json") as f:
             data = json.load(f)
             i = 0
             for line in data['sanctuaryCards']:
@@ -39,7 +43,7 @@ class Board:
 
 
     def initializeRegionCards(self):
-        with open("../data/RegionCards.json") as f:
+        with open("../../data/RegionCards.json") as f:
             data = json.load(f)
             i = 0
             for line in data['regionCards']:

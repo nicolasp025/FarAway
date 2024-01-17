@@ -1,9 +1,9 @@
 import sys
-sys.path.append('../game')
+sys.path.append("/home/nathsign/Documents/COURS/L3/S6/PROJET/projet-far-away/src/game/")
 import Board
 from Board import Board
 
-sys.path.append('../player')
+sys.path.append("/home/nathsign/Documents/COURS/L3/S6/PROJET/projet-far-away/src/player/")
 import Player
 from Player import Player
 

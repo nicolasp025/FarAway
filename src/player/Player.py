@@ -1,8 +1,13 @@
-from card.Card import *
-from card.RegionCard import *
-from game.Board import *
-
 import sys
+
+sys.path.append("/home/nathsign/Documents/COURS/L3/S6/PROJET/projet-far-away/src/card")
+sys.path.append("/home/nathsign/Documents/COURS/L3/S6/PROJET/projet-far-away/src/game")
+
+from Card import *
+
+from Board import *
+
+
 
 
 class Player:
