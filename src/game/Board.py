@@ -68,6 +68,7 @@ class Board:
             for j in range(3):
                 self.players[i].addCardToHand(self.regionCards.pop(0))
 
+        ### Choose the card to reveal
         while(len(self.players[0].revealedCards) < Player.NBCARDSTOREVEAL):
             for i in range(len(self.players)+1):
                 self.RegionCardRevealed.append(self.regionCards.pop(0))
@@ -75,34 +76,39 @@ class Board:
             starting = (self.players[0], Board.NBOFREGIONCARDS+1)
             for p in self.players:
                 index = -1
-                while(index <= 0 or index > Player.NBCARDSINHAND):
+                while(type(index) != int or index <= 0 or index > Player.NBCARDSINHAND):
                     i=1
                     print("Player "+str(p.id)+" cards :")
                     for card in p.hand:
                         print(str(i)+" : "+card.toString())
                         i+=1
-                    index = int(input("Player "+str(p.id)+" : Enter the index of the card you want to reveal : "))
-                n = p.revealCard(index)
+                    inp = input("Player "+str(p.id)+" : Enter the index of the card you want to reveal : ")
+                    if str.isdigit(inp):
+                        index = int(inp)
+                n = p.revealCard(int(index))
                 if n < starting[1]:
                     starting = (p, n)
                 print("Player "+str(p.id)+" has revealed "+p.revealedCards[-1].toString()+"\n")
                 print("\n")
 
-            
+            ## Set the new list of player with the right order (need fixes)
             indexP = self.players.index(starting[0])
             tmp = self.players[indexP]
             self.players[indexP] = self.players[0]
             self.players[0] = tmp
 
+            ## Choose the region card for player hand
             for p in self.players:
                 index=-1
-                while(index <= 0 or index > len(self.players)+2):
+                while(type(index) != int or index <= 0 or index > len(self.players)+2):
                     i=1
                     print("Player "+str(p.id)+" cards :\n")
                     for card in self.RegionCardRevealed:
                         print(str(i)+" : "+card.toString())
                         i+=1
-                    index = int(input("Player "+str(p.id)+" : Enter the index of the card you want to choose: "))
+                    inp = input("Player "+str(p.id)+" : Enter the index of the card you want to choose: ")
+                    if str.isdigit(inp):
+                        index = int(inp)
                 card = self.RegionCardRevealed.pop(index-1)
                 p.addCardToHand(card)
                 print("Player "+str(p.id)+" has choose "+card.toString()+"\n")
@@ -110,6 +116,7 @@ class Board:
 
             self.RegionCardRevealed = []
 
+        ## Print final cards revealed by players
         for p in self.players:
             print("Player "+str(p.id)+" final cards :")
             for c in p.revealedCards:
