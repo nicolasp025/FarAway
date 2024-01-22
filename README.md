@@ -18,6 +18,7 @@ https://lucid.app/lucidchart/f1e853e6-7e75-4ef3-9053-b722b3483ab9/edit?invitatio
 - Comptage des points (itération sur les cartes retournés et les cartes sanctuaires)
 - Conséquence de l'action d'un joueur (détermination du nombre de cartes sanctuaires piochés par le joueur)
 - Création de carte (Création de 68 cartes régions avec un numéro compris entre 1 et 68 et 45 cartes sancturaires)
+- Boucle de jeu
 
 
 ## Cahier des charges :
@@ -26,7 +27,7 @@ Jeu avec interface graphique représentant le plateau de jeu, les cartes (sur le
 Reproduction fidèle des règles du jeu.
 Représentation des cartes par des objets, de même pour les joueurs et le plateau.
 
-Algo comptage des points :
+Algorithme comptage des points :
 ````
 resultat = 0
 Tant Que toutes les cartes ne sont pas retournées Faire

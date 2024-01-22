@@ -20,7 +20,6 @@ class Player:
         self.hand = []
         self.revealedCards = []
         self.sanctuaryCards = []
-        self.handSanctuary = []
         self.id = id
     
     
@@ -38,7 +37,7 @@ class Player:
         if type(x) != SanctuaryCard:  #Trying to add something that is not a region card in the player hand
             print("Error : cannot add anything but a region card in the player's hand.")
             return
-        self.hand.append(x)
+        self.sanctuaryCards.append(x)
 
 
     
@@ -49,7 +48,21 @@ class Player:
         else:
             card = self.hand.pop(index-1)
             self.revealedCards.append(card)
-            return int(card.id)
+            return int(card.id) ## return the id of the card revealed
+        
+    def sanctuaryCardToAdd(self):
+        res = 0
+        if len(self.revealedCards) < 2:
+            return res
+        if self.revealedCards[-1].id > self.revealedCards[-2].id:
+            res += 1
+            for rCard in self.revealedCards:
+                if rCard.map:
+                    res += 1
+            for sCard in self.sanctuaryCards:
+                if sCard.map:
+                    res += 1
+        return res
         
 
 

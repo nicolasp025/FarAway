@@ -16,7 +16,7 @@ class Card:
         self.map = map
         
     def toString(self):
-        res = "Card number " + str(self.id) 
+        res = "Card number " + str(self.id)  + ", color : " + str(self.color)
         if len(self.stones) > 0:
             res += ", with stones : " + str(self.stones)
         if self.day:
