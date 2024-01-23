@@ -126,7 +126,7 @@ class Board:
                     index = -1
                     while(type(index) != int or index <= 0 or index > len(self.players)+2):
                         i=1
-                        print("Player "+str(p.id)+" cards :\n")
+                        print("All cards available :\n")
                         for card in self.RegionCardRevealed:
                             print(str(i)+" : "+card.toString())
                             i+=1
