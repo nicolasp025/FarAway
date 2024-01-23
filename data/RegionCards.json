@@ -1,7 +1,7 @@
 {
     "regionCards" : 
         [
-            {"id" : "region-1", "color" : "RED", "points" : "0", "conditionMode" : "NOTHING", "require": [], "condition" : [], "stones" : ["RUBIS", "SAPHYR"], "map" : "False", "day" : "True"},
+            {"id" : "region-1", "color" : "RED", "points" : "0", "conditionMode" : "NOTHING", "require": [], "condition" : [], "stones" : ["RUBY", "SAPHYR"], "map" : "False", "day" : "True"},
             {"id" : "region-2", "color" : "BLUE", "points" : "0", "conditionMode" : "NOTHING", "require": [], "condition" : [], "stones" : ["SAPHYR", "SAPHYR"], "map" : "False", "day" : "True"},
             {"id" : "region-3", "color" : "GREEN", "points" : "4", "conditionMode" : "NOTHING", "require": [], "condition" : [], "stones" : [], "map" : "False", "day" : "True"},
             {"id" : "region-4", "color" : "RED", "points" : "0", "conditionMode" : "NOTHING", "require": [], "condition" : [], "stones" : ["EMERALD", "SAPHYR"], "map" : "False", "day" : "True"},
@@ -31,7 +31,7 @@
             {"id" : "region-28", "color" : "RED", "points" : "3", "conditionMode" : "STONE", "require": [], "condition" : ["RUBY"], "stones" : ["SAPHYR"], "map" : "False", "day" : "False"},
             {"id" : "region-29", "color" : "YELLOW", "points" : "2", "conditionMode" : "STONE", "require": [], "condition" : ["EMERALD"], "stones" : ["EMERALD"], "map" : "False", "day" : "False"},
             {"id" : "region-30", "color" : "RED", "points" : "2", "conditionMode" : "STONE", "require": [], "condition" : ["SAPHYR"], "stones" : ["SAPHYR"], "map" : "False", "day" : "False"},
-            {"id" : "region-31", "color" : "YELOW", "points" : "1", "conditionMode" : "COLOR", "require": [], "condition" : ["RED","YELLOW"], "stones" : [], "map" : "False", "day" : "False"},
+            {"id" : "region-31", "color" : "YELLOW", "points" : "1", "conditionMode" : "COLOR", "require": [], "condition" : ["RED","YELLOW"], "stones" : [], "map" : "False", "day" : "False"},
             {"id" : "region-32", "color" : "RED", "points" : "7", "conditionMode" : "NOTHING", "require": ["SAPHYR","SAPHYR","SAPHYR"], "condition" : [], "stones" : ["SAPHYR","RUBY"], "map" : "False", "day" : "False"},
             {"id" : "region-33", "color" : "YELLOW", "points" : "3", "conditionMode" : "STONE", "require": [], "condition" : ["EMERALD"], "stones" : [], "map" : "True", "day" : "False"},
             {"id" : "region-34", "color" : "GREEN", "points" : "3", "conditionMode" : "STONE", "require": ["SAPHYR","SAPHYR"], "condition" : ["RUBY"], "stones" : ["RUBY"], "map" : "False", "day" : "False"},
@@ -43,7 +43,7 @@
             {"id" : "region-40", "color" : "BLUE", "points" : "3", "conditionMode" : "NIGHT", "require": ["EMERALD","RUBY","SAPHYR"], "condition" : [], "stones" : [], "map" : "False", "day" : "False"},
             {"id" : "region-41", "color" : "GREEN", "points" : "4", "conditionMode" : "NIGHT", "require": ["RUBY","SAPHYR","SAPHYR"], "condition" : [], "stones" : ["EMERALD"], "map" : "False", "day" : "True"},
             {"id" : "region-42", "color" : "YELLOW", "points" : "2", "conditionMode" : "COLOR", "require": ["SAPHYR","RUBY"], "condition" : ["YELLOW","GREEN"], "stones" : [], "map" : "False", "day" : "True"},
-            {"id" : "region-43", "color" : "BLUE", "points" : "10", "conditionMode" : "SOMECOOR", "require": [], "condition" : ["RED","BLUE","YELLOW","GREEN"], "stones" : ["SAPHYR"], "map" : "False", "day" : "True"},
+            {"id" : "region-43", "color" : "BLUE", "points" : "10", "conditionMode" : "SOMECOLOR", "require": [], "condition" : ["RED","BLUE","YELLOW","GREEN"], "stones" : ["SAPHYR"], "map" : "False", "day" : "True"},
             {"id" : "region-44", "color" : "YELLOW", "points" : "2", "conditionMode" : "COLOR", "require": ["SAPHYR","EMERALD"], "condition" : ["YELLOW","BLUE"], "stones" : [], "map" : "False", "day" : "True"},
             {"id" : "region-45", "color" : "GREEN", "points" : "13", "conditionMode" : "NOTHING", "require": ["RUBY","RUBY","RUBY"], "condition" : [], "stones" : ["SAPHYR"], "map" : "False", "day" : "True"},
             {"id" : "region-46", "color" : "BLUE", "points" : "10", "conditionMode" : "NOTHING", "require": ["RUBY","SAPHYR","SAPHYR"], "condition" : [], "stones" : [], "map" : "True", "day" : "True"},

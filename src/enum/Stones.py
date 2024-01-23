@@ -6,8 +6,8 @@ class Stones(Enum):
     EMERALD = 3
     
     @classmethod
-    def castToStone(cls, color_str):
-        for color in cls:
-            if color.name == color_str:
-                return color
+    def castToStone(cls, stone_str):
+        for stone in cls:
+            if stone.name == stone_str:
+                return stone
         raise ValueError()

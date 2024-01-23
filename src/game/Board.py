@@ -7,12 +7,12 @@ sys.path.append("./src/card/")
 sys.path.append("./src/enum/")
 
 from Colors import Colors
+from Quest import Quest
 from Stones import Stones
-from ConditionModes import ConditionModes
 from Player import Player
 from RegionCard import RegionCard
 from SanctuaryCard import SanctuaryCard
-from Quest import Quest
+from ConditionModes import ConditionModes
 
 class Board:
 
@@ -49,8 +49,14 @@ class Board:
             for line in data['sanctuaryCards']:
                 i += 1
                 id = str(line['id']).replace("sanctuary-", "")
-                quest = Quest([], line['points'], line['conditionMode'], line['condition'])
-                self.sanctuaryCards.append(SanctuaryCard(id, Colors.castToColor(line['color']) , quest, Stones.castToStone(line['stones']),  eval(line['night']), eval(line['map'])))
+                quest = Quest([], line['points'], ConditionModes.castToMode(line['conditionMode']), line['condition'])
+                
+                tmpColor = Colors.castToColor(line['color'])    # Getting the color of the card
+                tmpStones = []                                  # Getting the list of stones
+                for s in line['stones']:
+                    tmpStones.append(Stones.castToStone(s))
+                
+                self.sanctuaryCards.append(SanctuaryCard(id, tmpColor, quest, tmpStones, eval(line['night']), eval(line['map'])))
             print(str(i) + " sanctuary cards has been successfully generated.")
 
 
@@ -61,8 +67,14 @@ class Board:
             for line in data['regionCards']:
                 i += 1
                 id = str(line['id']).replace("region-", "")
-                quest = Quest(line['require'], line['points'], line['conditionMode'], line['condition'])
-                self.regionCards.append(RegionCard(id, line['color'], quest, line['stones'], eval(line['day']), eval(line['map'])))
+                quest = Quest(line['require'], line['points'], ConditionModes.castToMode(line['conditionMode']), line['condition'])
+
+                tmpColor = Colors.castToColor(line['color'])    # Getting the color of the card
+                tmpStones = []                                  # Getting the list of stones
+                for s in line['stones']:
+                    tmpStones.append(Stones.castToStone(s))
+
+                self.regionCards.append(RegionCard(id, tmpColor, quest, tmpStones, eval(line['day']), eval(line['map'])))
             print(str(i) + " region cards has been successfully generated.")
         
 
