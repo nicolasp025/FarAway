@@ -2,8 +2,13 @@ import sys
 import json
 from random import shuffle
 
-sys.path.append("./src/player")
+sys.path.append("./src/player/")
 sys.path.append("./src/card/")
+sys.path.append("./src/enum/")
+
+from Colors import Colors
+from Stones import Stones
+from ConditionModes import ConditionModes
 from Player import Player
 from RegionCard import RegionCard
 from SanctuaryCard import SanctuaryCard
@@ -45,7 +50,7 @@ class Board:
                 i += 1
                 id = str(line['id']).replace("sanctuary-", "")
                 quest = Quest([], line['points'], line['conditionMode'], line['condition'])
-                self.sanctuaryCards.append(SanctuaryCard(id, line['color'], quest, line['stones'],  eval(line['night']), eval(line['map'])))
+                self.sanctuaryCards.append(SanctuaryCard(id, Colors.castToColor(line['color']) , quest, Stones.castToStone(line['stones']),  eval(line['night']), eval(line['map'])))
             print(str(i) + " sanctuary cards has been successfully generated.")
 
 
@@ -149,6 +154,9 @@ class Board:
             print("Player "+str(p.id)+" final cards :")
             for c in p.revealedCards:
                 print(c.toString())
+                
+        print("Je compte les points")
+        
 
         print("Game end\n")
         
