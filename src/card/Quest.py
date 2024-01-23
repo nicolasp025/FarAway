@@ -19,7 +19,7 @@ class Quest:
         self.conditionMode = conditionMode
         self.condition = condition
 
-    def satisfy(ressources):
+    def satisfy(self, ressources):
       ## Returns the number of points won by this card
       for stone in self.require:
           if stone not in ressources or self.require[stone]>ressources[stone]:
@@ -33,19 +33,15 @@ class Quest:
         return self.points * ressources["map"]
       elif self.conditionMode == ConditionModes.STONE or self.conditionMode == ConditionModes.COLOR:
         tmpRes = 0
-        tmpRes += ressources[i] * self.points for i in self.condition
+        for i in self.condition:
+          tmpRes += ressources[i] * self.points 
         return tmpRes
-      else : # ConditionMode = SOMECOLOR
-        repeater = 1
-        conditionRespected = True
-        while conditionRespected:
-          for color in self.condition:
-            
-            return 0 # to remove
-            # to finish
-
-
-
+      elif self.conditionMode == ConditionModes.SOMECOLOR:
+        for color in self.condition:
+          if color not in ressources: 
+            return 0                                            # If one color is missing then return 0 pts
+        return min([ressources[i] for i in self.condition]) * self.points
+          
     def toString(self):
         res = ""
         if self.points != "0":
