@@ -1,5 +1,6 @@
 import sys
 import json
+import pygame
 from random import shuffle
 
 sys.path.append("./src/player/")
@@ -20,6 +21,12 @@ class Board:
     NBOFSANCTUARYCARDS = 45
     
     def __init__(self, players):
+        
+        pygame.init()
+        self.screen = pygame.display.set_mode((1980, 1280))
+        self.clock = pygame.time.Clock()
+        self.running = True
+        self.dt = 0
     
 
         self.RegionCardRevealed = []
@@ -143,96 +150,118 @@ class Board:
 
 
     def play(self):
-        nbTurns = 0
-        print("----------------- Start of the Game ------------------- \n\n")
-        ## Setup of the game 
-        for i in range(len(self.players)):
-            for j in range(3):
-                self.players[i].addCardToHand(self.regionCards.pop(0))
 
-        ### Choose the card to reveal
-        while(nbTurns < Player.NBCARDSTOREVEAL):
-            print("----------------- Turn number "+str(nbTurns+1)+" -----------------\n")
-            for i in range(len(self.players)+1):
-                self.RegionCardRevealed.append(self.regionCards.pop(0))
-
-            print("----------------- Choose the card you want to reveal ------------------- \n")
-            starting = []
-            for p in self.players:
-                index = -1
-                while(type(index) != int or index <= 0 or index > Player.NBCARDSINHAND):
-                    i=1
-                    print("Player "+str(p.id)+" cards :")
-                    for card in p.hand:
-                        print(str(i)+" : "+card.toString())
-                        i+=1
-                    inp = input("Player "+str(p.id)+" : Enter the index of the card you want to reveal : ")
-                    if str.isdigit(inp):
-                        index = int(inp)
-                n = p.revealCard(int(index))
-                starting.append((p, n))
-                print("Player "+str(p.id)+" has revealed "+p.revealedCards[-1].toString()+"\n")
-                print("\n")
+        while self.running:
 
 
-            print("----------------- Choose the sanctuary card you want to add to your hand  ------------------- \n")
-            ## Choose sanctuary card if you had to
-            for p in self.players:
-                nbToAdd = p.sanctuaryCardToAdd()
-                if nbToAdd > 0:
-                    print("Player "+str(p.id)+" sanctuary cards available :")
-                    index = -1
-                    while(type(index) != int or index <= 0 or index > nbToAdd):
-                        for i in range(1, nbToAdd+1):
-                            print(str(i)+" : "+self.sanctuaryCards[i-1].toString())
-                        inp = input("Player "+str(p.id)+" : Enter the index of the sanctuary card you want to take : ")
-                        if str.isdigit(inp):
-                            index = int(inp)
-                    p.addCardToSanctuaryCards(self.sanctuaryCards.pop(index-1))
-                    for i in range(nbToAdd-1):
-                        self.sanctuaryCards.pop(0)
-                    print("Player "+str(p.id)+" has taken "+p.sanctuaryCards[-1].toString()+"\n")
-                    print("\n")
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.running = False
+
+            # fill the screen with a color to wipe away anything from last frame
+            self.screen.fill("black")
 
 
-            ## Set the new list of player with the right order 
-            starting.sort(key=lambda x : x[1])
-            self.players = [t[0] for t in starting]
+            nbTurns = 0
+            print("----------------- Start of the Game ------------------- \n\n")
+            ## Setup of the game 
+            for i in range(len(self.players)):
+                for j in range(3):
+                    self.players[i].addCardToHand(self.regionCards.pop(0))
 
-            if (nbTurns < 7):
-                print("----------------- Choose the region card you want to add to your hand  ------------------- \n")
-                ## Choose the region card for player hand
+            ### Choose the card to reveal
+            while(nbTurns < Player.NBCARDSTOREVEAL):
+                print("----------------- Turn number "+str(nbTurns+1)+" -----------------\n")
+                for i in range(len(self.players)+1):
+                    self.RegionCardRevealed.append(self.regionCards.pop(0))
+
+                print("----------------- Choose the card you want to reveal ------------------- \n")
+                starting = []
                 for p in self.players:
                     index = -1
-                    while(type(index) != int or index <= 0 or index > len(self.players)+2):
+                    while(type(index) != int or index <= 0 or index > Player.NBCARDSINHAND):
                         i=1
-                        print("All cards available :\n")
-                        for card in self.RegionCardRevealed:
+                        print("Player "+str(p.id)+" cards :")
+                        for card in p.hand:
                             print(str(i)+" : "+card.toString())
                             i+=1
-                        inp = input("Player "+str(p.id)+" : Enter the index of the card you want to choose: ")
+                        inp = input("Player "+str(p.id)+" : Enter the index of the card you want to reveal : ")
                         if str.isdigit(inp):
                             index = int(inp)
-                    card = self.RegionCardRevealed.pop(index-1)
-                    p.addCardToHand(card)
-                    print("Player "+str(p.id)+" has choose "+card.toString()+"\n")
+                    n = p.revealCard(int(index))
+                    starting.append((p, n))
+                    print("Player "+str(p.id)+" has revealed "+p.revealedCards[-1].toString()+"\n")
                     print("\n")
 
-            self.RegionCardRevealed = []
-            nbTurns += 1
+
+                print("----------------- Choose the sanctuary card you want to add to your hand  ------------------- \n")
+                ## Choose sanctuary card if you had to
+                for p in self.players:
+                    nbToAdd = p.sanctuaryCardToAdd()
+                    if nbToAdd > 0:
+                        print("Player "+str(p.id)+" sanctuary cards available :")
+                        index = -1
+                        while(type(index) != int or index <= 0 or index > nbToAdd):
+                            for i in range(1, nbToAdd+1):
+                                print(str(i)+" : "+self.sanctuaryCards[i-1].toString())
+                            inp = input("Player "+str(p.id)+" : Enter the index of the sanctuary card you want to take : ")
+                            if str.isdigit(inp):
+                                index = int(inp)
+                        p.addCardToSanctuaryCards(self.sanctuaryCards.pop(index-1))
+                        for i in range(nbToAdd-1):
+                            self.sanctuaryCards.pop(0)
+                        print("Player "+str(p.id)+" has taken "+p.sanctuaryCards[-1].toString()+"\n")
+                        print("\n")
+
+
+                ## Set the new list of player with the right order 
+                starting.sort(key=lambda x : x[1])
+                self.players = [t[0] for t in starting]
+
+                if (nbTurns < 7):
+                    print("----------------- Choose the region card you want to add to your hand  ------------------- \n")
+                    ## Choose the region card for player hand
+                    for p in self.players:
+                        index = -1
+                        while(type(index) != int or index <= 0 or index > len(self.players)+2):
+                            i=1
+                            print("All cards available :\n")
+                            for card in self.RegionCardRevealed:
+                                print(str(i)+" : "+card.toString())
+                                i+=1
+                            inp = input("Player "+str(p.id)+" : Enter the index of the card you want to choose: ")
+                            if str.isdigit(inp):
+                                index = int(inp)
+                        card = self.RegionCardRevealed.pop(index-1)
+                        p.addCardToHand(card)
+                        print("Player "+str(p.id)+" has choose "+card.toString()+"\n")
+                        print("\n")
+
+                self.RegionCardRevealed = []
+                nbTurns += 1
 
 
 
-        print("----------------- Final Cards for each player  ------------------- \n")
-        ## Print final cards revealed by players
-        for p in self.players:
-            print("Player "+str(p.id)+" final cards :")
-            for c in p.revealedCards:
-                print(c.toString())
-                
-        print("------------ Counting points ------------")
-        print(countFinalPoints())
+            print("----------------- Final Cards for each player  ------------------- \n")
+            ## Print final cards revealed by players
+            for p in self.players:
+                print("Player "+str(p.id)+" final cards :")
+                for c in p.revealedCards:
+                    print(c.toString())
+                    
+            print("------------ Counting points ------------")
+            print(countFinalPoints())
 
-        print("Game end\n")
+            print("Game end\n")
+
+            # flip() the display to put your work on screen
+            pygame.display.flip()
+
+            # limits FPS to 60
+            # dt is delta time in seconds since last frame, used for framerate-
+            # independent physics.
+            dt = clock.tick(60) / 1000
+
+        pygame.quit()
         
         return
