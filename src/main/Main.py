@@ -1,9 +1,9 @@
 import sys
-sys.path.append("../game/")
+sys.path.append("./src/game/")
 import Board
 from Board import Board
 
-sys.path.append("../player/")
+sys.path.append("./src/player/")
 import Player
 from Player import Player
 

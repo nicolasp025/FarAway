@@ -1,5 +1,5 @@
 import sys 
-sys.path.append("../enum/")
+sys.path.append("./src/enum/")
 
 from ConditionModes import ConditionModes
 
@@ -16,10 +16,11 @@ class Quest:
         res = ""
         if self.points != "0":
             res += "quest : "
+            res += "require " + str(self.require)
             if self.conditionMode == "NOTHING":
-                res +="no require, gain " + self.points + " points"
+                res +=", gain " + self.points + " points"
             else:
-              res += "gain " + self.points + " points"
+              res += ", gain " + self.points + " points"
               if self.conditionMode == "NIGHT":
                 res += " for each night card"
               elif self.conditionMode == "MAP":

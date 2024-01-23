@@ -2,8 +2,8 @@ import sys
 import json
 from random import shuffle
 
-sys.path.append("../player")
-sys.path.append("../card/")
+sys.path.append("./src/player")
+sys.path.append("./src/card/")
 from Player import Player
 from RegionCard import RegionCard
 from SanctuaryCard import SanctuaryCard
@@ -38,7 +38,7 @@ class Board:
         shuffle(self.sanctuaryCards)
 
     def initializeSanctuaryCards(self):
-        with open("../../data/SanctuaryCards.json") as f:
+        with open("./data/SanctuaryCards.json") as f:
             data = json.load(f)
             i = 0
             for line in data['sanctuaryCards']:
@@ -50,7 +50,7 @@ class Board:
 
 
     def initializeRegionCards(self):
-        with open("../../data/RegionCards.json") as f:
+        with open("./data/RegionCards.json") as f:
             data = json.load(f)
             i = 0
             for line in data['regionCards']:
@@ -108,7 +108,7 @@ class Board:
                         inp = input("Player "+str(p.id)+" : Enter the index of the sanctuary card you want to take : ")
                         if str.isdigit(inp):
                             index = int(inp)
-                    p.addCardToHandSanctuary(self.sanctuaryCards.pop(index-1))
+                    p.addCardToSanctuaryCards(self.sanctuaryCards.pop(index-1))
                     for i in range(nbToAdd-1):
                         self.sanctuaryCards.pop(0)
                     print("Player "+str(p.id)+" has taken "+p.sanctuaryCards[-1].toString()+"\n")
