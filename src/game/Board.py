@@ -77,6 +77,69 @@ class Board:
                 self.regionCards.append(RegionCard(id, tmpColor, quest, tmpStones, eval(line['day']), eval(line['map'])))
             print(str(i) + " region cards has been successfully generated.")
         
+    def reverseList(x):
+        res = []
+        for i in x:
+            res.append(i)
+        return res
+
+    def countFinalPoints():
+        res = {} 
+        for p in self.players:
+            tmpScore = 0
+
+            ressources = {"map" : 0, "night": 0, "day": 0}
+            # Getting all bonuses from sanctuaryCards
+            for card in p.sanctuaryCards:
+
+                ## Adding the color of the sanctuary card
+                if card.color not in ressources:
+                    ressources[card.color] = 1
+                else:
+                    ressources[card.color] += 1
+                
+                ## Adding the stones of the sanctuary card
+                for stone in card.stones:
+                    if stone not in ressources:
+                        ressources[stone] = 1
+                    else:
+                        ressources[stone] += 1
+                
+                ## Adding the map
+                if card.map:
+                    ressources["map"] += 1
+                
+                ## Adding the night
+                if card.night:
+                    ressources["night"] += 1
+                else:
+                    ressources["day"] += 1
+
+            # Getting points from every region card
+            for card in reverse(p.revealedCards):
+                if card.satisfy(ressources):
+                    pass
+                    # to continue
+                
+
+                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     def play(self):
@@ -167,8 +230,8 @@ class Board:
             for c in p.revealedCards:
                 print(c.toString())
                 
-        print("Je compte les points")
-        
+        print("------------ Counting points ------------")
+        print(countFinalPoints())
 
         print("Game end\n")
         

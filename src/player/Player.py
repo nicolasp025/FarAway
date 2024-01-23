@@ -41,7 +41,7 @@ class Player:
     
     def revealCard(self, index): #The index choosed cannot be 0 (starting at 1)
         if index <= 0 or index > len(self.hand):
-            print("Error : the index choosed in incorrect, please retry.")
+            print("Error : the index choosed is incorrect, please retry.")
             return 
         else:
             card = self.hand.pop(index-1)
