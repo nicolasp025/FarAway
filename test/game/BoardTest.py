@@ -2,11 +2,13 @@ import unittest
 import sys
 
 sys.path.append("./src/game/")
+sys.path.append("./src/player/")
 
+from Player import Player
 from Board import Board
 
 
-class RegionCardTest(unittest.TestCase):
+class BoardTest(unittest.TestCase):
     
     def setUp(self):
         self.id = 0
