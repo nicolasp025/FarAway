@@ -10,8 +10,6 @@ from SanctuaryCard import SanctuaryCard
 
 class PlayerTest(unittest.TestCase):
 
-    
-
     def setUp(self):
         self.id = 0
         self.player = Player(self.id)
