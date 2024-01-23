@@ -10,8 +10,15 @@ from Quest import Quest
 
 class RegionCardDisplay():
 
-    def __init__(self, width, height):
+    def __init__(self, card, screen, clock, x, y, width, height):
         self.size = (width, height)
+        self.card = card
+        self.x = x
+        self.y = y
+        self.screen = screen
+        self.clock = clock
+        self.width = width
+        self.height = height
 
     def colorToColor(self, col):
         if col == Colors.GREEN:
@@ -70,17 +77,17 @@ class RegionCardDisplay():
 
 
 
-    def regionCardDisplay(self, x, y, screen, card):
-        pygame.draw.rect(screen, self.colorToColor(card.color), (x, y, self.width, self.height), border_radius=30)
-        images = self.stoneToImage(card.stones)
+    def regionCardDisplay(self):
+        pygame.draw.rect(self.screen, self.colorToColor(self.card.color), (self.x, self.y, self.width, self.height), border_radius=30)
+        images = self.stoneToImage(self.card.stones)
         last_x = 0
         for img in images:
-            screen.blit(img, (x+self.width-img.get_width()+last_x-10, y+10))
+            self.screen.blit(img, (self.x+self.width-img.get_width()+last_x-10, self.y+10))
             last_x -= img.get_width()
 
-        img_day = self.dayDisplay(card.day)
-        screen.blit(img_day, (x+10,y+10))
+        img_day = self.dayDisplay(self.card.day)
+        self.screen.blit(img_day, (self.x+10,self.y+10))
 
-        screen.blit(self.idDisplay(card.id), (x+img_day.get_width()/2, y+img_day.get_height()/2-2))
+        self.screen.blit(self.idDisplay(self.card.id), (self.x+img_day.get_width()/2, self.y+img_day.get_height()/2-2))
 
-        self.mapDisplay(card.map, screen, x+img_day.get_width()+20, y+10)
+        self.mapDisplay(self.card.map, self.screen, self.x+img_day.get_width()+20, self.y+10)

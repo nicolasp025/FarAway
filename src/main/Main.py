@@ -2,6 +2,7 @@ import sys
 sys.path.append("./src/game/")
 import Board
 from Board import Board
+from BoardDisplay import BoardDisplay
 
 sys.path.append("./src/player/")
 import Player
@@ -33,7 +34,7 @@ def play():
         players.append(Player(i))
     print("The " + str(nbPlayers) + " players has been successfully created.")
     
-    board = Board(players)
+    board = BoardDisplay(players)
     board.play()
     
 
