@@ -10,6 +10,11 @@ https://www.play-in.com/pdf/rules_games/faraway_-_regles_fr.pdf
 https://lucid.app/lucidchart/f1e853e6-7e75-4ef3-9053-b722b3483ab9/edit?invitationId=inv_6565462c-3992-430f-b5cd-513f6364a41f
 
 
+#### Exécution :
+
+Les commandes doivent être exécutées depuis le repertoire `projet-far-away`, pour exécuter le main : `python3 src/main/Main.py` pour jouer depuis le terminal et `python3 src/main/Main.py -d` pour avoir une interface graphique(en développement). Pour l'exécution des tests veuillez utilisez : `python3 test/'package'/'fileTest.py'` en remplaçant 'package' par le package dans lequel 'fileTest.py' se trouve.
+
+
 ### Structure de données :
 - Listes (Les cartes disponibles sur le plateau, les cartes sanctuaires des joueurs, ...)
 - Piles (la main du joueur / la pioche)

@@ -8,7 +8,10 @@ sys.path.append("./src/player/")
 sys.path.append("./src/card/")
 sys.path.append("./src/enum/")
 sys.path.append("./src/display/card/")
+sys.path.append("./src/display/")
 
+from Triangle import Triangle
+from State import State
 from Colors import Colors
 from Quest import Quest
 from Stones import Stones
@@ -23,25 +26,25 @@ class BoardDisplay:
     NBOFREGIONCARDS = 68
     NBOFSANCTUARYCARDS = 45
     
-    def __init__(self, players):
+    def __init__(self):
         
         pygame.init()
-        self.screen = pygame.display.set_mode((1980, 1280))
+        self.screen = pygame.display.set_mode((2160, 1440))
+        pygame.display.set_caption("Projet - Far Away")
         self.clock = pygame.time.Clock()
         self.running = True
         self.dt = 0
+        self.nbJoueur = 2
     
-
+        self.state = State.START
         self.RegionCardsToDisplay = []
         self.RegionCardRevealed = []
+        
+        self.players = []
+        self.actualPlayer = None
+        self.cpt = 0
 
-        
-        # Asserting we got a list of players to play with
-        assert type(players) == list
-        for i in players:
-            assert type(i) == Player
-        
-        self.players = players
+        self.starting = []
             
         # Initializing the region cards
         self.regionCards = []
@@ -68,7 +71,6 @@ class BoardDisplay:
                     tmpStones.append(Stones.castToStone(s))
                 
                 self.sanctuaryCards.append(SanctuaryCard(id, tmpColor, quest, tmpStones, eval(line['night']), eval(line['map'])))
-            print(str(i) + " sanctuary cards has been successfully generated.")
 
 
     def initializeRegionCards(self):
@@ -86,7 +88,6 @@ class BoardDisplay:
                     tmpStones.append(Stones.castToStone(s))
 
                 self.regionCards.append(RegionCard(id, tmpColor, quest, tmpStones, eval(line['day']), eval(line['map'])))
-            print(str(i) + " region cards has been successfully generated.")
         
     def reverseList(x):
         res = []
@@ -132,38 +133,98 @@ class BoardDisplay:
                     pass
                     # to continue
                 
+                               
+    def chooseNbPlayers(self):
+        midW = self.screen.get_width()/2
+        midH = self.screen.get_height()/2
+        ecart = 200
+        col = (255,255,255)
+        points_triangle1 = [(midW+ecart, midH), (midW+ecart, midH+180), (midW+180+ecart, midH+90)]
+        tr1 = Triangle(points_triangle1)
+        tr1.dessiner(self.screen, col)
+        points_triangle2 = [(midW-ecart, midH), (midW-ecart, midH+180), (midW-180-ecart, midH+90)]
+        tr2 = Triangle(points_triangle2)
+        tr2.dessiner(self.screen, col)
+        
+        sizeP = 400
+        police = pygame.font.Font(None, sizeP)
+        text_nbJ = pygame.Rect(midW-80, midH-40, 100, 50)
+        
+        policet = pygame.font.Font(None, 100)
+        text_title = pygame.Rect(midW-500, midH-200, 400, 50)
+        textt = "Choose the number of players :"
 
-                
+        text_val = pygame.Rect(midW-140, midH+300, 290, 70)
+        textv = "Validate"
+
+        nbJ = self.nbJoueur
+        clicks = pygame.mouse.get_pressed()
+        if clicks[0]==1:
+            time.sleep(0.1)
+            pos = pygame.mouse.get_pos()
+            if tr1.clickIn(pos):
+                nbJ = min(6, nbJ+1)
+            elif tr2.clickIn(pos):
+                nbJ = max(2, nbJ-1)
+            elif text_val.collidepoint(pos[0], pos[1]):
+                for i in range(1,self.nbJoueur+1):
+                    self.players.append(Player(i))
+                    for j in range(3):
+                        card = self.regionCards.pop(0)
+                        self.players[i-1].addCardToHand(card)
+                self.actualPlayer = self.players[self.cpt]
+                self.state = State.REVEAL
+
+        self.nbJoueur = nbJ
+        text = str(self.nbJoueur)
+        pygame.draw.rect(self.screen, (0,0,0), text_nbJ)
+        texte_surface = police.render(text, True, col)  
+        self.screen.blit(texte_surface, (text_nbJ.x + 5, text_nbJ.y + 5))
+
+        pygame.draw.rect(self.screen, (0,0,0), text_title)
+        textet_surface = policet.render(textt, True, col)  
+        self.screen.blit(textet_surface, (text_title.x + 5, text_title.y + 5))
+
+        pygame.draw.rect(self.screen, col, text_val, 2)
+        textev_surface = policet.render(textv, True, col)  
+        self.screen.blit(textev_surface, (text_val.x + 5, text_val.y + 5))
 
 
+    def chooseCardToReveal(self):
+        self.RegionCardsToDisplay = []
+        i=1
+        for card in self.actualPlayer.hand:
+            dcard = RegionCardDisplay(card, self.screen, self.clock, i*(self.screen.get_height()/3), self.screen.get_height()-500, 400, 400)
+            self.RegionCardsToDisplay.append(dcard)
+            clicks = pygame.mouse.get_pressed()
+            if clicks[0]==1:
+                time.sleep(0.1)
+                pos = pygame.mouse.get_pos()
+                if dcard.clickIn(pos):
+                    n = self.actualPlayer.revealCard(i)
+                    self.starting.append((self.actualPlayer, n))
+                    self.cpt+=1
+                    if self.cpt < self.nbJoueur:
+                        self.actualPlayer = self.players[self.cpt]
+                    else:
+                        self.state = State.SANCTUARY
+                        self.RegionCardsToDisplay = []
+            i+=1
+            
+
+            
+        
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    def execute(self):
+        if self.state == State.START:
+            self.chooseNbPlayers()
+        elif self.state == State.REVEAL:
+            self.chooseCardToReveal()
 
     def play(self):
-        print("----------------- Start of the Game ------------------- \n\n")
-        ## Setup of the game 
-        for i in range(len(self.players)):
-            for j in range(3):
-                card = self.regionCards.pop(0)
-                self.players[i].addCardToHand(card)
-                self.RegionCardsToDisplay.append(RegionCardDisplay(card, self.screen, self.clock, j*500+100, self.screen.get_height()-500-i*500, 400, 400))
 
         while self.running :
-
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -171,6 +232,8 @@ class BoardDisplay:
 
             # fill the screen with a color to wipe away anything from last frame
             self.screen.fill("black")
+
+            self.execute()
             
             nbTurns = 0
 

@@ -19,6 +19,7 @@ class RegionCardDisplay():
         self.clock = clock
         self.width = width
         self.height = height
+        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
     def colorToColor(self, col):
         if col == Colors.GREEN:
@@ -75,10 +76,12 @@ class RegionCardDisplay():
 
     # def questDisplay(self, quest):
 
+    def clickIn(self, coord_clic):
+        return self.rect.collidepoint(coord_clic[0], coord_clic[1])
 
 
     def regionCardDisplay(self):
-        pygame.draw.rect(self.screen, self.colorToColor(self.card.color), (self.x, self.y, self.width, self.height), border_radius=30)
+        pygame.draw.rect(self.screen, self.colorToColor(self.card.color), self.rect, border_radius=30) 
         images = self.stoneToImage(self.card.stones)
         last_x = 0
         for img in images:
