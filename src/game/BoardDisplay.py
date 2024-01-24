@@ -209,6 +209,8 @@ class BoardDisplay:
                     else:
                         self.state = State.SANCTUARY
                         self.RegionCardsToDisplay = []
+                        self.starting.sort(key=lambda x : x[1])
+                        self.players = [t[0] for t in self.starting]
             i+=1
             
 
@@ -239,31 +241,6 @@ class BoardDisplay:
 
             for card in self.RegionCardsToDisplay:
                 card.regionCardDisplay()
-
-
-            # ### Choose the card to reveal
-            # while(nbTurns < Player.NBCARDSTOREVEAL and self.running):
-            #     print("----------------- Turn number "+str(nbTurns+1)+" -----------------\n")
-            #     for i in range(len(self.players)+1):
-            #         self.RegionCardRevealed.append(self.regionCards.pop(0))
-
-            #     print("----------------- Choose the card you want to reveal ------------------- \n")
-            #     starting = []
-            #     for p in self.players:
-            #         index = -1
-            #         while(type(index) != int or index <= 0 or index > Player.NBCARDSINHAND):
-            #             i=1
-            #             print("Player "+str(p.id)+" cards :")
-            #             for card in p.hand:
-            #                 print(str(i)+" : "+card.toString())
-            #                 i+=1
-            #             inp = input("Player "+str(p.id)+" : Enter the index of the card you want to reveal : ")
-            #             if str.isdigit(inp):
-            #                 index = int(inp)
-            #         n = p.revealCard(int(index))
-            #         starting.append((p, n))
-            #         print("Player "+str(p.id)+" has revealed "+p.revealedCards[-1].toString()+"\n")
-            #         print("\n")
 
 
             #     print("----------------- Choose the sanctuary card you want to add to your hand  ------------------- \n")
@@ -329,9 +306,6 @@ class BoardDisplay:
             # flip() the display to put your work on screen
             pygame.display.flip()
 
-            # limits FPS to 60
-            # dt is delta time in seconds since last frame, used for framerate-
-            # independent physics.
             dt = self.clock.tick(60) / 1000
 
         pygame.quit()
