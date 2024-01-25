@@ -20,6 +20,7 @@ from RegionCard import RegionCard
 from SanctuaryCard import SanctuaryCard
 from ConditionModes import ConditionModes
 from RegionCardDisplay import RegionCardDisplay
+from SanctuaryCardDisplay import SanctuaryCardDisplay
 
 class BoardDisplay:
 
@@ -29,7 +30,7 @@ class BoardDisplay:
     def __init__(self):
         
         pygame.init()
-        self.screen = pygame.display.set_mode((2160, 1440))
+        self.screen = pygame.display.set_mode((2160, 1440), pygame.FULLSCREEN)
         pygame.display.set_caption("Projet - Far Away")
         self.clock = pygame.time.Clock()
         self.running = True
@@ -38,7 +39,9 @@ class BoardDisplay:
     
         self.state = State.START
         self.RegionCardsToDisplay = []
+        self.SanctuaryCardsToDisplay = []
         self.RegionCardRevealed = []
+        self.actualSanctuaryCards = []
         
         self.players = []
         self.actualPlayer = None
@@ -191,10 +194,17 @@ class BoardDisplay:
 
 
     def chooseCardToReveal(self):
+        police = pygame.font.Font(None, 120)
+        text_reveal = pygame.Rect(370, self.screen.get_height()-700, 100, 50)
+        textr = "Choose the card you want to reveal :"
+        pygame.draw.rect(self.screen, (0,0,0), text_reveal)
+        texte_surface = police.render(textr, True, (255,255,255))  
+        self.screen.blit(texte_surface, (text_reveal.x + 5, text_reveal.y + 5))
+
         self.RegionCardsToDisplay = []
         i=1
         for card in self.actualPlayer.hand:
-            dcard = RegionCardDisplay(card, self.screen, self.clock, i*(self.screen.get_height()/3), self.screen.get_height()-500, 400, 400)
+            dcard = RegionCardDisplay(card, self.screen, self.clock, i*(self.screen.get_height()/3)-70, self.screen.get_height()-500, 400, 400)
             self.RegionCardsToDisplay.append(dcard)
             clicks = pygame.mouse.get_pressed()
             if clicks[0]==1:
@@ -207,12 +217,52 @@ class BoardDisplay:
                     if self.cpt < self.nbJoueur:
                         self.actualPlayer = self.players[self.cpt]
                     else:
+                        self.cpt = 0
+                        self.actualPlayer = self.players[self.cpt]
                         self.state = State.SANCTUARY
                         self.RegionCardsToDisplay = []
                         self.starting.sort(key=lambda x : x[1])
                         self.players = [t[0] for t in self.starting]
             i+=1
             
+
+    def chooseSanctuaryCard(self):
+        police = pygame.font.Font(None, 120)
+        text_sanc = pygame.Rect(320, self.screen.get_height()-700, 100, 50)
+        textr = "Choose the sanctuary card you want :"
+        pygame.draw.rect(self.screen, (0,0,0), text_sanc)
+        texte_surface = police.render(textr, True, (255,255,255))  
+        self.screen.blit(texte_surface, (text_sanc.x + 5, text_sanc.y + 5))
+    
+
+        self.RegionCardsToDisplay = []
+        self.SanctuaryCardsToDisplay = []
+        nbToAdd = self.actualPlayer.sanctuaryCardToAdd() +1
+
+        if nbToAdd > 0:
+            index = 0
+            for i in range(nbToAdd):
+                card = self.sanctuaryCards[0]
+                dcard = SanctuaryCardDisplay(card, self.screen, self.clock, (i+1)*(300)-70, self.screen.get_height()-500, 280, 400)
+                self.SanctuaryCardsToDisplay.append(dcard)
+
+                clicks = pygame.mouse.get_pressed()
+                if clicks[0]==1:
+                    time.sleep(0.1)
+                    pos = pygame.mouse.get_pos()
+                    if dcard.clickIn(pos):
+                        self.actualPlayer.addCardToSanctuaryCards(self.sanctuaryCards.pop(index))
+                        for j in range(nbToAdd-1):
+                            self.sanctuaryCards.pop(0)
+                        self.cpt+=1
+                        if self.cpt < self.nbJoueur:
+                            self.actualPlayer = self.players[self.cpt]
+                        else:
+                            self.cpt = 0
+                            self.actualPlayer = self.players[self.cpt]
+                            self.state = State.REGION
+                            self.SanctuaryCardsToDisplay = []
+            index += 1
 
             
         
@@ -223,6 +273,8 @@ class BoardDisplay:
             self.chooseNbPlayers()
         elif self.state == State.REVEAL:
             self.chooseCardToReveal()
+        elif self.state == State.SANCTUARY:
+            self.chooseSanctuaryCard()
 
     def play(self):
 
@@ -239,8 +291,12 @@ class BoardDisplay:
             
             nbTurns = 0
 
+
             for card in self.RegionCardsToDisplay:
                 card.regionCardDisplay()
+            
+            for card in self.SanctuaryCardsToDisplay:
+                card.sanctuaryCardDisplay()
 
 
             #     print("----------------- Choose the sanctuary card you want to add to your hand  ------------------- \n")
