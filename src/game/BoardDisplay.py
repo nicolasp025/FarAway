@@ -41,7 +41,7 @@ class BoardDisplay:
         self.RegionCardsToDisplay = []
         self.SanctuaryCardsToDisplay = []
         self.RegionCardRevealed = []
-        self.actualSanctuaryCards = []
+
         
         self.players = []
         self.actualPlayer = None
@@ -195,8 +195,8 @@ class BoardDisplay:
 
     def chooseCardToReveal(self):
         police = pygame.font.Font(None, 120)
-        text_reveal = pygame.Rect(370, self.screen.get_height()-700, 100, 50)
-        textr = "Choose the card you want to reveal :"
+        text_reveal = pygame.Rect(250, self.screen.get_height()-700, 100, 50)
+        textr = "Player "+str(self.actualPlayer.id)+": Choose the card you want to reveal :"
         pygame.draw.rect(self.screen, (0,0,0), text_reveal)
         texte_surface = police.render(textr, True, (255,255,255))  
         self.screen.blit(texte_surface, (text_reveal.x + 5, text_reveal.y + 5))
@@ -228,8 +228,8 @@ class BoardDisplay:
 
     def chooseSanctuaryCard(self):
         police = pygame.font.Font(None, 120)
-        text_sanc = pygame.Rect(320, self.screen.get_height()-700, 100, 50)
-        textr = "Choose the sanctuary card you want :"
+        text_sanc = pygame.Rect(250, self.screen.get_height()-700, 100, 50)
+        textr = "Player "+str(self.actualPlayer.id)+": Choose the sanctuary card you want :"
         pygame.draw.rect(self.screen, (0,0,0), text_sanc)
         texte_surface = police.render(textr, True, (255,255,255))  
         self.screen.blit(texte_surface, (text_sanc.x + 5, text_sanc.y + 5))
@@ -237,12 +237,11 @@ class BoardDisplay:
 
         self.RegionCardsToDisplay = []
         self.SanctuaryCardsToDisplay = []
-        nbToAdd = self.actualPlayer.sanctuaryCardToAdd() +1
+        nbToAdd = self.actualPlayer.sanctuaryCardToAdd() 
 
         if nbToAdd > 0:
-            index = 0
             for i in range(nbToAdd):
-                card = self.sanctuaryCards[0]
+                card = self.sanctuaryCards[i]
                 dcard = SanctuaryCardDisplay(card, self.screen, self.clock, (i+1)*(300)-70, self.screen.get_height()-500, 280, 400)
                 self.SanctuaryCardsToDisplay.append(dcard)
 
@@ -251,9 +250,9 @@ class BoardDisplay:
                     time.sleep(0.1)
                     pos = pygame.mouse.get_pos()
                     if dcard.clickIn(pos):
-                        self.actualPlayer.addCardToSanctuaryCards(self.sanctuaryCards.pop(index))
+                        self.actualPlayer.addCardToSanctuaryCards(self.sanctuaryCards.pop(i))
                         for j in range(nbToAdd-1):
-                            self.sanctuaryCards.pop(0)
+                            self.sanctuaryCards.pop(i)
                         self.cpt+=1
                         if self.cpt < self.nbJoueur:
                             self.actualPlayer = self.players[self.cpt]
@@ -262,10 +261,48 @@ class BoardDisplay:
                             self.actualPlayer = self.players[self.cpt]
                             self.state = State.REGION
                             self.SanctuaryCardsToDisplay = []
-            index += 1
+        else:
+            self.cpt+=1
+            if self.cpt < self.nbJoueur:
+                self.actualPlayer = self.players[self.cpt]
+            else:
+                self.cpt = 0
+                self.actualPlayer = self.players[self.cpt]
+                self.state = State.REGION
+                self.SanctuaryCardsToDisplay = []
 
             
-        
+    def chooseRegionCard(self):
+        police = pygame.font.Font(None, 120)
+        text_reg = pygame.Rect(260, self.screen.get_height()-700, 100, 50)
+        textr = "Player "+str(self.actualPlayer.id)+": Choose the region card you want :"
+        pygame.draw.rect(self.screen, (0,0,0), text_reg)
+        texte_surface = police.render(textr, True, (255,255,255))  
+        self.screen.blit(texte_surface, (text_reg.x + 5, text_reg.y + 5))
+
+        for i in range(self.nbJoueur+1-self.cpt):
+            card = self.regionCards[i]
+            dcard = RegionCardDisplay(card, self.screen, self.clock, (i+1)*(self.screen.get_height()/3)-70, self.screen.get_height()-500, 400, 400)
+            self.RegionCardsToDisplay.append(dcard)
+
+            clicks = pygame.mouse.get_pressed()
+            if clicks[0]==1:
+                time.sleep(0.1)
+                pos = pygame.mouse.get_pos()
+                if dcard.clickIn(pos):
+                    self.actualPlayer.addCardToHand(self.regionCards.pop(i))
+
+                    self.cpt+=1
+                    if self.cpt < self.nbJoueur:
+                        self.actualPlayer = self.players[self.cpt]
+                        break
+                    else:
+                        self.cpt = 0
+                        self.actualPlayer = self.players[self.cpt]
+                        self.regionCards.pop(0)
+                        self.state = State.REVEAL
+                        self.RegionCardsToDisplay = []
+                        break
 
 
     def execute(self):
@@ -275,6 +312,8 @@ class BoardDisplay:
             self.chooseCardToReveal()
         elif self.state == State.SANCTUARY:
             self.chooseSanctuaryCard()
+        elif self.state == State.REGION:
+            self.chooseRegionCard()
 
     def play(self):
 
@@ -297,26 +336,6 @@ class BoardDisplay:
             
             for card in self.SanctuaryCardsToDisplay:
                 card.sanctuaryCardDisplay()
-
-
-            #     print("----------------- Choose the sanctuary card you want to add to your hand  ------------------- \n")
-            #     ## Choose sanctuary card if you had to
-            #     for p in self.players:
-            #         nbToAdd = p.sanctuaryCardToAdd()
-            #         if nbToAdd > 0:
-            #             print("Player "+str(p.id)+" sanctuary cards available :")
-            #             index = -1
-            #             while(type(index) != int or index <= 0 or index > nbToAdd):
-            #                 for i in range(1, nbToAdd+1):
-            #                     print(str(i)+" : "+self.sanctuaryCards[i-1].toString())
-            #                 inp = input("Player "+str(p.id)+" : Enter the index of the sanctuary card you want to take : ")
-            #                 if str.isdigit(inp):
-            #                     index = int(inp)
-            #             p.addCardToSanctuaryCards(self.sanctuaryCards.pop(index-1))
-            #             for i in range(nbToAdd-1):
-            #                 self.sanctuaryCards.pop(0)
-            #             print("Player "+str(p.id)+" has taken "+p.sanctuaryCards[-1].toString()+"\n")
-            #             print("\n")
 
 
             #     ## Set the new list of player with the right order 
