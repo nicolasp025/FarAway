@@ -7,13 +7,14 @@ from Colors import *
 
 class Card:
     
-    def __init__(self, id, color=None, quest=None, stones=[], day=False, map=False):
+    def __init__(self, id, color=None, quest=None, stones=[], day=False, map=False, dcard=None):
         self.id = id
         self.color = color
         self.quest = quest
         self.stones = stones
         self.day = day
         self.map = map
+        self.dcard = dcard
         
     def toString(self):
         res = ", color : " + str(self.color)
@@ -29,3 +30,6 @@ class Card:
             res += " with " + self.quest.toString()
         res += "\n"
         return res
+    
+    def addDisplayCard(self, displayCard):
+        self.dcard = displayCard
