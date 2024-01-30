@@ -7,6 +7,7 @@ from Card import Card
 from Colors import Colors
 from Stones import Stones
 from Quest import Quest
+from QuestDisplay import QuestDisplay
 
 class CardDisplay():
 
@@ -56,7 +57,10 @@ class CardDisplay():
             return img_map
         return None
 
-    # def questDisplay(self, quest):
+
+    def questDisplay(self):
+        return QuestDisplay(self.card.quest, self.screen, self.width, self.height)
+
 
     def clickIn(self, coord_clic):
         return self.rect.collidepoint(coord_clic[0], coord_clic[1])
@@ -72,3 +76,5 @@ class CardDisplay():
             last_x -= img.get_width()
 
         self.mapDisplay(self.card.map, self.screen, x+self.width/4, y+10)
+
+        self.questDisplay().display(x, y)

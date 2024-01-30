@@ -23,9 +23,6 @@ class SanctuaryCardDisplay(CardDisplay):
         return img_day
 
 
-    # def questDisplay(self, quest):
-
-
 
     def sanctuaryCardDisplay(self, x, y):
         super().display(x, y)

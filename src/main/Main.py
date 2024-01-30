@@ -33,7 +33,7 @@ def play():
 
     args = sys.argv 
 
-    if len(args)>0:
+    if len(args)>1:
         if args[1] == '-d':
             board = BoardDisplay()
             board.play()

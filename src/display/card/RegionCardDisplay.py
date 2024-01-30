@@ -30,7 +30,6 @@ class RegionCardDisplay(CardDisplay):
         surface_texte = police.render(texte, True, (0, 0, 0))
         return surface_texte
 
-    # def questDisplay(self, quest):
 
 
     def display(self, x, y):
