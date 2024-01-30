@@ -33,7 +33,7 @@ class CardDisplay():
         
     def stoneToImage(self, stones):
         images = []
-        size = (40, 60)
+        size = (60, 60)
         for s in stones:
             if s == Stones.EMERALD:
                 img = pygame.image.load("./data/img/emerald.png")

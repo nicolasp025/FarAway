@@ -46,7 +46,8 @@ class BoardDisplay:
         self.state = State.START
         self.RegionCardRevealed = []
 
-        
+        self.clic = 0
+
         self.players = []
         self.actualPlayer = None
         self.cpt = 0
@@ -72,7 +73,19 @@ class BoardDisplay:
             for line in data['sanctuaryCards']:
                 i += 1
                 id = str(line['id']).replace("sanctuary-", "")
-                quest = Quest([], line['points'], ConditionModes.castToMode(line['conditionMode']), line['condition'])
+
+                conditionMode = ConditionModes.castToMode(line['conditionMode'])
+
+                tmp = []
+                if conditionMode == ConditionModes.STONE:
+                    for s in line['condition']:
+                        tmp.append(Stones.castToStone(s))
+                elif conditionMode == ConditionModes.COLOR or conditionMode == ConditionModes.SOMECOLOR:
+                    for c in line['condition']:
+                        tmp.append(Colors.castToColor(c))
+
+
+                quest = Quest([], line['points'], conditionMode, tmp)
                 
                 tmpColor = Colors.castToColor(line['color'])    # Getting the color of the card
                 tmpStones = []                                  # Getting the list of stones
@@ -97,7 +110,19 @@ class BoardDisplay:
             for line in data['regionCards']:
                 i += 1
                 id = str(line['id']).replace("region-", "")
-                quest = Quest(line['require'], line['points'], ConditionModes.castToMode(line['conditionMode']), line['condition'])
+                
+                conditionMode = ConditionModes.castToMode(line['conditionMode'])
+
+                tmp = []
+                if conditionMode == ConditionModes.STONE:
+                    for s in line['condition']:
+                        tmp.append(Stones.castToStone(s))
+                elif conditionMode == ConditionModes.COLOR or conditionMode == ConditionModes.SOMECOLOR:
+                    for c in line['condition']:
+                        tmp.append(Colors.castToColor(c))
+
+
+                quest = Quest([], line['points'], conditionMode, tmp)
 
                 tmpColor = Colors.castToColor(line['color'])    # Getting the color of the card
                 tmpStones = []                                  # Getting the list of stones
@@ -181,9 +206,7 @@ class BoardDisplay:
         textv = "Validate"
 
         nbJ = self.nbJoueur
-        clicks = pygame.mouse.get_pressed()
-        if clicks[0]==1:
-            time.sleep(0.1)
+        if self.clic==2:
             pos = pygame.mouse.get_pos()
             if tr1.clickIn(pos):
                 nbJ = min(6, nbJ+1)
@@ -235,9 +258,7 @@ class BoardDisplay:
         i=1
         for card in self.actualPlayer.hand:
             card.dcard.display(i*(self.screen.get_height()/3)-70, self.screen.get_height()-500)
-            clicks = pygame.mouse.get_pressed()
-            if clicks[0]==1:
-                time.sleep(0.1)
+            if self.clic==2:
                 pos = pygame.mouse.get_pos()
                 if card.dcard.clickIn(pos):
                     n = self.actualPlayer.revealCard(i)
@@ -263,9 +284,7 @@ class BoardDisplay:
                 card = self.sanctuaryCards[i]
                 card.dcard.display((i+1)*(300)-70, self.screen.get_height()-500)
 
-                clicks = pygame.mouse.get_pressed()
-                if clicks[0]==1:
-                    time.sleep(0.1)
+                if self.clic==2:
                     pos = pygame.mouse.get_pos()
                     if card.dcard.clickIn(pos):
                         self.actualPlayer.addCardToSanctuaryCards(self.sanctuaryCards.pop(i))
@@ -297,9 +316,7 @@ class BoardDisplay:
             card = self.regionCards[i]
             card.dcard.display((i+1)*(self.screen.get_height()/3)-70, self.screen.get_height()-500)
 
-            clicks = pygame.mouse.get_pressed()
-            if clicks[0]==1:
-                time.sleep(0.1)
+            if self.clic==2:
                 pos = pygame.mouse.get_pos()
                 if card.dcard.clickIn(pos):
                     self.actualPlayer.addCardToHand(self.regionCards.pop(i))
@@ -340,54 +357,21 @@ class BoardDisplay:
                 if event.type == pygame.QUIT:
                     self.running = False
 
+                # Vérifier si le bouton de la souris est enfoncé
+                elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    self.clic = 1
+
+                # Vérifier si le bouton de la souris est relâché
+                elif event.type == pygame.MOUSEBUTTONUP and event.button == 1 and self.clic == 1:
+                    self.clic = 2
+
             # fill the screen with a color to wipe away anything from last frame
             self.screen.fill("black")
 
             self.execute()
             
-            nbTurns = 0
-
-
-            #     ## Set the new list of player with the right order 
-            #     starting.sort(key=lambda x : x[1])
-            #     self.players = [t[0] for t in starting]
-
-            #     if (nbTurns < 7):
-            #         print("----------------- Choose the region card you want to add to your hand  ------------------- \n")
-            #         ## Choose the region card for player hand
-            #         for p in self.players:
-            #             index = -1
-            #             while(type(index) != int or index <= 0 or index > len(self.players)+2):
-            #                 i=1
-            #                 print("All cards available :\n")
-            #                 for card in self.RegionCardRevealed:
-            #                     print(str(i)+" : "+card.toString())
-            #                     i+=1
-            #                 inp = input("Player "+str(p.id)+" : Enter the index of the card you want to choose: ")
-            #                 if str.isdigit(inp):
-            #                     index = int(inp)
-            #             card = self.RegionCardRevealed.pop(index-1)
-            #             p.addCardToHand(card)
-            #             print("Player "+str(p.id)+" has choose "+card.toString()+"\n")
-            #             print("\n")
-
-            #     self.RegionCardRevealed = []
-            #     nbTurns += 1
-
-
-
-            # print("----------------- Final Cards for each player  ------------------- \n")
-            # ## Print final cards revealed by players
-            # for p in self.players:
-            #     print("Player "+str(p.id)+" final cards :")
-            #     for c in p.revealedCards:
-            #         print(c.toString())
-                    
-            # print("------------ Counting points ------------")
-            # print(countFinalPoints())
-
-            # print("Game end\n")
-
+            if self.clic == 2:
+                self.clic = 0
             # flip() the display to put your work on screen
             pygame.display.flip()
 
