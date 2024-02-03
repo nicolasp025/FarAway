@@ -257,10 +257,14 @@ class BoardDisplay:
 
         i=1
         for card in self.actualPlayer.hand:
-            card.dcard.display(i*(self.screen.get_height()/3)-70, self.screen.get_height()-500)
-            if self.clic==2:
-                pos = pygame.mouse.get_pos()
-                if card.dcard.clickIn(pos):
+            x = i*(self.screen.get_height()/3)-70
+            y = self.screen.get_height()-500
+            card.dcard.display(x, y)
+            pos = pygame.mouse.get_pos()
+            if card.dcard.clickIn(pos):
+                r = pygame.Rect(x, y, self.WIDTHREGION, self.HEIGHTREGION)
+                pygame.draw.rect(self.screen, (255,255,255), r, 7, border_radius=30)
+                if self.clic==2:
                     n = self.actualPlayer.revealCard(i)
                     self.starting.append((self.actualPlayer, n))
                     if self.next(State.SANCTUARY):
@@ -282,11 +286,14 @@ class BoardDisplay:
         if nbToAdd > 0:
             for i in range(nbToAdd):
                 card = self.sanctuaryCards[i]
-                card.dcard.display((i+1)*(300)-70, self.screen.get_height()-500)
-
-                if self.clic==2:
-                    pos = pygame.mouse.get_pos()
-                    if card.dcard.clickIn(pos):
+                x = (i+1)*(300)-70
+                y = self.screen.get_height()-500
+                card.dcard.display(x, y)
+                pos = pygame.mouse.get_pos()
+                if card.dcard.clickIn(pos):
+                    r = pygame.Rect(x, y, self.WIDTHSANCTUARY, self.HEIGHTSANCTUARY)
+                    pygame.draw.rect(self.screen, (255,255,255), r, 7, border_radius=30)
+                    if self.clic==2:
                         self.actualPlayer.addCardToSanctuaryCards(self.sanctuaryCards.pop(i))
                         for j in range(nbToAdd-1):
                             self.sanctuaryCards.pop(i)
@@ -314,11 +321,14 @@ class BoardDisplay:
 
         for i in range(self.nbJoueur+1-self.cpt):
             card = self.regionCards[i]
-            card.dcard.display((i+1)*(self.screen.get_height()/3)-70, self.screen.get_height()-500)
-
-            if self.clic==2:
-                pos = pygame.mouse.get_pos()
-                if card.dcard.clickIn(pos):
+            x = (i+1)*(self.screen.get_height()/3)-70
+            y = self.screen.get_height()-500
+            card.dcard.display(x, y)
+            pos = pygame.mouse.get_pos()
+            if card.dcard.clickIn(pos):
+                r = pygame.Rect(x, y, self.WIDTHREGION, self.HEIGHTREGION)
+                pygame.draw.rect(self.screen, (255,255,255), r, 7, border_radius=30)
+                if self.clic==2:
                     self.actualPlayer.addCardToHand(self.regionCards.pop(i))
 
                     if self.next(State.REVEAL):

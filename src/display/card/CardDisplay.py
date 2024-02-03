@@ -69,6 +69,8 @@ class CardDisplay():
     def display(self, x, y):
         self.rect = pygame.Rect(x, y, self.width, self.height)
         pygame.draw.rect(self.screen, self.colorToColor(self.card.color), self.rect, border_radius=30) 
+        r = pygame.Rect(x, y, self.width, self.height)
+        pygame.draw.rect(self.screen, (255,255,255), r, 3, border_radius=30)
         images = self.stoneToImage(self.card.stones)
         last_x = 0
         for img in images:
