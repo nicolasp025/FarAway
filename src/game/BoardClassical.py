@@ -30,60 +30,9 @@ class BoardClassical(Board):
             return
         
         # Generate all the players
-        self.players = []
         for i in range(nbPlayers):
-            self.players.append(Player(i))
+            self.players.append(Player(i+1))
         print("The " + str(nbPlayers) + " players has been successfully created.")
-    
-    def reverseList(self, x):
-        res = []
-        for i in x:
-            res.append(i)
-        return res
-
-    def addRessources(self, ressources, card):
-
-         ## Adding the color of the card
-        if card.color not in ressources:
-            ressources[card.color] = 1
-        else:
-            ressources[card.color] += 1
-    
-        ## Adding the stones of the card
-        for stone in card.stones:
-            if stone not in ressources:
-                ressources[stone] = 1
-            else:
-                ressources[stone] += 1
-        
-        ## Adding the map
-        if card.map:
-            ressources["map"] += 1
-        
-        ## Adding the night
-        if card.day:
-            ressources["day"] += 1
-        else:
-            ressources["night"] += 1
-        return ressources
-
-    def countFinalPoints(self):
-        res = {} 
-        for p in self.players:
-            tmpScore = 0
-
-            ressources = {"map" : 0, "night": 0, "day": 0}
-            # Getting all bonuses from sanctuaryCards
-            for card in p.sanctuaryCards:
-                ressources = self.addRessources(ressources, card)
-
-            # Getting points from every region card
-            for card in self.reverseList(p.revealedCards):
-                ressources = self.addRessources(ressources, card)
-                tmpScore += card.satisfy(ressources)
-
-            res[p.id] = tmpScore
-        return res
                 
 
     def play(self):

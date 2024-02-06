@@ -42,7 +42,6 @@ class BoardDisplay(Board):
 
         self.clic = 0
 
-        self.players = []
         self.actualPlayer = None
         self.cpt = 0
 
@@ -168,7 +167,7 @@ class BoardDisplay(Board):
     def displayEnd(self):
         police = pygame.font.Font(None, 120)
         text_end = pygame.Rect(self.screen.get_width()/2-300, self.screen.get_height()-700, 100, 50)
-        textr = "Game is finished !"
+        textr = str(self.countFinalPoints())
         pygame.draw.rect(self.screen, (0,0,0), text_end)
         texte_surface = police.render(textr, True, (255,255,255))  
         self.screen.blit(texte_surface, (text_end.x + 5, text_end.y + 5))

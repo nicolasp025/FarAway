@@ -35,6 +35,7 @@ class Board:
     def __init__(self, screen=None):
 
         self.RegionCardRevealed = []
+        self.players = []
             
         # Initializing the region cards
         self.regionCards = []
@@ -104,3 +105,48 @@ class Board:
                     dcard = RegionCardDisplay(card, screen, self.WIDTHREGION, self.HEIGHTREGION)
                     card.addDisplayCard(dcard)
                 self.regionCards.append(card)
+
+
+    def addRessources(self, ressources, card):
+
+         ## Adding the color of the card
+        if card.color not in ressources:
+            ressources[card.color] = 1
+        else:
+            ressources[card.color] += 1
+    
+        ## Adding the stones of the card
+        for stone in card.stones:
+            if stone not in ressources:
+                ressources[stone] = 1
+            else:
+                ressources[stone] += 1
+        
+        ## Adding the map
+        if card.map:
+            ressources["map"] += 1
+        
+        ## Adding the night
+        if card.day:
+            ressources["day"] += 1
+        else:
+            ressources["night"] += 1
+        return ressources
+
+    def countFinalPoints(self):
+        res = {} 
+        for p in self.players:
+            tmpScore = 0
+
+            ressources = {"map" : 0, "night": 0, "day": 0}
+            # Getting all bonuses from sanctuaryCards
+            for card in p.sanctuaryCards:
+                ressources = self.addRessources(ressources, card)
+
+            # Getting points from every region card
+            for card in p.revealedCards[::-1]:
+                ressources = self.addRessources(ressources, card)
+                tmpScore += card.satisfy(ressources)
+
+            res[p.id] = tmpScore
+        return res

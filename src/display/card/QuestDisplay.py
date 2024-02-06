@@ -103,6 +103,8 @@ class QuestDisplay():
                     i+=1
                 textr = points
 
+            textr = str(textr)
+
             pygame.draw.rect(transp, (0, 0, 255), rect)
             
             self.screen.blit(text_eg, (x-self.width/(div-2)-10, y-self.height/(div+1)-2))
