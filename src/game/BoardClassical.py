@@ -44,28 +44,27 @@ class BoardClassical(Board):
     def addRessources(ressources, card):
 
          ## Adding the color of the card
-                if card.color not in ressources:
-                    ressources[card.color] = 1
-                else:
+        if card.color not in ressources:
+            ressources[card.color] = 1
+        else:
                     ressources[card.color] += 1
-                
-                ## Adding the stones of the card
-                for stone in card.stones:
-                    if stone not in ressources:
-                        ressources[stone] = 1
-                    else:
-                        ressources[stone] += 1
-                
-                ## Adding the map
-                if card.map:
-                    ressources["map"] += 1
-                
-                ## Adding the night
-                if card.night:
-                    ressources["night"] += 1
-                else:
-                    ressources["day"] += 1
-
+    
+        ## Adding the stones of the card
+        for stone in card.stones:
+            if stone not in ressources:
+                ressources[stone] = 1
+            else:
+                ressources[stone] += 1
+        
+        ## Adding the map
+        if card.map:
+            ressources["map"] += 1
+        
+        ## Adding the night
+        if card.night:
+            ressources["night"] += 1
+        else:
+            ressources["day"] += 1
         return ressources
 
     def countFinalPoints():
