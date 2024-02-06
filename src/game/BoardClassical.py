@@ -35,19 +35,19 @@ class BoardClassical(Board):
             self.players.append(Player(i))
         print("The " + str(nbPlayers) + " players has been successfully created.")
     
-    def reverseList(x):
+    def reverseList(self, x):
         res = []
         for i in x:
             res.append(i)
         return res
 
-    def addRessources(ressources, card):
+    def addRessources(self, ressources, card):
 
          ## Adding the color of the card
         if card.color not in ressources:
             ressources[card.color] = 1
         else:
-                    ressources[card.color] += 1
+            ressources[card.color] += 1
     
         ## Adding the stones of the card
         for stone in card.stones:
@@ -61,13 +61,13 @@ class BoardClassical(Board):
             ressources["map"] += 1
         
         ## Adding the night
-        if card.night:
-            ressources["night"] += 1
-        else:
+        if card.day:
             ressources["day"] += 1
+        else:
+            ressources["night"] += 1
         return ressources
 
-    def countFinalPoints():
+    def countFinalPoints(self):
         res = {} 
         for p in self.players:
             tmpScore = 0
@@ -75,11 +75,11 @@ class BoardClassical(Board):
             ressources = {"map" : 0, "night": 0, "day": 0}
             # Getting all bonuses from sanctuaryCards
             for card in p.sanctuaryCards:
-                ressources = addRessources(ressources, card)
+                ressources = self.addRessources(ressources, card)
 
             # Getting points from every region card
-            for card in reverseList(p.revealedCards):
-                ressources = addRessources(ressources, card)
+            for card in self.reverseList(p.revealedCards):
+                ressources = self.addRessources(ressources, card)
                 tmpScore += card.satisfy(ressources)
 
             res[p.id] = tmpScore
@@ -175,7 +175,7 @@ class BoardClassical(Board):
                 print(c.toString())
                 
         print("------------ Counting points ------------")
-        print(countFinalPoints())
+        print(self.countFinalPoints())
 
         print("Game end\n")
         

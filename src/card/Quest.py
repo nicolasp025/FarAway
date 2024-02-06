@@ -15,7 +15,7 @@ class Quest:
             tmpRequire[i] += 1
         
         self.require = tmpRequire
-        self.points = points
+        self.points = int(points)
         self.conditionMode = conditionMode
         self.condition = condition
 
@@ -44,11 +44,11 @@ class Quest:
           
     def toString(self):
         res = ""
-        if self.points != "0":
+        if self.points != 0:
             res += "quest : "
             res += "require " + str(self.require)
             if self.conditionMode == ConditionModes.NOTHING:
-                res +=", gain " + self.points + " points"
+                res +=", gain " + str(self.points) + " points"
             if self.conditionMode == ConditionModes.NIGHT:
               res += " for each night card"
             elif self.conditionMode == ConditionModes.MAP:
