@@ -18,6 +18,8 @@ class CardDisplay():
         self.width = width
         self.height = height
         self.rect = None
+        self.rect1 = None
+        self.rect2 = None
 
     def colorToColor(self, col):
         if col == Colors.GREEN:
@@ -65,10 +67,41 @@ class CardDisplay():
     def clickIn(self, coord_clic):
         return self.rect.collidepoint(coord_clic[0], coord_clic[1])
 
-
-    def display(self, x, y):
+    def backgroundColor(self, x, y):
         self.rect = pygame.Rect(x, y, self.width, self.height)
-        pygame.draw.rect(self.screen, self.colorToColor(self.card.color), self.rect, border_radius=30) 
+        self.rect1 = pygame.Rect(x, y+(self.height/3)*2, self.width, self.height/3)
+        self.rect2 = pygame.Rect(x, y, self.width, (self.height/3)*2)
+        if self.card.color == Colors.GREEN:
+            return (144, 238, 144), (34, 139, 34)
+        elif self.card.color == Colors.RED:
+            return (255, 99, 71), (220, 20, 60)
+        elif self.card.color ==  Colors.BLUE:
+            return (135, 206, 250), (0, 0, 139)
+        elif self.card.color == Colors.YELLOW:
+            return (255, 255, 102), (255, 215, 0)
+        elif self.card.color == Colors.GRAY:
+            return (192, 192, 192), (128, 128, 128)
+        
+    def banner(self, x, y):
+        img = None
+        if self.card.color == Colors.GREEN:
+            img = pygame.image.load("./data/img/green_banner.png")
+        elif self.card.color == Colors.RED:
+            img = pygame.image.load("./data/img/red_banner.png")
+        elif self.card.color == Colors.BLUE:
+            img = pygame.image.load("./data/img/blue_banner.png")
+        elif self.card.color == Colors.YELLOW:
+            img = pygame.image.load("./data/img/yellow_banner.png")
+        elif self.card.color == Colors.GRAY:
+            img = pygame.image.load("./data/img/yellow_banner.png")
+        img = pygame.transform.scale(img, (self.width, 35))
+        return img
+    
+    def display(self, x, y):
+        col1, col2 = self.backgroundColor(x, y)
+        pygame.draw.rect(self.screen, col1, self.rect1, border_radius=30) 
+        pygame.draw.rect(self.screen, col2, self.rect2, border_radius=30)
+        self.screen.blit(self.banner(x, y), (x, y+(self.height/3)*2-15)) 
         r = pygame.Rect(x, y, self.width, self.height)
         pygame.draw.rect(self.screen, (255,255,255), r, 3, border_radius=30)
         images = self.stoneToImage(self.card.stones)
