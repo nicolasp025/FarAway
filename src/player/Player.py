@@ -62,9 +62,5 @@ class Player:
                     res += 1
         return res
         
-
-
-    def canRevealCard(self):
-        return len(self.revealedCards) < Player.NBCARDSTOREVEAL and len(self.hand) > 0
             
             

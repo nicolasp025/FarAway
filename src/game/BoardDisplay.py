@@ -10,6 +10,7 @@ sys.path.append("./src/enum/")
 sys.path.append("./src/display/card/")
 sys.path.append("./src/display/")
 
+from Board import Board
 from Triangle import Triangle
 from State import State
 from Colors import Colors
@@ -21,30 +22,23 @@ from SanctuaryCard import SanctuaryCard
 from ConditionModes import ConditionModes
 from RegionCardDisplay import RegionCardDisplay
 from SanctuaryCardDisplay import SanctuaryCardDisplay
+from ChooseNbPlayer import ChooseNbPlayer
 
-class BoardDisplay:
-
-    NBOFREGIONCARDS = 68
-    NBOFSANCTUARYCARDS = 45
-
-    WIDTHSANCTUARY = 280
-    HEIGHTSANCTUARY = 400
-
-    WIDTHREGION = 400
-    HEIGHTREGION = 400
+class BoardDisplay(Board):
     
     def __init__(self):
-        
+
         pygame.init()
         self.screen = pygame.display.set_mode((2160, 1440), pygame.FULLSCREEN)
         pygame.display.set_caption("Projet - Far Away")
         self.clock = pygame.time.Clock()
+        super().__init__(self.screen)
+
         self.running = True
-        self.dt = 0
+
         self.nbJoueur = 2
     
         self.state = State.START
-        self.RegionCardRevealed = []
 
         self.clic = 0
 
@@ -56,86 +50,6 @@ class BoardDisplay:
 
         self.starting = []
             
-        # Initializing the region cards
-        self.regionCards = []
-        self.initializeRegionCards()
-        shuffle(self.regionCards)
-
-        # Initializing the sanctuary cards
-        self.sanctuaryCards = []
-        self.initializeSanctuaryCards()
-        shuffle(self.sanctuaryCards)
-
-    def initializeSanctuaryCards(self):
-        with open("./data/SanctuaryCards.json") as f:
-            data = json.load(f)
-            i = 0
-            for line in data['sanctuaryCards']:
-                i += 1
-                id = str(line['id']).replace("sanctuary-", "")
-
-                conditionMode = ConditionModes.castToMode(line['conditionMode'])
-
-                tmp = []
-                if conditionMode == ConditionModes.STONE:
-                    for s in line['condition']:
-                        tmp.append(Stones.castToStone(s))
-                elif conditionMode == ConditionModes.COLOR or conditionMode == ConditionModes.SOMECOLOR:
-                    for c in line['condition']:
-                        tmp.append(Colors.castToColor(c))
-
-
-                quest = Quest([], line['points'], conditionMode, tmp)
-                
-                tmpColor = Colors.castToColor(line['color'])    # Getting the color of the card
-                tmpStones = []                                  # Getting the list of stones
-                for s in line['stones']:
-                    tmpStones.append(Stones.castToStone(s))
-
-                card = SanctuaryCard(id, tmpColor, quest, tmpStones, eval(line['night']), eval(line['map']))
-
-                dcard = SanctuaryCardDisplay(card, self.screen, self.WIDTHSANCTUARY, self.HEIGHTSANCTUARY)
-
-                card.addDisplayCard(dcard)
-
-                self.sanctuaryCards.append(card)
-
-
-
-
-    def initializeRegionCards(self):
-        with open("./data/RegionCards.json") as f:
-            data = json.load(f)
-            i = 0
-            for line in data['regionCards']:
-                i += 1
-                id = str(line['id']).replace("region-", "")
-                
-                conditionMode = ConditionModes.castToMode(line['conditionMode'])
-
-                tmp = []
-                if conditionMode == ConditionModes.STONE:
-                    for s in line['condition']:
-                        tmp.append(Stones.castToStone(s))
-                elif conditionMode == ConditionModes.COLOR or conditionMode == ConditionModes.SOMECOLOR:
-                    for c in line['condition']:
-                        tmp.append(Colors.castToColor(c))
-
-
-                quest = Quest([], line['points'], conditionMode, tmp)
-
-                tmpColor = Colors.castToColor(line['color'])    # Getting the color of the card
-                tmpStones = []                                  # Getting the list of stones
-                for s in line['stones']:
-                    tmpStones.append(Stones.castToStone(s))
-
-                card = RegionCard(id, tmpColor, quest, tmpStones, eval(line['day']), eval(line['map']))
-
-                dcard = RegionCardDisplay(card, self.screen, self.WIDTHREGION, self.HEIGHTREGION)
-
-                card.addDisplayCard(dcard)
-
-                self.regionCards.append(card)
         
     def reverseList(x):
         res = []
@@ -181,59 +95,19 @@ class BoardDisplay:
                     pass
                     # to continue
                 
-                               
+                   
     def chooseNbPlayers(self):
-        midW = self.screen.get_width()/2
-        midH = self.screen.get_height()/2
-        ecart = 200
-        col = (255,255,255)
-        points_triangle1 = [(midW+ecart, midH), (midW+ecart, midH+180), (midW+180+ecart, midH+90)]
-        tr1 = Triangle(points_triangle1)
-        tr1.dessiner(self.screen, col)
-        points_triangle2 = [(midW-ecart, midH), (midW-ecart, midH+180), (midW-180-ecart, midH+90)]
-        tr2 = Triangle(points_triangle2)
-        tr2.dessiner(self.screen, col)
-        
-        sizeP = 400
-        police = pygame.font.Font(None, sizeP)
-        text_nbJ = pygame.Rect(midW-80, midH-40, 100, 50)
-        
-        policet = pygame.font.Font(None, 100)
-        text_title = pygame.Rect(midW-500, midH-200, 400, 50)
-        textt = "Choose the number of players :"
+        nbJ = ChooseNbPlayer(self.screen, super().MAXIMUMPLAYERS, super().MINIMUMPLAYERS).display(self.nbJoueur, self.clic)
+        self.nbJoueur = nbJ[1]
+        if nbJ[0]:
+            for i in range(1,self.nbJoueur+1):
+                self.players.append(Player(i))
+                for j in range(3):
+                    card = self.regionCards.pop(0)
+                    self.players[i-1].addCardToHand(card)
+            self.actualPlayer = self.players[self.cpt]
+            self.state = State.REVEAL
 
-        text_val = pygame.Rect(midW-140, midH+300, 290, 70)
-        textv = "Validate"
-
-        nbJ = self.nbJoueur
-        if self.clic==2:
-            pos = pygame.mouse.get_pos()
-            if tr1.clickIn(pos):
-                nbJ = min(6, nbJ+1)
-            elif tr2.clickIn(pos):
-                nbJ = max(2, nbJ-1)
-            elif text_val.collidepoint(pos[0], pos[1]):
-                for i in range(1,self.nbJoueur+1):
-                    self.players.append(Player(i))
-                    for j in range(3):
-                        card = self.regionCards.pop(0)
-                        self.players[i-1].addCardToHand(card)
-                self.actualPlayer = self.players[self.cpt]
-                self.state = State.REVEAL
-
-        self.nbJoueur = nbJ
-        text = str(self.nbJoueur)
-        pygame.draw.rect(self.screen, (0,0,0), text_nbJ)
-        texte_surface = police.render(text, True, col)  
-        self.screen.blit(texte_surface, (text_nbJ.x + 5, text_nbJ.y + 5))
-
-        pygame.draw.rect(self.screen, (0,0,0), text_title)
-        textet_surface = policet.render(textt, True, col)  
-        self.screen.blit(textet_surface, (text_title.x + 5, text_title.y + 5))
-
-        pygame.draw.rect(self.screen, col, text_val, 2)
-        textev_surface = policet.render(textv, True, col)  
-        self.screen.blit(textev_surface, (text_val.x + 5, text_val.y + 5))
 
     def next(self, state):
         self.cpt +=1
@@ -358,6 +232,7 @@ class BoardDisplay:
             self.chooseRegionCard()
         elif self.state == State.END:
             self.displayEnd()
+
 
     def play(self):
 

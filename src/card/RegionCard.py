@@ -9,7 +9,6 @@ class RegionCard(Card):
     
     def __init__(self, number, color=None, quest=None, stones=[], day=False, map=False):
         super().__init__(number, color, quest, stones, day, map)
-        self.id = number
 
 
     def toString(self):

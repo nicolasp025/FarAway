@@ -54,7 +54,7 @@ class Quest:
             elif self.conditionMode == ConditionModes.MAP:
               res += " for each map"
             elif self.conditionMode == ConditionModes.STONE:
-              res += " for each " + self.condition[0]
+              res += " for each " + str(self.condition[0])
             elif self.conditionMode == ConditionModes.COLOR:
               res += " for each card with a color within " + str(self.condition)
             else:
