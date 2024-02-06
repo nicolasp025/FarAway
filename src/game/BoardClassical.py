@@ -41,22 +41,15 @@ class BoardClassical(Board):
             res.append(i)
         return res
 
-    def countFinalPoints():
-        res = {} 
-        for p in self.players:
-            tmpScore = 0
+    def addRessources(ressources, card):
 
-            ressources = {"map" : 0, "night": 0, "day": 0}
-            # Getting all bonuses from sanctuaryCards
-            for card in p.sanctuaryCards:
-
-                ## Adding the color of the sanctuary card
+         ## Adding the color of the card
                 if card.color not in ressources:
                     ressources[card.color] = 1
                 else:
                     ressources[card.color] += 1
                 
-                ## Adding the stones of the sanctuary card
+                ## Adding the stones of the card
                 for stone in card.stones:
                     if stone not in ressources:
                         ressources[stone] = 1
@@ -73,11 +66,25 @@ class BoardClassical(Board):
                 else:
                     ressources["day"] += 1
 
+        return ressources
+
+    def countFinalPoints():
+        res = {} 
+        for p in self.players:
+            tmpScore = 0
+
+            ressources = {"map" : 0, "night": 0, "day": 0}
+            # Getting all bonuses from sanctuaryCards
+            for card in p.sanctuaryCards:
+                ressources = addRessources(ressources, card)
+
             # Getting points from every region card
-            for card in reverse(p.revealedCards):
-                if card.satisfy(ressources):
-                    pass
-                    # to continue
+            for card in reverseList(p.revealedCards):
+                ressources = addRessources(ressources, card)
+                tmpScore += card.satisfy(ressources)
+
+            res[p.id] = tmpScore
+        return res
                 
 
     def play(self):

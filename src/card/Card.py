@@ -33,3 +33,6 @@ class Card:
     
     def addDisplayCard(self, displayCard):
         self.dcard = displayCard
+    
+    def satisfy(self, ressources):
+        return self.quest.satisfy(ressources)
