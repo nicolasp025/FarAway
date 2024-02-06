@@ -14,7 +14,7 @@ class SanctuaryCardDisplay(CardDisplay):
     def __init__(self, card, screen, width, height):
         super().__init__(card, screen, width, height)
 
-    def dayDisplay(self, ):
+    def dayDisplay(self):
         img_day = None
         if self.card.day:
             img_day = pygame.image.load("./data/img/night.png")

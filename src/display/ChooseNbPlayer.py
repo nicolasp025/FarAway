@@ -25,10 +25,10 @@ class ChooseNbPlayer:
         col = (255,255,255)
         points_triangle1 = [(midW+ecart, midH), (midW+ecart, midH+180), (midW+180+ecart, midH+90)]
         tr1 = Triangle(points_triangle1)
-        tr1.dessiner(self.screen, col)
+        tr1.draw(self.screen, col)
         points_triangle2 = [(midW-ecart, midH), (midW-ecart, midH+180), (midW-180-ecart, midH+90)]
         tr2 = Triangle(points_triangle2)
-        tr2.dessiner(self.screen, col)
+        tr2.draw(self.screen, col)
         
         sizeP = 400
         police = pygame.font.Font(None, sizeP)

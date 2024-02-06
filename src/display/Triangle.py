@@ -5,8 +5,8 @@ class Triangle:
     def __init__(self, points):
         self.points = points
 
-    def dessiner(self, fenetre, couleur):
-        pygame.draw.polygon(fenetre, couleur, self.points)
+    def draw(self, screen, color):
+        pygame.draw.polygon(screen, color, self.points)
 
     def clickIn(self, coord_clic):
         x, y = coord_clic
