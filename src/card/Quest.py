@@ -2,6 +2,8 @@ import sys
 sys.path.append("./src/enum/")
 
 from ConditionModes import ConditionModes
+from Stones import Stones
+from Colors import Colors
 
 
 class Quest:
@@ -15,7 +17,7 @@ class Quest:
             tmpRequire[i] += 1
         
         self.require = tmpRequire
-        self.points = int(points)
+        self.points = points
         self.conditionMode = conditionMode
         self.condition = condition
 
@@ -45,20 +47,25 @@ class Quest:
     def toString(self):
         res = ""
         if self.points != 0:
-            res += "quest : "
-            res += "require " + str(self.require)
-            if self.conditionMode == ConditionModes.NOTHING:
-                res +=", gain " + str(self.points) + " points"
-            if self.conditionMode == ConditionModes.NIGHT:
-              res += " for each night card"
-            elif self.conditionMode == ConditionModes.MAP:
-              res += " for each map"
-            elif self.conditionMode == ConditionModes.STONE:
-              res += " for each " + str(self.condition[0])
-            elif self.conditionMode == ConditionModes.COLOR:
-              res += " for each card with a color within " + str(self.condition)
+            res += "quest : require "
+            l = list(self.require.items())
+            if len(l) == 0:
+              res += "nothing"
             else:
-              res += " for each combo of cards of all colors in " + str(self.condition)
+              res += " and ".join(list(map(lambda x : str(x[1]) + " " + Stones.toString(x[0]), l)))
+            res +=", gain " + str(self.points) + " points"
+            if self.conditionMode == ConditionModes.NOTHING:
+              res += "."
+            elif self.conditionMode == ConditionModes.NIGHT:
+              res += " for each night card."
+            elif self.conditionMode == ConditionModes.MAP:
+              res += " for each map."
+            elif self.conditionMode == ConditionModes.STONE:
+              res += " for each " + " | ".join(list(map(lambda x : Stones.toString(x), self.condition)))+ "."
+            elif self.conditionMode == ConditionModes.COLOR:
+              res += " for each card with a color " + " or ".join(list(map(lambda x: Colors.toString(x), self.condition))) + "."
+            elif self.conditionMode == ConditionModes.SOMECOLOR:
+              res += " for each combo of cards of all colors in " + " | ".join(list(map(lambda x : Colors.toString(x), self.condition))) + "."
         else:
-           res += "no quest"
+           res += "no quest."
         return res

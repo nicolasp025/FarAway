@@ -13,3 +13,18 @@ class Colors(Enum):
             if color.name == color_str:
                 return color
         raise ValueError()
+
+    @classmethod
+    def toString(self, cls):
+        if cls == Colors.GRAY:
+            return "Gray"
+        elif cls == Colors.RED:
+            return "Red"
+        elif cls == Colors.BLUE:
+            return "Blue"
+        elif cls == Colors.GREEN:
+            return "Green"
+        elif cls == Colors.YELLOW:
+            return "Yellow"
+        else:
+            return "Unknown"

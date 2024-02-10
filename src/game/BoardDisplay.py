@@ -45,8 +45,6 @@ class BoardDisplay(Board):
         self.actualPlayer = None
         self.cpt = 0
 
-        self.nbTurns = 0
-
         self.starting = []
 
     def chooseNbPlayers(self):

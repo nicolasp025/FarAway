@@ -36,6 +36,7 @@ class Board:
 
         self.RegionCardRevealed = []
         self.players = []
+        self.nbTurns = 0
             
         # Initializing the region cards
         self.regionCards = []
@@ -63,7 +64,7 @@ class Board:
                 elif conditionMode == ConditionModes.COLOR or conditionMode == ConditionModes.SOMECOLOR:
                     for c in line['condition']:
                         tmp.append(Colors.castToColor(c))
-                quest = Quest([], line['points'], conditionMode, tmp)
+                quest = Quest([], eval(line['points']), conditionMode, tmp)
                 tmpColor = Colors.castToColor(line['color'])    # Getting the color of the card
                 tmpStones = []                                  # Getting the list of stones
                 for s in line['stones']:
@@ -94,7 +95,7 @@ class Board:
                 tmpReq = []
                 for s in line['require']:
                     tmpReq.append(Stones.castToStone(s))
-                quest = Quest(tmpReq, line['points'], conditionMode, tmp)
+                quest = Quest(tmpReq, eval(line['points']), conditionMode, tmp)
                 tmpColor = Colors.castToColor(line['color'])    # Getting the color of the card
                 tmpStones = []                                  # Getting the list of stones
                 for s in line['stones']:

@@ -2,7 +2,8 @@ import sys
 sys.path.append("./src/enum")
 
 
-from Colors import *
+from Colors import Colors
+from Stones import Stones
 
 
 class Card:
@@ -17,9 +18,9 @@ class Card:
         self.dcard = dcard
         
     def toString(self):
-        res = ", color : " + str(self.color)
+        res = ", color : " + Colors.toString(self.color)
         if len(self.stones) > 0:
-            res += ", with stones : " + str(self.stones)
+            res += ", with stone(s) : " + " | ".join(list(map(lambda x : Stones.toString(x), self.stones)))
         if self.day:
             res += ", day card"
         else:

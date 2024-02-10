@@ -11,3 +11,14 @@ class Stones(Enum):
             if stone.name == stone_str:
                 return stone
         raise ValueError()
+    
+    @classmethod
+    def toString(self, stone):
+        if stone == Stones.SAPHYR:
+            return "Sapphire"
+        elif stone == Stones.RUBY:
+            return "Ruby"
+        elif stone == Stones.EMERALD:
+            return "Emerald"
+        else:
+            return "Unknown"
