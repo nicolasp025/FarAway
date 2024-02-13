@@ -95,6 +95,7 @@ class BoardDisplay(Board):
                     if self.next(State.SANCTUARY):
                         self.starting.sort(key=lambda x : x[1])
                         self.players = [t[0] for t in self.starting]
+                        self.starting = []
                         self.actualPlayer = self.players[0]
             i+=1
             
@@ -184,6 +185,13 @@ class BoardDisplay(Board):
         texte_surface = police.render(textr, True, (255,255,255))  
         self.screen.blit(texte_surface, (text_reg.x + 5, text_reg.y + 5))
 
+    def forceExit(self):
+        rect = pygame.Rect(self.screen.get_width()-50, 0, 50, 50)
+        pygame.draw.rect(self.screen, (255,0,0), rect)
+        pos = pygame.mouse.get_pos()
+        if rect.collidepoint(pos[0], pos[1]) and self.clic == 2:
+            pygame.quit()
+
     def execute(self):
         if self.nbTurns == 8:
             self.state = State.END
@@ -220,6 +228,8 @@ class BoardDisplay(Board):
             self.screen.fill("black")
 
             self.execute()
+
+            self.forceExit()
 
             if self.state != State.END and self.state != State.START:
                 self.displayRevealedCard()
