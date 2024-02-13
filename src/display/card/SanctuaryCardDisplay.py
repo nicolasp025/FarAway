@@ -17,7 +17,7 @@ class SanctuaryCardDisplay(CardDisplay):
     def dayDisplay(self):
         img_day = None
         if self.card.day:
-            img_day = pygame.image.load("./data/img/night.png")
+            img_day = pygame.image.load("./data/img/night.png") # don't mind the logic
             img_day = pygame.transform.scale(img_day, (70, 70))
         return img_day
 

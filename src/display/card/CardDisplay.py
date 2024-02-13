@@ -4,10 +4,13 @@ import sys
 sys.path.append("./src/card/")
 sys.path.append("./src/enum/")
 from Card import Card
+from RegionCard import RegionCard
+from SanctuaryCard import SanctuaryCard
 from Colors import Colors
 from Stones import Stones
 from Quest import Quest
-from QuestDisplay import QuestDisplay
+from RegionQuestDisplay import RegionQuestDisplay
+from SanctuaryQuestDisplay import SanctuaryQuestDisplay
 
 class CardDisplay():
 
@@ -57,7 +60,9 @@ class CardDisplay():
 
 
     def questDisplay(self):
-        return QuestDisplay(self.card.quest, self.screen, self.width, self.height)
+        if type(self.card) == RegionCard:
+            return RegionQuestDisplay(self.card.quest, self.screen, self.width, self.height)
+        return SanctuaryQuestDisplay(self.card.quest, self.screen, self.width, self.height)
 
 
     def clickIn(self, coord_clic):
@@ -71,7 +76,7 @@ class CardDisplay():
         if self.card.color == Colors.GREEN:
             colors =  (144, 238, 144), (34, 139, 34)
         elif self.card.color == Colors.RED:
-            colors =  (255, 99, 71), (220, 20, 60)
+            colors =  (255, 100, 70), (100, 0, 0)
         elif self.card.color ==  Colors.BLUE:
             colors =  (135, 206, 250), (0, 0, 139)
         elif self.card.color == Colors.YELLOW:

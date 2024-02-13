@@ -37,6 +37,17 @@ class RegionCardDisplay(CardDisplay):
 
         img_day = self.dayDisplay()
         self.screen.blit(img_day, (x+10,y+10))
-
-        self.screen.blit(self.idDisplay(), (x+img_day.get_width()/2, y+img_day.get_height()/2-2))
+        
+        width = img_day.get_width()
+        height = img_day.get_height()
+        if self.card.day:
+            if int(self.card.id)<10:
+                self.screen.blit(self.idDisplay(), (x+width/2+4, y+height/2-3))
+            else:
+                self.screen.blit(self.idDisplay(), (x+width/2-3, y+height/2-3))
+        else:
+            if int(self.card.id)<10:
+                self.screen.blit(self.idDisplay(), (x+width/2-6, y+height/2-2))
+            else:
+                self.screen.blit(self.idDisplay(), (x+width/2-6, y+height/2-2))
 
