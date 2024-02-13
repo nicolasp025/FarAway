@@ -107,9 +107,9 @@ class BoardDisplay(Board):
         pygame.draw.rect(self.screen, (0,0,0), text_sanc)
         texte_surface = police.render(textr, True, (255,255,255))  
         self.screen.blit(texte_surface, (text_sanc.x + 5, text_sanc.y + 5))
-    
-        nbToAdd = self.actualPlayer.sanctuaryCardToAdd() 
 
+        nbToAdd = self.actualPlayer.sanctuaryCardToAdd() 
+    
         if nbToAdd > 0:
             for i in range(nbToAdd):
                 card = self.sanctuaryCards[i]
@@ -125,7 +125,6 @@ class BoardDisplay(Board):
                         for j in range(nbToAdd-1):
                             self.sanctuaryCards.pop(i)
                         self.next(State.REGION)
-                        
         else:
             self.next(State.REGION)
 
