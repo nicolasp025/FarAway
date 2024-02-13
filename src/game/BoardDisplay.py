@@ -61,7 +61,7 @@ class BoardDisplay(Board):
 
 
     def next(self, state):
-        self.cpt +=1
+        self.cpt += 1
         if self.cpt < self.nbJoueur:
             self.actualPlayer = self.players[self.cpt]
             return False
@@ -80,9 +80,9 @@ class BoardDisplay(Board):
         texte_surface = police.render(textr, True, (255,255,255))  
         self.screen.blit(texte_surface, (text_reveal.x + 5, text_reveal.y + 5))
 
-        i=1
+        i=0
         for card in self.actualPlayer.hand:
-            x = i*(self.screen.get_height()/3)-70
+            x = i*(self.WIDTHREGION+20)+30
             y = self.screen.get_height()-500
             card.dcard.display(x, y)
             pos = pygame.mouse.get_pos()
@@ -90,17 +90,18 @@ class BoardDisplay(Board):
                 r = pygame.Rect(x, y, self.WIDTHREGION, self.HEIGHTREGION)
                 pygame.draw.rect(self.screen, (255,255,255), r, 7, border_radius=30)
                 if self.clic==2:
-                    n = self.actualPlayer.revealCard(i)
+                    n = self.actualPlayer.revealCard(i+1)
                     self.starting.append((self.actualPlayer, n))
                     if self.next(State.SANCTUARY):
                         self.starting.sort(key=lambda x : x[1])
                         self.players = [t[0] for t in self.starting]
+                        self.actualPlayer = self.players[0]
             i+=1
             
 
     def chooseSanctuaryCard(self):
         police = pygame.font.Font(None, 120)
-        text_sanc = pygame.Rect(250, self.screen.get_height()-700, 100, 50)
+        text_sanc = pygame.Rect(100, self.screen.get_height()-700, 50, 50)
         textr = "Player "+str(self.actualPlayer.id)+": Choose the sanctuary card you want :"
         pygame.draw.rect(self.screen, (0,0,0), text_sanc)
         texte_surface = police.render(textr, True, (255,255,255))  
@@ -111,7 +112,7 @@ class BoardDisplay(Board):
         if nbToAdd > 0:
             for i in range(nbToAdd):
                 card = self.sanctuaryCards[i]
-                x = (i+1)*(300)-70
+                x = (i+1)*(self.WIDTHSANCTUARY+20)-70
                 y = self.screen.get_height()-500
                 card.dcard.display(x, y)
                 pos = pygame.mouse.get_pos()
@@ -125,13 +126,7 @@ class BoardDisplay(Board):
                         self.next(State.REGION)
                         
         else:
-            self.cpt+=1
-            if self.cpt < self.nbJoueur:
-                self.actualPlayer = self.players[self.cpt]
-            else:
-                self.cpt = 0
-                self.actualPlayer = self.players[self.cpt]
-                self.state = State.REGION
+            self.next(State.REGION)
 
 
 
@@ -159,7 +154,9 @@ class BoardDisplay(Board):
                     if self.next(State.REVEAL):
                         self.nbTurns += 1
                         self.regionCards.pop(0)
-                    break
+                        self.players.sort(key=lambda p : p.id)
+                        self.actualPlayer = self.players[0]
+                    
 
 
     def displayEnd(self):
@@ -169,6 +166,23 @@ class BoardDisplay(Board):
         pygame.draw.rect(self.screen, (0,0,0), text_end)
         texte_surface = police.render(textr, True, (255,255,255))  
         self.screen.blit(texte_surface, (text_end.x + 5, text_end.y + 5))
+
+
+    def displayRevealedCard(self):
+        i=0
+        for card in self.actualPlayer.revealedCards:
+            x = i*(self.WIDTHREGION+20)+30
+            y = 100
+            card.dcard.display(x, y)
+            i+=1
+
+    def idPlayers(self):
+        police = pygame.font.Font(None, 60)
+        text_reg = pygame.Rect(0, 0, 100, 50)
+        textr = "Player actual : "+str(self.actualPlayer.id)+" | Players : "+str(["Player "+str(p.id) for p in self.players]) + " | cpt : " + str(self.cpt)
+        pygame.draw.rect(self.screen, (0,0,0), text_reg)
+        texte_surface = police.render(textr, True, (255,255,255))  
+        self.screen.blit(texte_surface, (text_reg.x + 5, text_reg.y + 5))
 
     def execute(self):
         if self.nbTurns == 8:
@@ -183,6 +197,7 @@ class BoardDisplay(Board):
             self.chooseRegionCard()
         elif self.state == State.END:
             self.displayEnd()
+        
 
 
     def play(self):
@@ -205,6 +220,10 @@ class BoardDisplay(Board):
             self.screen.fill("black")
 
             self.execute()
+
+            if self.state != State.END and self.state != State.START:
+                self.displayRevealedCard()
+                self.idPlayers()
             
             if self.clic == 2:
                 self.clic = 0

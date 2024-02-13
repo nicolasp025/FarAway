@@ -32,7 +32,7 @@ class QuestDisplay():
         div = 5
 
         points = self.quest.points
-        if points != "0":
+        if points != 0:
             if self.quest.conditionMode == ConditionModes.NOTHING:
                 r = pygame.Rect(x-self.width/div-sizePol/(div-2), y-self.height/div, 100, 50)
                 textr = points
