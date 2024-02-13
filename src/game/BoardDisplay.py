@@ -74,23 +74,23 @@ class BoardDisplay(Board):
 
     def chooseCardToReveal(self):
         police = pygame.font.Font(None, 120)
-        text_reveal = pygame.Rect(250, self.screen.get_height()-700, 100, 50)
+        text_reveal = pygame.Rect(180, self.screen.get_height()/2+100, 100, 50)
         textr = "Player "+str(self.actualPlayer.id)+": Choose the card you want to reveal :"
         pygame.draw.rect(self.screen, (0,0,0), text_reveal)
         texte_surface = police.render(textr, True, (255,255,255))  
         self.screen.blit(texte_surface, (text_reveal.x + 5, text_reveal.y + 5))
 
-        i=0
+        i=1
         for card in self.actualPlayer.hand:
-            x = i*(self.WIDTHREGION+20)+30
-            y = self.screen.get_height()-500
+            x = i*(self.WIDTHREGION+100)
+            y = self.screen.get_height()/2+260
             card.dcard.display(x, y)
             pos = pygame.mouse.get_pos()
             if card.dcard.clickIn(pos):
                 r = pygame.Rect(x, y, self.WIDTHREGION, self.HEIGHTREGION)
                 pygame.draw.rect(self.screen, (255,255,255), r, 7, border_radius=30)
                 if self.clic==2:
-                    n = self.actualPlayer.revealCard(i+1)
+                    n = self.actualPlayer.revealCard(i)
                     self.starting.append((self.actualPlayer, n))
                     if self.next(State.SANCTUARY):
                         self.starting.sort(key=lambda x : x[1])
@@ -102,7 +102,7 @@ class BoardDisplay(Board):
 
     def chooseSanctuaryCard(self):
         police = pygame.font.Font(None, 120)
-        text_sanc = pygame.Rect(100, self.screen.get_height()-700, 50, 50)
+        text_sanc = pygame.Rect(100, self.screen.get_height()/2+100, 50, 50)
         textr = "Player "+str(self.actualPlayer.id)+": Choose the sanctuary card you want :"
         pygame.draw.rect(self.screen, (0,0,0), text_sanc)
         texte_surface = police.render(textr, True, (255,255,255))  
@@ -114,7 +114,7 @@ class BoardDisplay(Board):
             for i in range(nbToAdd):
                 card = self.sanctuaryCards[i]
                 x = (i+1)*(self.WIDTHSANCTUARY+20)-70
-                y = self.screen.get_height()-500
+                y = self.screen.get_height()/2+260
                 card.dcard.display(x, y)
                 pos = pygame.mouse.get_pos()
                 if card.dcard.clickIn(pos):
@@ -133,7 +133,7 @@ class BoardDisplay(Board):
             
     def chooseRegionCard(self):
         police = pygame.font.Font(None, 120)
-        text_reg = pygame.Rect(260, self.screen.get_height()-700, 100, 50)
+        text_reg = pygame.Rect(260, self.screen.get_height()/2+100, 100, 50)
         textr = "Player "+str(self.actualPlayer.id)+": Choose the region card you want :"
         pygame.draw.rect(self.screen, (0,0,0), text_reg)
         texte_surface = police.render(textr, True, (255,255,255))  
@@ -141,8 +141,8 @@ class BoardDisplay(Board):
 
         for i in range(self.nbJoueur+1-self.cpt):
             card = self.regionCards[i]
-            x = (i+1)*(self.screen.get_height()/3)-70
-            y = self.screen.get_height()-500
+            x = i*(self.WIDTHREGION+5)
+            y = self.screen.get_height()/2+260
             card.dcard.display(x, y)
             pos = pygame.mouse.get_pos()
             if card.dcard.clickIn(pos):
@@ -169,17 +169,35 @@ class BoardDisplay(Board):
 
 
     def displayRevealedCard(self):
-        i=0
-        for card in self.actualPlayer.revealedCards:
-            x = i*(self.WIDTHREGION+20)+30
-            y = 100
-            card.dcard.display(x, y)
-            i+=1
+        police = pygame.font.Font(None, 40)
+        text_revealed = pygame.Rect(self.screen.get_width()/3, 0, 650, 50)
+        textrev = "Press 's' to show your revealed cards"
+        pygame.draw.rect(self.screen, (0,0,0), text_revealed, 2)
+        texte_surface = police.render(textrev, True, (255,255,255))  
+        self.screen.blit(texte_surface, (text_revealed.x, text_revealed.y + 15))
+
+        if pygame.key.get_pressed()[pygame.K_s]:
+            i=0
+            for card in self.actualPlayer.revealedCards:
+                y = 0
+                if i > 3:
+                    y = 130 + self.HEIGHTSANCTUARY + self.HEIGHTREGION
+                else :
+                    y = self.HEIGHTSANCTUARY + 90
+                x = (i%4)*(self.WIDTHREGION+40) + (self.WIDTHREGION*0.95)
+                card.dcard.display(x, y)
+                i+=1
+            i=0
+            for card in self.actualPlayer.sanctuaryCards:
+                y = 60 
+                x = i*(self.WIDTHSANCTUARY+40) + (self.WIDTHSANCTUARY*0.95)
+                card.dcard.display(x, y)
+                i+=1
 
     def idPlayers(self):
         police = pygame.font.Font(None, 60)
         text_reg = pygame.Rect(0, 0, 100, 50)
-        textr = "Player actual : "+str(self.actualPlayer.id)+" | Players : "+str(["Player "+str(p.id) for p in self.players]) + " | cpt : " + str(self.cpt)
+        textr = "Actual Player : "+str(self.actualPlayer.id)+ " | turn number : "+str(self.nbTurns)
         pygame.draw.rect(self.screen, (0,0,0), text_reg)
         texte_surface = police.render(textr, True, (255,255,255))  
         self.screen.blit(texte_surface, (text_reg.x + 5, text_reg.y + 5))
@@ -241,6 +259,7 @@ class BoardDisplay(Board):
 
             dt = self.clock.tick(60) / 1000
 
+        time.sleep(5)
         pygame.quit()
         
         return
