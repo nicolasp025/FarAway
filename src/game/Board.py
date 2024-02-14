@@ -34,6 +34,7 @@ class Board:
 
     def __init__(self, screen=None):
 
+        self.sanctuaryCardsUsed = []
         self.RegionCardRevealed = []
         self.players = []
         self.nbTurns = 0
@@ -107,6 +108,10 @@ class Board:
                     card.addDisplayCard(dcard)
                 self.regionCards.append(card)
 
+    def checkSanctuaryCards(self, n):
+        if n > len(self.sanctuaryCards):
+            self.sanctuaryCards = self.sanctuaryCardsUsed + self.sanctuaryCards
+            shuffle(self.sanctuaryCards)
 
     def addRessources(self, ressources, card):
 

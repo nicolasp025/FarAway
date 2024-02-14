@@ -75,7 +75,7 @@ class BoardDisplay(Board):
     def chooseCardToReveal(self):
         police = pygame.font.Font(None, 120)
         text_reveal = pygame.Rect(180, self.screen.get_height()/2+100, 100, 50)
-        textr = "Player "+str(self.actualPlayer.id)+": Choose the card you want to reveal :"
+        textr = "Choose the card you want to reveal :"
         pygame.draw.rect(self.screen, (0,0,0), text_reveal)
         texte_surface = police.render(textr, True, (255,255,255))  
         self.screen.blit(texte_surface, (text_reveal.x + 5, text_reveal.y + 5))
@@ -103,7 +103,7 @@ class BoardDisplay(Board):
     def chooseSanctuaryCard(self):
         police = pygame.font.Font(None, 120)
         text_sanc = pygame.Rect(100, self.screen.get_height()/2+100, 50, 50)
-        textr = "Player "+str(self.actualPlayer.id)+": Choose the sanctuary card you want :"
+        textr = "Choose the sanctuary card you want :"
         pygame.draw.rect(self.screen, (0,0,0), text_sanc)
         texte_surface = police.render(textr, True, (255,255,255))  
         self.screen.blit(texte_surface, (text_sanc.x + 5, text_sanc.y + 5))
@@ -111,6 +111,7 @@ class BoardDisplay(Board):
         nbToAdd = self.actualPlayer.sanctuaryCardToAdd() 
     
         if nbToAdd > 0:
+            self.checkSanctuaryCards(nbToAdd)
             for i in range(nbToAdd):
                 card = self.sanctuaryCards[i]
                 x = (i+1)*(self.WIDTHSANCTUARY+20)-70
@@ -123,8 +124,9 @@ class BoardDisplay(Board):
                     if self.clic==2:
                         self.actualPlayer.addCardToSanctuaryCards(self.sanctuaryCards.pop(i))
                         for j in range(nbToAdd-1):
-                            self.sanctuaryCards.pop(i)
+                            self.sanctuaryCardsUsed.append(self.sanctuaryCards.pop(0))
                         self.next(State.REGION)
+                        break
         else:
             self.next(State.REGION)
 
@@ -134,7 +136,7 @@ class BoardDisplay(Board):
     def chooseRegionCard(self):
         police = pygame.font.Font(None, 120)
         text_reg = pygame.Rect(260, self.screen.get_height()/2+100, 100, 50)
-        textr = "Player "+str(self.actualPlayer.id)+": Choose the region card you want :"
+        textr = "Choose the region card you want :"
         pygame.draw.rect(self.screen, (0,0,0), text_reg)
         texte_surface = police.render(textr, True, (255,255,255))  
         self.screen.blit(texte_surface, (text_reg.x + 5, text_reg.y + 5))
@@ -160,8 +162,8 @@ class BoardDisplay(Board):
 
 
     def displayEnd(self):
-        police = pygame.font.Font(None, 120)
-        text_end = pygame.Rect(self.screen.get_width()/2-300, self.screen.get_height()-700, 100, 50)
+        police = pygame.font.Font(None, 110)
+        text_end = pygame.Rect(self.screen.get_width()/2-self.nbJoueur*150, self.screen.get_height()-700, 100, 50)
         textr = str(self.countFinalPoints())
         pygame.draw.rect(self.screen, (0,0,0), text_end)
         texte_surface = police.render(textr, True, (255,255,255))  
@@ -174,30 +176,45 @@ class BoardDisplay(Board):
         textrev = "Press 's' to show your revealed cards"
         pygame.draw.rect(self.screen, (0,0,0), text_revealed, 2)
         texte_surface = police.render(textrev, True, (255,255,255))  
-        self.screen.blit(texte_surface, (text_revealed.x, text_revealed.y + 15))
+
+        policeCard = pygame.font.Font(None, 60)
+        text_sanc = pygame.Rect(0, 70+self.HEIGHTSANCTUARY/2, 50, 50)
+        texts = "Sanctuary cards :"
+        pygame.draw.rect(self.screen, (0,0,0), text_sanc, 2)
+        texte_surfaces = policeCard.render(texts, True, (255,255,255))  
+
+        text_reg = pygame.Rect(0, self.HEIGHTSANCTUARY + 90 + self.HEIGHTREGION/2, 50, 50)
+        textr = "Region cards :"
+        pygame.draw.rect(self.screen, (0,0,0), text_reg, 2)
+        texte_surfacer = policeCard.render(textr, True, (255,255,255))  
 
         if pygame.key.get_pressed()[pygame.K_s]:
+            self.screen.fill("black")
+            self.screen.blit(texte_surfaces, (text_sanc.x+10, text_sanc.y + 15))
+            self.screen.blit(texte_surfacer, (text_reg.x+10, text_reg.y + 15))
             i=0
             for card in self.actualPlayer.revealedCards:
                 y = 0
                 if i > 3:
-                    y = 130 + self.HEIGHTSANCTUARY + self.HEIGHTREGION
+                    y = 140 + self.HEIGHTSANCTUARY + self.HEIGHTREGION
                 else :
-                    y = self.HEIGHTSANCTUARY + 90
-                x = (i%4)*(self.WIDTHREGION+40) + (self.WIDTHREGION*0.95)
+                    y = self.HEIGHTSANCTUARY + 110
+                x = (i%4)*(self.WIDTHREGION+30) + (self.WIDTHREGION*0.95)
                 card.dcard.display(x, y)
                 i+=1
             i=0
+            l = len(self.actualPlayer.sanctuaryCards)
             for card in self.actualPlayer.sanctuaryCards:
-                y = 60 
-                x = i*(self.WIDTHSANCTUARY+40) + (self.WIDTHSANCTUARY*0.95)
+                y = 70 
+                x = self.screen.get_width()/2 - (l*(self.WIDTHSANCTUARY+30))/2 + i*(self.WIDTHSANCTUARY+30)
                 card.dcard.display(x, y)
                 i+=1
+        self.screen.blit(texte_surface, (text_revealed.x, text_revealed.y + 15))
 
     def idPlayers(self):
         police = pygame.font.Font(None, 60)
         text_reg = pygame.Rect(0, 0, 100, 50)
-        textr = "Actual Player : "+str(self.actualPlayer.id)+ " | turn number : "+str(self.nbTurns)
+        textr = "Actual Player : "+str(self.actualPlayer.id)+ " | turn number : "+str(self.nbTurns+1)
         pygame.draw.rect(self.screen, (0,0,0), text_reg)
         texte_surface = police.render(textr, True, (255,255,255))  
         self.screen.blit(texte_surface, (text_reg.x + 5, text_reg.y + 5))
@@ -207,7 +224,7 @@ class BoardDisplay(Board):
         pygame.draw.rect(self.screen, (255,0,0), rect)
         pos = pygame.mouse.get_pos()
         if rect.collidepoint(pos[0], pos[1]) and self.clic == 2:
-            pygame.quit()
+            self.running = False
 
     def execute(self):
         if self.nbTurns == 8:
@@ -219,7 +236,10 @@ class BoardDisplay(Board):
         elif self.state == State.SANCTUARY:
             self.chooseSanctuaryCard()
         elif self.state == State.REGION:
-            self.chooseRegionCard()
+            if self.nbTurns < 7:
+                self.chooseRegionCard()
+            else:
+                self.state = State.END
         elif self.state == State.END:
             self.displayEnd()
         
@@ -259,7 +279,6 @@ class BoardDisplay(Board):
 
             dt = self.clock.tick(60) / 1000
 
-        time.sleep(5)
         pygame.quit()
         
         return

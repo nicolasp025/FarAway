@@ -36,7 +36,10 @@ class Quest:
       elif self.conditionMode == ConditionModes.STONE or self.conditionMode == ConditionModes.COLOR:
         tmpRes = 0
         for i in self.condition:
-          tmpRes += ressources[i] * self.points 
+          if i not in ressources:
+            tmpRes += 0
+          else :
+            tmpRes += ressources[i] * self.points 
         return tmpRes
       elif self.conditionMode == ConditionModes.SOMECOLOR:
         for color in self.condition:
