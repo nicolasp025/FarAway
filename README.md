@@ -12,7 +12,7 @@ https://lucid.app/lucidchart/f1e853e6-7e75-4ef3-9053-b722b3483ab9/edit?invitatio
 
 #### Exécution :
 
-Les commandes doivent être exécutées depuis le repertoire `projet-far-away`, pour exécuter le main : `python3 src/main/Main.py` pour jouer depuis le terminal et `python3 src/main/Main.py -d` pour avoir une interface graphique(en développement). Pour l'exécution des tests veuillez utilisez : `python3 test/'package'/'fileTest.py'` en remplaçant 'package' par le package dans lequel 'fileTest.py' se trouve.
+Les commandes doivent être exécutées depuis le repertoire `projet-far-away`, pour exécuter le main : `make game` pour jouer depuis le terminal et `make` pour avoir une interface graphique (en développement). Pour l'exécution des tests veuillez utilisez : `python3 test/'package'/'fileTest.py'` en remplaçant 'package' par le package dans lequel 'fileTest.py' se trouve.
 
 
 ### Structure de données :
