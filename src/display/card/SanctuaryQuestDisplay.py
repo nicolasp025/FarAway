@@ -65,14 +65,7 @@ class SanctuaryQuestDisplay(QuestDisplay):
                 max = len(self.quest.condition)
                 for color in self.quest.condition:
                     img = None
-                    if color == Colors.BLUE:
-                        img = pygame.image.load("./data/img/blue.png")
-                    elif color == Colors.RED:
-                        img = pygame.image.load("./data/img/red.png")
-                    elif color == Colors.YELLOW:
-                        img = pygame.image.load("./data/img/yellow.png")
-                    elif color == Colors.GREEN:
-                        img = pygame.image.load("./data/img/green.png")
+                    img = pygame.image.load("./data/img/"+Colors.toStringLower(color)+".png")
                     img = pygame.transform.scale(img, (40, 40))
                     self.screen.blit(img, (x-self.width/(div-3)-sizePol/(div)-i*60, y-self.height/div+10))
                     i+=1
@@ -87,14 +80,7 @@ class SanctuaryQuestDisplay(QuestDisplay):
                 i=0
                 for color in self.quest.condition:
                     img = None
-                    if color == Colors.BLUE:
-                        img = pygame.image.load("./data/img/blue.png")
-                    elif color == Colors.RED:
-                        img = pygame.image.load("./data/img/red.png")
-                    elif color == Colors.YELLOW:
-                        img = pygame.image.load("./data/img/yellow.png")
-                    elif color == Colors.GREEN:
-                        img = pygame.image.load("./data/img/green.png")
+                    img = pygame.image.load("./data/img/"+Colors.toStringLower(color)+".png")
                     img = pygame.transform.scale(img, (40, 40))
                     if i%2==0:
                         self.screen.blit(img, (x-self.width/(div-3)-sizePol/(div)-i*22, y-self.height/div+10))
