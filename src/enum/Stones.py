@@ -5,7 +5,6 @@ class Stones(Enum):
     SAPHYR = 1
     RUBY = 2
     EMERALD = 3
-    imageSize = 60
     
     @classmethod
     def castToStone(cls, stone_str):
@@ -23,24 +22,29 @@ class Stones(Enum):
         elif stone == Stones.EMERALD:
             return "Emerald"
         else:
-            return "Unknown"
+            raise ValueError("Invalid color.")
     
     @classmethod
-    def stonesToImage(self, stones):
+    def toStringLower(self, stone):
+        if stone == Stones.SAPHYR:
+            return "sapphire"
+        elif stone == Stones.RUBY:
+            return "ruby"
+        elif stone == Stones.EMERALD:
+            return "emerald"
+        else:
+            raise ValueError("Invalid color.")
+
+    @classmethod
+    def stonesToImage(self, stones, size):
         images = []
-        size = (60, 60)
         for s in stones:
-            if s == Stones.EMERALD:
-                img = pygame.image.load("./data/img/emerald.png")
-                img = pygame.transform.scale(img, size)
-                images.append(img)
-            elif s == Stones.RUBY:
-                img = pygame.image.load("./data/img/ruby.png")
-                img = pygame.transform.scale(img, size)
-                images.append(img)
-            elif s == Stones.SAPHYR:
-                img = pygame.image.load("./data/img/sapphire.png")
-                img = pygame.transform.scale(img, size)
-                images.append(img)
+            images.append(Stones.stoneToImage(s, size))
         return images
 
+    @classmethod
+    def stoneToImage(self, stone, size):
+        imgSize = (size, size)
+        img = pygame.image.load("./data/img/"+Stones.toStringLower(s)+".png")
+        img = pygame.transform.scale(img, imgSize)
+        return img

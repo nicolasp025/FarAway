@@ -35,30 +35,25 @@ class SanctuaryQuestDisplay(QuestDisplay):
         if points != 0:
             if self.quest.conditionMode == ConditionModes.NOTHING:
                 r = pygame.Rect(x-self.width/div-sizePol/(div-2), y-self.height/div, 100, 50)
-                textr = points
+
             elif self.quest.conditionMode == ConditionModes.NIGHT:
                 r = pygame.Rect(x-self.width/div-sizePol/(div-2), y-self.height/div, 100, 50)
                 img_day = pygame.image.load("./data/img/night.png")
                 img_day = pygame.transform.scale(img_day, (60, 60))
-                textr = points
                 self.screen.blit(img_day, (x-self.width*0.7, y-self.height*0.22))
+
             elif self.quest.conditionMode == ConditionModes.MAP:
                 r = pygame.Rect(x-self.width/div-sizePol/(div-2), y-self.height/div, 100, 50)
                 img_map = pygame.image.load("./data/img/map.png")
                 img_map = pygame.transform.scale(img_map, (60, 60))
-                textr = points
                 self.screen.blit(img_map, (x-self.width*0.7, y-self.height*0.22))
+
             elif self.quest.conditionMode == ConditionModes.STONE:
-                stone = self.quest.condition[0]
-                if stone == Stones.EMERALD:
-                    stoneImg = Stones.stonesToImage([stone])[0] 
-                elif stone == Stones.RUBY:
-                    stoneImg = pygame.image.load("./data/img/ruby.png")
-                elif stone == Stones.SAPHYR:
-                    stoneImg = pygame.image.load("./data/img/sapphire.png")
-                stoneImg = pygame.transform.scale(stoneImg, (50, 50))
-                self.screen.blit(stoneImg, (x-self.width*0.68, y-self.height*0.20))
-                textr = points
+                stoneImages = Stones.stonesToImage(self.quest.condition)
+                for i in range(len(stoneImages)):
+                    stoneImages[i] = pygame.transform.scale(stoneImages[i], (50, 50))
+                    self.screen.blit(stoneImg, (x*i*0.68, y*i*0.18))
+
             elif self.quest.conditionMode == ConditionModes.COLOR:
                 i=0
                 max = len(self.quest.condition)
@@ -73,7 +68,7 @@ class SanctuaryQuestDisplay(QuestDisplay):
                         r = texte_surface.get_rect()
                         r.center = (x-self.width*0.68-i*10, y-self.height*0.2)
                         self.screen.blit(texte_surface, r)
-                textr = points
+
             elif self.quest.conditionMode == ConditionModes.SOMECOLOR:
                 i=0
                 for color in self.quest.condition:
@@ -84,8 +79,8 @@ class SanctuaryQuestDisplay(QuestDisplay):
                     else:
                         self.screen.blit(colorImg, (x-self.width/(div-3)-sizePol/(div)-(i-1)*22, y-self.height/div+10-43))
                     i+=1
-                textr = points
 
+            textr = points
             textr = str(textr)
 
             pygame.draw.rect(transp, (0, 0, 255), rect)
