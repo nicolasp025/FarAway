@@ -30,10 +30,9 @@ class RegionCardDisplay(CardDisplay):
         surface_texte = police.render(texte, True, (0, 0, 0))
         return surface_texte
 
-
-
     def display(self, x, y):
         super().display(x, y)
+
 
         img_day = self.dayDisplay()
         self.screen.blit(img_day, (x+10,y+10))

@@ -30,13 +30,6 @@ class CardDisplay():
             img_map = pygame.transform.scale(img_map, (70, 70))
             self.screen.blit(img_map, self.getMapCoords(x, y))
 
-
-    def questDisplay(self):
-        if type(self.card) == RegionCard:
-            return RegionQuestDisplay(self.card.quest, self.screen, self.width, self.height)
-        return SanctuaryQuestDisplay(self.card.quest, self.screen, self.width, self.height)
-
-
     def clickIn(self, coord_clic):
         return self.rect.collidepoint(coord_clic[0], coord_clic[1])
 
@@ -79,4 +72,8 @@ class CardDisplay():
         r = pygame.Rect(x, y, self.width, self.height)
         pygame.draw.rect(self.screen, (255,255,255), r, 3, border_radius=30)
         self.displayMap(x, y)
-        self.questDisplay().display(x, y, col1)
+        
+        if type(self.card) == RegionCard:
+            RegionQuestDisplay(self.card.quest, self.screen, self.width, self.height).display(x, y, col1)
+        else:
+            SanctuaryQuestDisplay(self.card.quest, self.screen, self.width, self.height).display(x, y)

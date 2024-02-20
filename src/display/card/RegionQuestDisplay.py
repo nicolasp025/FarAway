@@ -14,6 +14,19 @@ class RegionQuestDisplay(QuestDisplay):
     def __init__(self, quest, screen, cardWidth, cardHeight):
         super().__init__(quest, screen, cardWidth, cardHeight)
 
+    def requireDisplay(self, x, y, color):
+        
+
+        l = []
+        for key in self.quest.require:
+            for i in range(self.quest.require.get(key)):
+                l.append(key)
+        i = 1
+        for img_stone in Stones.stonesToImage(l):
+            img_stone = pygame.transform.scale(img_stone, (35, 35))
+            self.screen.blit(img_stone, (x-35*i-25, y-self.height*0.49))
+            i += 1
+
     def conditionDisplay(self, x, y):
         sizePol = 50
         police = pygame.font.Font(None, sizePol)
