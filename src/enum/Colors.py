@@ -43,3 +43,10 @@ class Colors(Enum):
             return "yellow"
         else:
             raise ValueError("Invalid color.")
+
+    @classmethod
+    def colorToImage(self, color, size):
+        imgSize = (size, size)
+        img = pygame.image.load("./data/img/"+Colors.toStringLower(color)+".png")
+        img = pygame.transform.scale(img, imgSize)
+        return img
