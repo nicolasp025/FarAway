@@ -22,13 +22,13 @@ class RegionQuestDisplay(QuestDisplay):
                 l.append(key)
 
         r, g, b = color
-        f = 1.05
+        f = 1.5
         newr = min(int(r * f), 255)
         newg = min(int(g * f), 255)
         newb = min(int(b * f), 255)
         col = (newr, newg, newb)
         x2, y2 = x-len(l)*sizeImg, y-self.height*0.5
-        r = pygame.Rect(x2, y2, x2-x, 50)
+        r = pygame.Rect(x2, y2, x-x2, 200)
         pygame.draw.rect(self.screen, col, r, border_radius=10)
 
         i = 1

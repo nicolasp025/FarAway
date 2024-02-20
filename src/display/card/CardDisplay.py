@@ -68,12 +68,14 @@ class CardDisplay():
         pygame.draw.rect(self.screen, col2, rect2, border_radius=30) 
 
         self.displayStones(x, y)
+
+        if type(self.card) == RegionCard:
+            RegionQuestDisplay(self.card.quest, self.screen, self.width, self.height).display(x, y, col1)
+        else:
+            SanctuaryQuestDisplay(self.card.quest, self.screen, self.width, self.height).display(x, y)
+
         self.displayBanner(x, y)
         r = pygame.Rect(x, y, self.width, self.height)
         pygame.draw.rect(self.screen, (255,255,255), r, 3, border_radius=30)
         self.displayMap(x, y)
         
-        if type(self.card) == RegionCard:
-            RegionQuestDisplay(self.card.quest, self.screen, self.width, self.height).display(x, y, col1)
-        else:
-            SanctuaryQuestDisplay(self.card.quest, self.screen, self.width, self.height).display(x, y)
