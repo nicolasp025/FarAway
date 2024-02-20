@@ -21,20 +21,27 @@ class RegionQuestDisplay(QuestDisplay):
             for i in range(self.quest.require.get(key)):
                 l.append(key)
 
-        r, g, b = color
-        f = 1.5
-        newr = min(int(r * f), 255)
-        newg = min(int(g * f), 255)
-        newb = min(int(b * f), 255)
-        col = (newr, newg, newb)
-        x2, y2 = x-len(l)*sizeImg, y-self.height*0.5
-        r = pygame.Rect(x2, y2, x-x2, 200)
-        pygame.draw.rect(self.screen, col, r, border_radius=10)
+        if len(l) > 0:
+            r, g, b = color
+            f1 = 1.1
+            newr = min(int(r * f1), 255)
+            newg = min(int(g * f1), 255)
+            newb = min(int(b * f1), 255)
+            col1 = (newr, newg, newb)
+            f2 = 0.9
+            newr = min(int(r * f2), 255)
+            newg = min(int(g * f2), 255)
+            newb = min(int(b * f2), 255)
+            col2 = (newr, newg, newb)
+            x2, y2 = x-(len(l)+1)*sizeImg, y-self.height*0.51
+            r = pygame.Rect(x2, y2, (len(l)+1)*sizeImg-15, 160)
+            pygame.draw.rect(self.screen, col1, r, border_radius=10)
+            pygame.draw.rect(self.screen, col2, r, 2, border_radius=10)
 
-        i = 1
-        for img_stone in Stones.stonesToImage(l, sizeImg):
-            self.screen.blit(img_stone, (x-sizeImg*i-25, y-self.height*0.49))
-            i += 1
+            i = 1
+            for img_stone in Stones.stonesToImage(l, sizeImg):
+                self.screen.blit(img_stone, (x-sizeImg*i-25, y-self.height*0.49))
+                i += 1
 
     def conditionDisplay(self, x, y):
         sizePol = 50
@@ -74,7 +81,7 @@ class RegionQuestDisplay(QuestDisplay):
                     img = pygame.image.load("./data/img/emerald.png")
                 elif stone == Stones.RUBY:
                     img = pygame.image.load("./data/img/ruby.png")
-                elif stone == Stones.SAPHYR:
+                elif stone == Stones.SAPPHIRE:
                     img = pygame.image.load("./data/img/sapphire.png")
                 img = pygame.transform.scale(img, (50, 50))
                 self.screen.blit(img, (x-self.width*0.65, y-self.height*0.2))

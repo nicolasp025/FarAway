@@ -162,6 +162,8 @@ class BoardDisplay(Board):
 
 
     def displayEnd(self):
+        if self.clic == 2:
+            self.next(State.END)
         police = pygame.font.Font(None, 110)
         text_end = pygame.Rect(self.screen.get_width()/2-self.nbJoueur*150, self.screen.get_height()-700, 100, 50)
         textr = str(self.countFinalPoints())
@@ -268,7 +270,7 @@ class BoardDisplay(Board):
 
             self.forceExit()
 
-            if self.state != State.END and self.state != State.START:
+            if self.state != State.START:
                 self.displayRevealedCard()
                 self.idPlayers()
             

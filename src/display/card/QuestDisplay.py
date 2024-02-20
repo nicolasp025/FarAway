@@ -17,8 +17,8 @@ class QuestDisplay():
         self.height = cardHeight
         
     def display(self, x, y, color):
-        self.conditionDisplay(x+self.width, y+self.height)
         self.requireDisplay(x+self.width, y+self.height, color)
+        self.conditionDisplay(x+self.width, y+self.height)
 
         
 
