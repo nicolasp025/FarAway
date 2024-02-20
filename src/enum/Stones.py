@@ -1,9 +1,11 @@
 from enum import Enum
+import pygame
 
 class Stones(Enum):
     SAPHYR = 1
     RUBY = 2
     EMERALD = 3
+    imageSize = 60
     
     @classmethod
     def castToStone(cls, stone_str):
@@ -24,7 +26,7 @@ class Stones(Enum):
             return "Unknown"
     
     @classmethod
-    def stoneToImage(self, stones):
+    def stonesToImage(self, stones):
         images = []
         size = (60, 60)
         for s in stones:
@@ -41,3 +43,4 @@ class Stones(Enum):
                 img = pygame.transform.scale(img, size)
                 images.append(img)
         return images
+

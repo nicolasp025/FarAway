@@ -49,25 +49,23 @@ class SanctuaryQuestDisplay(QuestDisplay):
                 textr = points
                 self.screen.blit(img_map, (x-self.width*0.7, y-self.height*0.22))
             elif self.quest.conditionMode == ConditionModes.STONE:
-                img = None
                 stone = self.quest.condition[0]
                 if stone == Stones.EMERALD:
-                    img = pygame.image.load("./data/img/emerald.png")
+                    stoneImg = Stones.stonesToImage([stone])[0] 
                 elif stone == Stones.RUBY:
-                    img = pygame.image.load("./data/img/ruby.png")
+                    stoneImg = pygame.image.load("./data/img/ruby.png")
                 elif stone == Stones.SAPHYR:
-                    img = pygame.image.load("./data/img/sapphire.png")
-                img = pygame.transform.scale(img, (50, 50))
-                self.screen.blit(img, (x-self.width*0.68, y-self.height*0.20))
+                    stoneImg = pygame.image.load("./data/img/sapphire.png")
+                stoneImg = pygame.transform.scale(stoneImg, (50, 50))
+                self.screen.blit(stoneImg, (x-self.width*0.68, y-self.height*0.20))
                 textr = points
             elif self.quest.conditionMode == ConditionModes.COLOR:
                 i=0
                 max = len(self.quest.condition)
                 for color in self.quest.condition:
-                    img = None
-                    img = pygame.image.load("./data/img/"+Colors.toStringLower(color)+".png")
-                    img = pygame.transform.scale(img, (40, 40))
-                    self.screen.blit(img, (x-self.width/(div-3)-sizePol/(div)-i*60, y-self.height/div+10))
+                    colorImg = pygame.image.load("./data/img/"+Colors.toStringLower(color)+".png")
+                    colorImg = pygame.transform.scale(colorImg, (40, 40))
+                    self.screen.blit(colorImg, (x-self.width/(div-3)-sizePol/(div)-i*60, y-self.height/div+10))
                     i+=1
                     if i != max:
                         tmpPol = pygame.font.Font(None, sizePol + 45)
@@ -79,13 +77,12 @@ class SanctuaryQuestDisplay(QuestDisplay):
             elif self.quest.conditionMode == ConditionModes.SOMECOLOR:
                 i=0
                 for color in self.quest.condition:
-                    img = None
-                    img = pygame.image.load("./data/img/"+Colors.toStringLower(color)+".png")
-                    img = pygame.transform.scale(img, (40, 40))
+                    colorImg = pygame.image.load("./data/img/"+Colors.toStringLower(color)+".png")
+                    colorImg = pygame.transform.scale(colorImg, (40, 40))
                     if i%2==0:
-                        self.screen.blit(img, (x-self.width/(div-3)-sizePol/(div)-i*22, y-self.height/div+10))
+                        self.screen.blit(colorImg, (x-self.width/(div-3)-sizePol/(div)-i*22, y-self.height/div+10))
                     else:
-                        self.screen.blit(img, (x-self.width/(div-3)-sizePol/(div)-(i-1)*22, y-self.height/div+10-43))
+                        self.screen.blit(colorImg, (x-self.width/(div-3)-sizePol/(div)-(i-1)*22, y-self.height/div+10-43))
                     i+=1
                 textr = points
 

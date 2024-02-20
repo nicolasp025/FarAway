@@ -21,18 +21,6 @@ class CardDisplay():
         self.height = height
         self.rect = None
 
-    def colorToColor(self, col):
-        if col == Colors.GREEN:
-            return "green"
-        elif col == Colors.RED:
-            return "red"
-        elif col == Colors.BLUE:
-            return "blue"
-        elif col == Colors.YELLOW:
-            return "yellow"
-        else:
-            return "gray"
-
     def getMapCoords(self, x, y):
         return (x+self.width*0.25, y+10)
 
@@ -75,7 +63,7 @@ class CardDisplay():
         self.screen.blit(img, (x, y+(self.height/3)*2-15))
 
     def displayStones(self, x, y):
-        images = Stones.stoneToImage(self.card.stones)
+        images = Stones.stonesToImage(self.card.stones)
         last_x = 0
         for img in images:
             self.screen.blit(img, (x+self.width-img.get_width()+last_x-10, y+10))
@@ -91,4 +79,4 @@ class CardDisplay():
         r = pygame.Rect(x, y, self.width, self.height)
         pygame.draw.rect(self.screen, (255,255,255), r, 3, border_radius=30)
         self.displayMap(x, y)
-        self.questDisplay().display(x, y)
+        self.questDisplay().display(x, y, col1)
