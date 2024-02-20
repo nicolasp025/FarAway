@@ -15,16 +15,25 @@ class RegionQuestDisplay(QuestDisplay):
         super().__init__(quest, screen, cardWidth, cardHeight)
 
     def requireDisplay(self, x, y, color):
-        
-
         l = []
+        sizeImg = 35
         for key in self.quest.require:
             for i in range(self.quest.require.get(key)):
                 l.append(key)
+
+        r, g, b = color
+        f = 1.2
+        newr = r * f
+        newg = g * f
+        newb = b * f
+        col = (newr, newg, newb)
+        x2, y2 = x-len(l)*sizeImg, y-self.height*0.5
+        r = pygame.Rect(x2, y2, x2-x, 50)
+        pygame.draw.rect(self.screen, col, r, border_radius=10)
+
         i = 1
-        for img_stone in Stones.stonesToImage(l):
-            img_stone = pygame.transform.scale(img_stone, (35, 35))
-            self.screen.blit(img_stone, (x-35*i-25, y-self.height*0.49))
+        for img_stone in Stones.stonesToImage(l, sizeImg):
+            self.screen.blit(img_stone, (x-sizeImg*i-25, y-self.height*0.49))
             i += 1
 
     def conditionDisplay(self, x, y):

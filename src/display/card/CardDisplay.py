@@ -56,7 +56,7 @@ class CardDisplay():
         self.screen.blit(img, (x, y+(self.height/3)*2-15))
 
     def displayStones(self, x, y):
-        images = Stones.stonesToImage(self.card.stones)
+        images = Stones.stonesToImage(self.card.stones, 60)
         last_x = 0
         for img in images:
             self.screen.blit(img, (x+self.width-img.get_width()+last_x-10, y+10))
