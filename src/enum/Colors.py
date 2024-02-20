@@ -27,4 +27,19 @@ class Colors(Enum):
         elif cls == Colors.YELLOW:
             return "Yellow"
         else:
-            return "Unknown"
+            raise ValueError("Invalid color.")
+
+    @classmethod
+    def toStringLower(self, cls):
+        if cls == Colors.GRAY:
+            return "gray"
+        elif cls == Colors.RED:
+            return "red"
+        elif cls == Colors.BLUE:
+            return "blue"
+        elif cls == Colors.GREEN:
+            return "green"
+        elif cls == Colors.YELLOW:
+            return "yellow"
+        else:
+            raise ValueError("Invalid color.")

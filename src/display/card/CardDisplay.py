@@ -32,31 +32,15 @@ class CardDisplay():
             return "yellow"
         else:
             return "gray"
-        
-    def stoneToImage(self, stones):
-        images = []
-        size = (60, 60)
-        for s in stones:
-            if s == Stones.EMERALD:
-                img = pygame.image.load("./data/img/emerald.png")
-                img = pygame.transform.scale(img, size)
-                images.append(img)
-            elif s == Stones.RUBY:
-                img = pygame.image.load("./data/img/ruby.png")
-                img = pygame.transform.scale(img, size)
-                images.append(img)
-            elif s == Stones.SAPHYR:
-                img = pygame.image.load("./data/img/sapphire.png")
-                img = pygame.transform.scale(img, size)
-                images.append(img)
-        return images
 
-    def mapDisplay(self):
+    def getMapCoords(self, x, y):
+        return (x+self.width*0.25, y+10)
+
+    def displayMap(self, x, y):
         if self.card.map:
             img_map = pygame.image.load("./data/img/map.png")
             img_map = pygame.transform.scale(img_map, (70, 70))
-            return img_map
-        return None
+            self.screen.blit(img_map, self.getMapCoords(x, y))
 
 
     def questDisplay(self):
@@ -85,36 +69,26 @@ class CardDisplay():
             colors = (192, 192, 192), (128, 128, 128)
         return colors, rect1, rect2
         
-    def banner(self):
-        img = None
-        if self.card.color == Colors.GREEN:
-            img = pygame.image.load("./data/img/green_banner.png")
-        elif self.card.color == Colors.RED:
-            img = pygame.image.load("./data/img/red_banner.png")
-        elif self.card.color == Colors.BLUE:
-            img = pygame.image.load("./data/img/blue_banner.png")
-        elif self.card.color == Colors.YELLOW:
-            img = pygame.image.load("./data/img/yellow_banner.png")
-        elif self.card.color == Colors.GRAY:
-            img = pygame.image.load("./data/img/gray_banner.png")
+    def displayBanner(self, x, y):
+        img = pygame.image.load("./data/img/"+Colors.toStringLower(self.card.color)+"_banner.png")
         img = pygame.transform.scale(img, (self.width, 35))
-        return img
-    
-    def display(self, x, y):
-        (col1, col2), rect1, rect2 = self.backgroundColor(x, y)
-        pygame.draw.rect(self.screen, col1, rect1, border_radius=30) 
-        pygame.draw.rect(self.screen, col2, rect2, border_radius=30)
-        self.screen.blit(self.banner(), (x, y+(self.height/3)*2-15)) 
-        r = pygame.Rect(x, y, self.width, self.height)
-        pygame.draw.rect(self.screen, (255,255,255), r, 3, border_radius=30)
-        images = self.stoneToImage(self.card.stones)
+        self.screen.blit(img, (x, y+(self.height/3)*2-15))
+
+    def displayStones(self, x, y):
+        images = Stones.stoneToImage(self.card.stones)
         last_x = 0
         for img in images:
             self.screen.blit(img, (x+self.width-img.get_width()+last_x-10, y+10))
             last_x -= img.get_width()
+    
+    def display(self, x, y):
+        (col1, col2), rect1, rect2 = self.backgroundColor(x, y)
+        pygame.draw.rect(self.screen, col1, rect1, border_radius=30) 
+        pygame.draw.rect(self.screen, col2, rect2, border_radius=30) 
 
-        img_map = self.mapDisplay()
-        if img_map != None:
-            self.screen.blit(img_map, (x+self.width/4, y+10))
-
+        self.displayStones(x, y)
+        self.displayBanner(x, y)
+        r = pygame.Rect(x, y, self.width, self.height)
+        pygame.draw.rect(self.screen, (255,255,255), r, 3, border_radius=30)
+        self.displayMap(x, y)
         self.questDisplay().display(x, y)
