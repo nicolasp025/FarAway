@@ -26,7 +26,7 @@ class Stones(Enum):
     
     @classmethod
     def toStringLower(self, stone):
-        if stone == Stones.SAPHYR:
+        if stone == Stones.SAPPHIRE:
             return "sapphire"
         elif stone == Stones.RUBY:
             return "ruby"
