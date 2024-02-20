@@ -45,6 +45,6 @@ class Stones(Enum):
     @classmethod
     def stoneToImage(self, stone, size):
         imgSize = (size, size)
-        img = pygame.image.load("./data/img/"+Stones.toStringLower(s)+".png")
+        img = pygame.image.load("./data/img/"+Stones.toStringLower(stone)+".png")
         img = pygame.transform.scale(img, imgSize)
         return img
