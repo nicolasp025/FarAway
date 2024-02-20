@@ -49,10 +49,11 @@ class SanctuaryQuestDisplay(QuestDisplay):
                 self.screen.blit(img_map, (x-self.width*0.7, y-self.height*0.22))
 
             elif self.quest.conditionMode == ConditionModes.STONE:
-                stoneImages = Stones.stonesToImage(self.quest.condition, 40)
-                i=0
+                sizeStone = 40
+                stoneImages = Stones.stonesToImage(self.quest.condition, sizeStone)
+                i=1
                 for stone in stoneImages:
-                    self.screen.blit(stone, (x*i*0.68, y*i*0.18))
+                    self.screen.blit(stone, (x+i*sizeStone, y+20))
                     i+=1
 
             elif self.quest.conditionMode == ConditionModes.COLOR:
