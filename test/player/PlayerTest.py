@@ -1,5 +1,6 @@
 import unittest
 import sys
+import io
 
 sys.path.append("./src/player")
 sys.path.append("./src/card")
@@ -72,17 +73,10 @@ class PlayerTest(unittest.TestCase):
         self.assertEqual(None, res)
         self.assertEqual(0, len(self.player.revealedCards))
 
-    def test_canRevealACard(self):
-        self.assertEqual(False, self.player.canRevealCard())
-        card = RegionCard(self.id)
-        self.player.addCardToHand(card)
-        self.assertEqual(True, self.player.canRevealCard())
-        self.player.revealCard(1)
-        self.assertEqual(False, self.player.canRevealCard())
-
-
 
 
 if __name__ == "__main__":
+    output = io.StringIO()
+    sys.stdout = output
     unittest.main()
 

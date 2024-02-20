@@ -46,8 +46,6 @@ class BoardClassical(Board):
     def chooseCardToReveal(self):
         ### Choose the card to reveal
         print("----------------- Turn number "+str(self.nbTurns+1)+" -----------------\n")
-        for i in range(len(self.players)+1):
-            self.RegionCardRevealed.append(self.regionCards.pop(0))
 
         print("----------------- Choose the card you want to reveal ------------------- \n")
         starting = []
@@ -77,6 +75,7 @@ class BoardClassical(Board):
         for p in self.players:
             nbToAdd = p.sanctuaryCardToAdd()
             if nbToAdd > 0:
+                self.checkSanctuaryCards(nbToAdd)
                 print("Player "+str(p.id)+" sanctuary cards available :")
                 index = -1
                 while(type(index) != int or index <= 0 or index > nbToAdd):
@@ -87,13 +86,15 @@ class BoardClassical(Board):
                         index = int(inp)
                 p.addCardToSanctuaryCards(self.sanctuaryCards.pop(index-1))
                 for i in range(nbToAdd-1):
-                    self.sanctuaryCards.pop(0)
+                    self.sanctuaryCardsUsed.append(self.sanctuaryCards.pop(0))
                 print("Player "+str(p.id)+" has taken "+p.sanctuaryCards[-1].toString()+"\n")
                 print("\n")
 
 
     def chooseRegionCard(self):
         if (self.nbTurns < 7):
+            for i in range(len(self.players)+1):
+                self.RegionCardRevealed.append(self.regionCards.pop(0))
             print("----------------- Choose the region card you want to add to your hand  ------------------- \n")
             ## Choose the region card for player hand
             for p in self.players:
