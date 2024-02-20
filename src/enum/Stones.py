@@ -2,7 +2,7 @@ from enum import Enum
 import pygame
 
 class Stones(Enum):
-    SAPHYR = 1
+    SAPPHIRE = 1
     RUBY = 2
     EMERALD = 3
     
@@ -15,7 +15,7 @@ class Stones(Enum):
     
     @classmethod
     def toString(self, stone):
-        if stone == Stones.SAPHYR:
+        if stone == Stones.SAPPHIRE:
             return "Sapphire"
         elif stone == Stones.RUBY:
             return "Ruby"
