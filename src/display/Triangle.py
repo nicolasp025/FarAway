@@ -1,14 +1,16 @@
 import pygame
-import sys
 
+## Triangle class
 class Triangle:
-    def __init__(self, points):
+    def __init__(self, points:int):
         self.points = points
 
-    def draw(self, screen, color):
+    ## Draw the triangle on the screen
+    def draw(self, screen, color:tuple[int, int, int]) -> None:
         pygame.draw.polygon(screen, color, self.points)
 
-    def clickIn(self, coord_clic):
+    ## Get the state of the clic, true if it is within the triangle else false
+    def clickIn(self, coord_clic) -> bool:
         x, y = coord_clic
         x1, y1 = self.points[0]
         x2, y2 = self.points[1]

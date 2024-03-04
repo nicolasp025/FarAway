@@ -9,23 +9,29 @@ from Stones import Stones
 from Quest import Quest
 from CardDisplay import CardDisplay
 
+## The class which represent the display of the sanctuary card
 class SanctuaryCardDisplay(CardDisplay):
 
-    def __init__(self, card, screen, width, height):
+    def __init__(self, card, screen, width:int, height:int):
         super().__init__(card, screen, width, height)
         self.iconSize = 70
 
-    def displayNight(self, x, y):
-        if self.card.day:
-            img_day = pygame.image.load("./data/img/night.png") # don't mind the logic
+
+    ## Display the night icon
+    def displayNight(self, x:int, y:int) -> None:
+        if self.card.day: # Load the night icon when day because of how the json was made (badly)
+            img_day = pygame.image.load("./data/img/night.png")
             img_day = pygame.transform.scale(img_day, (self.iconSize, self.iconSize))
             self.screen.blit(img_day, (x+10, y+5))
 
-    def getMapCoords(self, x, y):
+    ## Get the coordinate of the map image
+    def getMapCoords(self, x:int, y:int) -> tuple[int, int]:
         if self.card.day:
             return (x+self.iconSize+10, y+5)
         return (x+10, y+5)
 
+
+    ## Display the sanctuary card
     def display(self, x, y):
         super().display(x, y)     
         self.displayNight(x, y)

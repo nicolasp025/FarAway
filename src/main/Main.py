@@ -4,9 +4,10 @@ from BoardClassical import BoardClassical
 from BoardDisplay import BoardDisplay
         
 
-def play():
+def play() -> None:
     args = sys.argv 
 
+    # If the user wants to play with the display
     if len(args)>1:
         if args[1] == '-d':
             board = BoardDisplay()

@@ -5,7 +5,7 @@ from ConditionModes import ConditionModes
 from Stones import Stones
 from Colors import Colors
 
-
+## The class which represents the quests
 class Quest:
 
     def __init__(self, require, points, conditionMode, condition):
@@ -21,12 +21,14 @@ class Quest:
         self.conditionMode = conditionMode
         self.condition = condition
 
-    def satisfy(self, ressources):
-      ## Returns the number of points won by this card
+    ## Get the number of points won by this card
+    def satisfy(self, ressources) -> int:
+      ## Check the requirement
       for stone in self.require:
           if stone not in ressources or self.require[stone]>ressources[stone]:
             return 0
       
+      ## Set the number of points won depending of the condition mode
       if self.conditionMode == ConditionModes.NOTHING:
         return self.points
       elif self.conditionMode == ConditionModes.NIGHT:
@@ -36,18 +38,19 @@ class Quest:
       elif self.conditionMode == ConditionModes.STONE or self.conditionMode == ConditionModes.COLOR:
         tmpRes = 0
         for i in self.condition:
-          if i not in ressources:
-            tmpRes += 0
-          else :
+          # Check if the stone or the color is in the ressources
+          if i in ressources:
             tmpRes += ressources[i] * self.points 
         return tmpRes
       elif self.conditionMode == ConditionModes.SOMECOLOR:
         for color in self.condition:
+          # If one color is missing then return 0 points
           if color not in ressources: 
-            return 0                                            # If one color is missing then return 0 pts
+            return 0                                            
         return min([ressources[i] for i in self.condition]) * self.points
           
-    def toString(self):
+    ## Get the string representation of the quests
+    def toString(self) -> str:
         res = ""
         if self.points != 0:
             res += "quest : require "

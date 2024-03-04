@@ -12,6 +12,7 @@ from Quest import Quest
 from RegionQuestDisplay import RegionQuestDisplay
 from SanctuaryQuestDisplay import SanctuaryQuestDisplay
 
+## Class that displays a card
 class CardDisplay():
 
     def __init__(self, card, screen, width, height):
@@ -21,22 +22,34 @@ class CardDisplay():
         self.height = height
         self.rect = None
 
-    def getMapCoords(self, x, y):
+
+    ## Get the coordinates of the map
+    def getMapCoords(self, x:int, y:int) -> tuple[int, int]:
         return (x+self.width*0.25, y+10)
 
-    def displayMap(self, x, y):
+
+    ## Display the map
+    def displayMap(self, x:int, y:int) -> None:
         if self.card.map:
             img_map = pygame.image.load("./data/img/map.png")
             img_map = pygame.transform.scale(img_map, (70, 70))
             self.screen.blit(img_map, self.getMapCoords(x, y))
 
-    def clickIn(self, coord_clic):
+
+    ## Check if the card is clicked
+    def clickIn(self, coord_clic:tuple[int, int]) -> bool:
         return self.rect.collidepoint(coord_clic[0], coord_clic[1])
 
-    def backgroundColor(self, x, y):
+
+    ## Get the background color of the card
+    def backgroundColor(self, x:int, y:int) -> tuple[tuple[int, int, int], pygame.Rect, pygame.Rect]:
+        # Rectangle representing the all card
         self.rect = pygame.Rect(x, y, self.width, self.height)
+
+        # Two rectangles representing the top and the bottom of the card
         rect1 = pygame.Rect(x, y+(self.height/3)*2, self.width, self.height/3)
         rect2 = pygame.Rect(x, y, self.width, (self.height/3)*2)
+
         colors = None, None
         if self.card.color == Colors.GREEN:
             colors =  (144, 238, 144), (34, 139, 34)
@@ -49,20 +62,26 @@ class CardDisplay():
         elif self.card.color == Colors.GRAY:
             colors = (192, 192, 192), (128, 128, 128)
         return colors, rect1, rect2
-        
-    def displayBanner(self, x, y):
+
+
+    ## Display the banner of the card
+    def displayBanner(self, x:int, y:int) -> None:
         img = pygame.image.load("./data/img/"+Colors.toStringLower(self.card.color)+"_banner.png")
         img = pygame.transform.scale(img, (self.width, 35))
         self.screen.blit(img, (x, y+(self.height/3)*2-15))
 
-    def displayStones(self, x, y):
+
+    ## Display the stones of the card
+    def displayStones(self, x:int, y:int) -> None:
         images = Stones.stonesToImage(self.card.stones, 60)
         last_x = 0
         for img in images:
             self.screen.blit(img, (x+self.width-img.get_width()+last_x-10, y+10))
             last_x -= img.get_width()
     
-    def display(self, x, y):
+
+    ## Display the card
+    def display(self, x:int, y:int) -> None:
         (col1, col2), rect1, rect2 = self.backgroundColor(x, y)
         pygame.draw.rect(self.screen, col1, rect1, border_radius=30) 
         pygame.draw.rect(self.screen, col2, rect2, border_radius=30) 
@@ -75,7 +94,10 @@ class CardDisplay():
             SanctuaryQuestDisplay(self.card.quest, self.screen, self.width, self.height).display(x, y)
 
         self.displayBanner(x, y)
+
+        # Display a border around the card
         r = pygame.Rect(x, y, self.width, self.height)
         pygame.draw.rect(self.screen, (255,255,255), r, 3, border_radius=30)
+        
         self.displayMap(x, y)
         
