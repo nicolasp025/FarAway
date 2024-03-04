@@ -33,14 +33,11 @@ class Stones(Enum):
         elif stone == Stones.EMERALD:
             return "emerald"
         else:
-            raise ValueError("Invalid color.")
+            raise ValueError("Invalid stone.")
 
     @classmethod
     def stonesToImage(self, stones, size):
-        images = []
-        for s in stones:
-            images.append(Stones.stoneToImage(s, size))
-        return images
+        return [Stones.stoneToImage(i, size) for i in stones]
 
     @classmethod
     def stoneToImage(self, stone, size):

@@ -49,37 +49,37 @@ class SanctuaryQuestDisplay(QuestDisplay):
                 self.screen.blit(img_map, (x-self.width*0.7, y-self.height*0.22))
 
             elif self.quest.conditionMode == ConditionModes.STONE:
-                sizeStone = 40
-                stoneImages = Stones.stonesToImage(self.quest.condition, sizeStone)
-                i=1
-                for stone in stoneImages:
-                    self.screen.blit(stone, (x+i*sizeStone, y+20))
-                    i+=1
+                stoneImages = Stones.stonesToImage(self.quest.condition, 50)
+                self.screen.blit(stoneImages[0], (x-self.width*0.69, y-self.height*0.21))
 
             elif self.quest.conditionMode == ConditionModes.COLOR:
                 i=0
-                max = len(self.quest.condition)
-                for color in self.quest.condition:
-                    colorImg = pygame.image.load("./data/img/"+Colors.toStringLower(color)+".png")
-                    colorImg = pygame.transform.scale(colorImg, (40, 40))
-                    self.screen.blit(colorImg, (x-self.width/(div-3)-sizePol/(div)-i*60, y-self.height/div+10))
+                imgSize = 40
+                fontSize = 45
+                colorImages = Colors.colorsToImage(self.quest.condition, imgSize)
+                for color in colorImages:
+                    if i==0:
+                        self.screen.blit(color, (x-self.width*0.63, y-self.height*0.19))
+                    else:
+                        self.screen.blit(color, (x-self.width*0.63-(i*imgSize)-20, y-self.height*0.19)) 
                     i+=1
-                    if i != max:
-                        tmpPol = pygame.font.Font(None, sizePol + 45)
+                
+                if len(self.quest.condition) > 1:
+                        tmpPol = pygame.font.Font(None, sizePol + fontSize)
                         texte_surface = tmpPol.render("/", True, (0,0,0))
                         r = texte_surface.get_rect()
-                        r.center = (x-self.width*0.68-i*10, y-self.height*0.2)
+                        r.center = (x-self.width*0.67, y-self.height*0.13)
                         self.screen.blit(texte_surface, r)
 
             elif self.quest.conditionMode == ConditionModes.SOMECOLOR:
                 i=0
+                spaceBetween = 3
+                imgSize = 40
                 for color in self.quest.condition:
                     colorImg = pygame.image.load("./data/img/"+Colors.toStringLower(color)+".png")
-                    colorImg = pygame.transform.scale(colorImg, (40, 40))
-                    if i%2==0:
-                        self.screen.blit(colorImg, (x-self.width/(div-3)-sizePol/(div)-i*22, y-self.height/div+10))
-                    else:
-                        self.screen.blit(colorImg, (x-self.width/(div-3)-sizePol/(div)-(i-1)*22, y-self.height/div+10-43))
+                    colorImg = pygame.transform.scale(colorImg, (imgSize, imgSize))
+                    addOn = 0 if i%2==0 else imgSize+spaceBetween
+                    self.screen.blit(colorImg, (x-self.width*0.58+addOn, y-self.height/div+20-addOn))
                     i+=1
 
             textr = points
@@ -88,11 +88,10 @@ class SanctuaryQuestDisplay(QuestDisplay):
             pygame.draw.rect(transp, (0, 0, 255), rect)
             
             if self.quest.conditionMode != ConditionModes.NOTHING: 
-                self.screen.blit(text_eg, (x-self.width*0.41, y-self.height*0.19))
+                self.screen.blit(text_eg, (x-self.width*0.41, y-self.height*0.19))  # Display the =
 
             texte_surface = police.render(textr, True, (0,0,0))
             r = texte_surface.get_rect()
-            r.center = (x-self.width*0.15, y-self.height*0.13) # Display the number of points
-    
-            self.screen.blit(img_pt, (x-self.width*0.3, y-self.height*0.22)) # Display the points square
+            r.center = (x-self.width*0.15, y-self.height*0.13)                      # Display the number of points
+            self.screen.blit(img_pt, (x-self.width*0.3, y-self.height*0.22))        # Display the points square
             self.screen.blit(texte_surface, r)

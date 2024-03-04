@@ -1,4 +1,5 @@
 from enum import Enum
+import pygame
 
 class Colors(Enum):
     GRAY = 0
@@ -50,3 +51,7 @@ class Colors(Enum):
         img = pygame.image.load("./data/img/"+Colors.toStringLower(color)+".png")
         img = pygame.transform.scale(img, imgSize)
         return img
+    
+    @classmethod
+    def colorsToImage(self, c, size):
+        return [Colors.colorToImage(i, size) for i in c]
