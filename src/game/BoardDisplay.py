@@ -80,7 +80,10 @@ class BoardDisplay(Board):
     def chooseCardToReveal(self) -> None:
         # Display the text
         textr = "Choose the card you want to reveal :"
-        self.displayText(120, 185, self.screen.get_height()/2+105, textr)
+        self.displayText(120, self.screen.get_width()/2-750, self.screen.get_height()/2+100, textr)
+
+        # Display the actual player and the separator
+        self.displayActualPlayer()
 
         i=1
         for card in self.actualPlayer.hand:
@@ -114,7 +117,10 @@ class BoardDisplay(Board):
     def chooseSanctuaryCard(self) -> None:
         # Display the text
         texts = "Choose the sanctuary card you want :"
-        self.displayText(105, 265, self.screen.get_height()/2+105, texts)
+        self.displayText(105, 200, self.screen.get_height()/2+100, texts)
+
+        # Display the actual player and the separator
+        self.displayActualPlayer()
 
         nbToAdd = self.actualPlayer.sanctuaryCardToAdd() # Number of sanctuary cards to choose between
     
@@ -153,7 +159,10 @@ class BoardDisplay(Board):
     def chooseRegionCard(self) -> None:
         # Display the text
         textr = "Choose the region card you want :"
-        self.displayText(120, 265, self.screen.get_height()/2+105, textr)
+        self.displayText(120, self.screen.get_width()/2-700, self.screen.get_height()/2+100, textr)
+
+        # Display the actual player and the separator
+        self.displayActualPlayer()
 
         for i in range(self.nbJoueur+1-self.cpt): # Display number of players plus one region cards
             # Display the card
@@ -253,12 +262,13 @@ class BoardDisplay(Board):
     ## Display some informations for the players
     def infoPlayers(self) -> None:
         # Display the actual player and the turn number
-        textPl = "Actual Player : "+str(self.actualPlayer.id)+ " | turn number : "+str(self.nbTurns+1) + " | "
+        textPl = "Actual Player : " + str(self.actualPlayer.id) + " | Turn number : "+str(self.nbTurns+1) + " | "
         self.displayText(60, 5, 5, textPl) 
 
         # Display the key bind and what it does
         textKeybind = "Press 's' to show your revealed cards"
         self.displayText(60, self.screen.get_width()/3, 5, textKeybind) 
+
 
 
     ## Create a rectangle to permit the player to close the pygame window
@@ -299,6 +309,18 @@ class BoardDisplay(Board):
         texte_surface = police.render(text, True, colTxt)
         self.screen.blit(texte_surface, (x, y))  
         
+    
+    ## Display actual player with a separator
+    def displayActualPlayer(self):
+        # Display the separator
+        textSep = "__________________________"
+        self.displayText(100, self.screen.get_width()/2-500, self.screen.get_height()/2+30, textSep)
+
+        # Display the actual player
+        textPl = "Actual player : " + str(self.actualPlayer.id)
+        self.displayText(120, self.screen.get_width()/2-320, self.screen.get_height()/2, textPl)
+
+    
 
     ## Play the game
     def play(self) -> None:
