@@ -29,10 +29,10 @@ class BoardDisplay(Board):
     
     def __init__(self):
         pygame.init()
-        self.screen = pygame.display.set_mode((2160, 1440), pygame.FULLSCREEN)
         info = pygame.display.Info()
         self.screenW = info.current_w
         self.screenH = info.current_h
+        self.screen = pygame.display.set_mode((self.screenW, self.screenH), pygame.FULLSCREEN)
         pygame.display.set_caption("Projet - Far Away")
         self.clock = pygame.time.Clock()
         super().__init__(self.screen)
@@ -85,10 +85,10 @@ class BoardDisplay(Board):
         # Display the actual player and the separator
         self.displayActualPlayer()
 
-        i=1
+        i=0
         for card in self.actualPlayer.hand:
             # Display the card
-            x = i*(self.WIDTHREGION+100)
+            x = self.screen.get_width()/2 - 630 + i*(self.WIDTHREGION+100)
             y = self.screen.get_height()/2+260
             card.dcard.display(x, y)  
 
@@ -117,7 +117,7 @@ class BoardDisplay(Board):
     def chooseSanctuaryCard(self) -> None:
         # Display the text
         texts = "Choose the sanctuary card you want :"
-        self.displayText(105, 200, self.screen.get_height()/2+100, texts)
+        self.displayText(120, self.screen.get_width()/2-780, self.screen.get_height()/2+100, texts)
 
         # Display the actual player and the separator
         self.displayActualPlayer()
@@ -202,7 +202,7 @@ class BoardDisplay(Board):
         textSep = "___________"
 
         # Display texts
-        dec = 700 - 100*len(self.players) # Offset for the display in height (depending of the number of players)
+        dec = 700 - 80*len(self.players) # Offset for the display in height (depending of the number of players)
         self.displayText(200, self.screen.get_width()/2-280, dec, textScore)
         self.displayText(200, self.screen.get_width()/2-390, dec+30, textSep)
 
@@ -276,6 +276,10 @@ class BoardDisplay(Board):
         # Create and draw the rectangle
         rect = pygame.Rect(self.screen.get_width()-50, 0, 50, 50)
         pygame.draw.rect(self.screen, (255,0,0), rect)
+
+        # Add a cross in the rectangle
+        textCr = "x"
+        self.displayText(60, self.screen.get_width()-35, 2, textCr, (0,0,0))
 
         # Check the mouse position and clic
         pos = pygame.mouse.get_pos()
