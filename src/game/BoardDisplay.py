@@ -24,12 +24,15 @@ from RegionCardDisplay import RegionCardDisplay
 from SanctuaryCardDisplay import SanctuaryCardDisplay
 from ChooseNbPlayer import ChooseNbPlayer
 
+## The class which represents the display of the game
 class BoardDisplay(Board):
     
     def __init__(self):
-
         pygame.init()
         self.screen = pygame.display.set_mode((2160, 1440), pygame.FULLSCREEN)
+        info = pygame.display.Info()
+        self.screenW = info.current_w
+        self.screenH = info.current_h
         pygame.display.set_caption("Projet - Far Away")
         self.clock = pygame.time.Clock()
         super().__init__(self.screen)
@@ -47,7 +50,8 @@ class BoardDisplay(Board):
 
         self.starting = []
 
-    def chooseNbPlayers(self):
+    ## Override
+    def chooseNbPlayers(self) -> None:
         nbJ = ChooseNbPlayer(self.screen, super().MAXIMUMPLAYERS, super().MINIMUMPLAYERS).display(self.nbJoueur, self.clic)
         self.nbJoueur = nbJ[1]
         if nbJ[0]:
@@ -59,39 +63,45 @@ class BoardDisplay(Board):
             self.actualPlayer = self.players[self.cpt]
             self.state = State.REVEAL
 
-
-    def next(self, state):
+    ## Change the actual player and, if it has to, to the next state
+    def next(self, state) -> bool:
         self.cpt += 1
-        if self.cpt < self.nbJoueur:
+        # Check if the actual player is the last
+        if self.cpt < self.nbJoueur:   
             self.actualPlayer = self.players[self.cpt]
             return False
         else:
             self.cpt = 0
             self.actualPlayer = self.players[self.cpt]
-            self.state = state
+            self.state = state  # Go to the next state 
             return True
 
-
-    def chooseCardToReveal(self):
-        police = pygame.font.Font(None, 120)
-        text_reveal = pygame.Rect(180, self.screen.get_height()/2+100, 100, 50)
+    ## Override
+    def chooseCardToReveal(self) -> None:
+        # Display the text
         textr = "Choose the card you want to reveal :"
-        pygame.draw.rect(self.screen, (0,0,0), text_reveal)
-        texte_surface = police.render(textr, True, (255,255,255))  
-        self.screen.blit(texte_surface, (text_reveal.x + 5, text_reveal.y + 5))
+        self.displayText(120, 185, self.screen.get_height()/2+105, textr)
 
         i=1
         for card in self.actualPlayer.hand:
+            # Display the card
             x = i*(self.WIDTHREGION+100)
             y = self.screen.get_height()/2+260
-            card.dcard.display(x, y)
+            card.dcard.display(x, y)  
+
             pos = pygame.mouse.get_pos()
+            # Check the mouse position
             if card.dcard.clickIn(pos):
+                # Add a larger border when the mouse is over the card
                 r = pygame.Rect(x, y, self.WIDTHREGION, self.HEIGHTREGION)
                 pygame.draw.rect(self.screen, (255,255,255), r, 7, border_radius=30)
+
+                # Check the mouse clic
                 if self.clic==2:
                     n = self.actualPlayer.revealCard(i)
                     self.starting.append((self.actualPlayer, n))
+
+                    # Go to next player or next state and change the list of player with the right order for next state
                     if self.next(State.SANCTUARY):
                         self.starting.sort(key=lambda x : x[1])
                         self.players = [t[0] for t in self.starting]
@@ -100,135 +110,155 @@ class BoardDisplay(Board):
             i+=1
             
 
-    def chooseSanctuaryCard(self):
-        police = pygame.font.Font(None, 120)
-        text_sanc = pygame.Rect(100, self.screen.get_height()/2+100, 50, 50)
-        textr = "Choose the sanctuary card you want :"
-        pygame.draw.rect(self.screen, (0,0,0), text_sanc)
-        texte_surface = police.render(textr, True, (255,255,255))  
-        self.screen.blit(texte_surface, (text_sanc.x + 5, text_sanc.y + 5))
+    ## Override
+    def chooseSanctuaryCard(self) -> None:
+        # Display the text
+        texts = "Choose the sanctuary card you want :"
+        self.displayText(105, 265, self.screen.get_height()/2+105, texts)
 
-        nbToAdd = self.actualPlayer.sanctuaryCardToAdd() 
+        nbToAdd = self.actualPlayer.sanctuaryCardToAdd() # Number of sanctuary cards to choose between
     
         if nbToAdd > 0:
-            self.checkSanctuaryCards(nbToAdd)
+            self.checkSanctuaryCards(nbToAdd)  # Check if there is enough sanctuary cards in the stack
             for i in range(nbToAdd):
+                # Display the card
                 card = self.sanctuaryCards[i]
                 x = (i+1)*(self.WIDTHSANCTUARY+20)-70
                 y = self.screen.get_height()/2+260
                 card.dcard.display(x, y)
+
                 pos = pygame.mouse.get_pos()
+                # Check the mouse position
                 if card.dcard.clickIn(pos):
+                    # Add a larger border when the mouse is over
                     r = pygame.Rect(x, y, self.WIDTHSANCTUARY, self.HEIGHTSANCTUARY)
                     pygame.draw.rect(self.screen, (255,255,255), r, 7, border_radius=30)
+
+                    # Check the mouse clic
                     if self.clic==2:
+                        # Add the selected card to the player's sanctuary cards
                         self.actualPlayer.addCardToSanctuaryCards(self.sanctuaryCards.pop(i))
+
+                        # Add the other ones showed before to the stack for used ones
                         for j in range(nbToAdd-1):
                             self.sanctuaryCardsUsed.append(self.sanctuaryCards.pop(0))
-                        self.next(State.REGION)
+                        self.next(State.REGION) # Go to next player or next state
                         break
         else:
-            self.next(State.REGION)
+            # No sanctuary cards to add, go to next player or next state
+            self.next(State.REGION) 
 
 
-
-            
-    def chooseRegionCard(self):
-        police = pygame.font.Font(None, 120)
-        text_reg = pygame.Rect(260, self.screen.get_height()/2+100, 100, 50)
+    ## Override
+    def chooseRegionCard(self) -> None:
+        # Display the text
         textr = "Choose the region card you want :"
-        pygame.draw.rect(self.screen, (0,0,0), text_reg)
-        texte_surface = police.render(textr, True, (255,255,255))  
-        self.screen.blit(texte_surface, (text_reg.x + 5, text_reg.y + 5))
+        self.displayText(120, 265, self.screen.get_height()/2+105, textr)
 
-        for i in range(self.nbJoueur+1-self.cpt):
+        for i in range(self.nbJoueur+1-self.cpt): # Display number of players plus one region cards
+            # Display the card
             card = self.regionCards[i]
             x = i*(self.WIDTHREGION+5)
             y = self.screen.get_height()/2+260
             card.dcard.display(x, y)
+
+            # Check the mouse position
             pos = pygame.mouse.get_pos()
             if card.dcard.clickIn(pos):
+                # Add a larger border when the mouse is over
                 r = pygame.Rect(x, y, self.WIDTHREGION, self.HEIGHTREGION)
                 pygame.draw.rect(self.screen, (255,255,255), r, 7, border_radius=30)
+
+                # Check the click
                 if self.clic==2:
+                    # Add the card to the player hand
                     self.actualPlayer.addCardToHand(self.regionCards.pop(i))
 
+                    # Go the next player or next state and put back the player in order of their id 
                     if self.next(State.REVEAL):
                         self.nbTurns += 1
-                        self.regionCards.pop(0)
+                        self.regionCards.pop(0) # Delete the region that left 
                         self.players.sort(key=lambda p : p.id)
                         self.actualPlayer = self.players[0]
                     
 
-
-    def displayEnd(self):
+    ## Override
+    def displayEnd(self) -> None:
+        # If there is a right clic go to the next player so he can see his revealed cards
         if self.clic == 2:
             self.next(State.END)
-        police = pygame.font.Font(None, 110)
-        text_end = pygame.Rect(self.screen.get_width()/2-self.nbJoueur*150, self.screen.get_height()-700, 100, 50)
-        textr = str(self.countFinalPoints())
-        pygame.draw.rect(self.screen, (0,0,0), text_end)
-        texte_surface = police.render(textr, True, (255,255,255))  
-        self.screen.blit(texte_surface, (text_end.x + 5, text_end.y + 5))
+        
+        # Display the scores
+        textPts = str(self.countFinalPoints())
+        self.displayText(110, self.screen.get_width()/2-self.nbJoueur*150 + 5, self.screen.get_height()-705, textPts)
 
 
-    def displayRevealedCard(self):
-        police = pygame.font.Font(None, 40)
-        text_revealed = pygame.Rect(self.screen.get_width()/3, 0, 650, 50)
-        textrev = "Press 's' to show your revealed cards"
-        pygame.draw.rect(self.screen, (0,0,0), text_revealed, 2)
-        texte_surface = police.render(textrev, True, (255,255,255))  
+    ## Display the revealed cards for the actual player
+    def displayRevealedCard(self) -> None:
+        # Fill the screen to only show the revealed cards        
+        background = pygame.image.load("./data/img/background.png")
+        background = pygame.transform.scale(background, (self.screenW, self.screenH))
+        self.screen.blit(background, (0, 0))
 
-        policeCard = pygame.font.Font(None, 60)
-        text_sanc = pygame.Rect(0, 70+self.HEIGHTSANCTUARY/2, 50, 50)
+        # Size police
+        sizePol = 60
+
+        # Text sanctuary cards
         texts = "Sanctuary cards :"
-        pygame.draw.rect(self.screen, (0,0,0), text_sanc, 2)
-        texte_surfaces = policeCard.render(texts, True, (255,255,255))  
+        self.displayText(sizePol, 10, 85+self.HEIGHTSANCTUARY/2, texts)
 
-        text_reg = pygame.Rect(0, self.HEIGHTSANCTUARY + 90 + self.HEIGHTREGION/2, 50, 50)
+        # Text region cards
         textr = "Region cards :"
-        pygame.draw.rect(self.screen, (0,0,0), text_reg, 2)
-        texte_surfacer = policeCard.render(textr, True, (255,255,255))  
+        self.displayText(sizePol, 10, self.HEIGHTSANCTUARY + 105 + self.HEIGHTREGION/2, textr) 
 
-        if pygame.key.get_pressed()[pygame.K_s]:
-            self.screen.fill("black")
-            self.screen.blit(texte_surfaces, (text_sanc.x+10, text_sanc.y + 15))
-            self.screen.blit(texte_surfacer, (text_reg.x+10, text_reg.y + 15))
-            i=0
-            for card in self.actualPlayer.revealedCards:
-                y = 0
-                if i > 3:
-                    y = 140 + self.HEIGHTSANCTUARY + self.HEIGHTREGION
-                else :
-                    y = self.HEIGHTSANCTUARY + 110
-                x = (i%4)*(self.WIDTHREGION+30) + (self.WIDTHREGION*0.95)
-                card.dcard.display(x, y)
-                i+=1
-            i=0
-            l = len(self.actualPlayer.sanctuaryCards)
-            for card in self.actualPlayer.sanctuaryCards:
-                y = 70 
-                x = self.screen.get_width()/2 - (l*(self.WIDTHSANCTUARY+30))/2 + i*(self.WIDTHSANCTUARY+30)
-                card.dcard.display(x, y)
-                i+=1
-        self.screen.blit(texte_surface, (text_revealed.x, text_revealed.y + 15))
+        # Display region cards
+        i=0
+        for card in self.actualPlayer.revealedCards:
+            y = 0
+            # Display the cards in 2 different rows
+            if i > 3:
+                y = 140 + self.HEIGHTSANCTUARY + self.HEIGHTREGION
+            else :
+                y = self.HEIGHTSANCTUARY + 110
+            x = (i%4)*(self.WIDTHREGION+30) + (self.WIDTHREGION*0.95)
+            card.dcard.display(x, y)
+            i+=1
 
-    def idPlayers(self):
-        police = pygame.font.Font(None, 60)
-        text_reg = pygame.Rect(0, 0, 100, 50)
-        textr = "Actual Player : "+str(self.actualPlayer.id)+ " | turn number : "+str(self.nbTurns+1)
-        pygame.draw.rect(self.screen, (0,0,0), text_reg)
-        texte_surface = police.render(textr, True, (255,255,255))  
-        self.screen.blit(texte_surface, (text_reg.x + 5, text_reg.y + 5))
+        # Display sanctuary cards
+        i=0
+        l = len(self.actualPlayer.sanctuaryCards)
+        for card in self.actualPlayer.sanctuaryCards:
+            y = 70 
+            x = self.screen.get_width()/2 - (l*(self.WIDTHSANCTUARY+30))/2 + i*(self.WIDTHSANCTUARY+30)
+            card.dcard.display(x, y)
+            i+=1
+        
 
-    def forceExit(self):
+    ## Display some informations for the players
+    def infoPlayers(self) -> None:
+        # Display the actual player and the turn number
+        textPl = "Actual Player : "+str(self.actualPlayer.id)+ " | turn number : "+str(self.nbTurns+1) + " | "
+        self.displayText(60, 5, 5, textPl) 
+
+        # Display the key bind and what it does
+        textKeybind = "Press 's' to show your revealed cards"
+        self.displayText(60, self.screen.get_width()/3, 5, textKeybind) 
+
+
+    ## Create a rectangle to permit the player to close the pygame window
+    def forceExit(self) -> None:
+        # Create and draw the rectangle
         rect = pygame.Rect(self.screen.get_width()-50, 0, 50, 50)
         pygame.draw.rect(self.screen, (255,0,0), rect)
+
+        # Check the mouse position and clic
         pos = pygame.mouse.get_pos()
-        if rect.collidepoint(pos[0], pos[1]) and self.clic == 2:
+        if rect.collidepoint(pos[0], pos[1]) and self.clic == 1:
             self.running = False
 
-    def execute(self):
+
+    ## Call the function corresponding to the actual state
+    def execute(self) -> None:
         if self.nbTurns == 8:
             self.state = State.END
         if self.state == State.START:
@@ -238,48 +268,66 @@ class BoardDisplay(Board):
         elif self.state == State.SANCTUARY:
             self.chooseSanctuaryCard()
         elif self.state == State.REGION:
+            # Players don't choose region card when it is the last turn
             if self.nbTurns < 7:
                 self.chooseRegionCard()
             else:
                 self.state = State.END
         elif self.state == State.END:
             self.displayEnd()
+
+
+    ## Display the text at the given coordonate
+    def displayText(self, sizePol:int, x:int, y:int, text:str, colTxt:tuple[int, int, int]=(255,255,255), pol:str=None) -> None:
+        police = pygame.font.Font(pol, sizePol)
+        texte_surface = police.render(text, True, colTxt)
+        self.screen.blit(texte_surface, (x, y))  
         
 
-
-    def play(self):
-
+    ## Play the game
+    def play(self) -> None:
         while self.running :
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
 
-                # Vérifier si le bouton de la souris est enfoncé
+                # Check is the left clic is donw
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     self.clic = 1
 
-                # Vérifier si le bouton de la souris est relâché
+                # Check if the left clic is up
                 elif event.type == pygame.MOUSEBUTTONUP and event.button == 1 and self.clic == 1:
                     self.clic = 2
 
             # fill the screen with a color to wipe away anything from last frame
-            self.screen.fill("black")
+            background = pygame.image.load("./data/img/background.png")
+            background = pygame.transform.scale(background, (self.screenW, self.screenH))
+            self.screen.blit(background, (0, 0))
 
+
+            # Execute the right function corresponding to the state
             self.execute()
 
+            # Check is exit is pressed
             self.forceExit()
 
-            if self.state != State.START:
+            # Check if the key bind is pressed and it is not the start
+            if pygame.key.get_pressed()[pygame.K_s] and self.state != State.START:
                 self.displayRevealedCard()
-                self.idPlayers()
+
+            # Display some informations if it is not the start
+            if self.state != State.START:
+                self.infoPlayers()
             
+            # Check is the left clic is up (This permits to only detect a clic when it up after being down)
             if self.clic == 2:
                 self.clic = 0
+
             # flip() the display to put your work on screen
             pygame.display.flip()
 
-            dt = self.clock.tick(60) / 1000
+            self.clock.tick(60) / 1000
 
         pygame.quit()
         

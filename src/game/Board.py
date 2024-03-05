@@ -151,14 +151,14 @@ class Board:
             # Init the ressources
             ressources = {"map" : 0, "night": 0, "day": 0}
 
+            # Add sanctuaryCards to ressources
+            for card in p.sanctuaryCards:
+                ressources = self.addRessources(ressources, card)
+
             # Getting points from every region card (from the last to the first)
             for card in p.revealedCards[::-1]:
                 ressources = self.addRessources(ressources, card)
                 tmpScore += card.satisfy(ressources)
-
-            # Add sanctuaryCards to ressources
-            for card in p.sanctuaryCards:
-                ressources = self.addRessources(ressources, card)
 
             # Getting all bonuses from sanctuaryCards
             for card in p.sanctuaryCards:
@@ -166,3 +166,24 @@ class Board:
 
             res[p.id] = tmpScore
         return res
+    
+
+    ## Choose the number of players
+    def chooseNbPlayers(self) -> None:
+        pass
+
+    ## Choose the card to reveal
+    def chooseCardToReveal(self) -> None:
+        pass
+
+    ## Choose the sanctuary card
+    def chooseSanctuaryCard(self) -> None:
+        pass
+
+    ## Choose the region card
+    def chooseRegionCard(self) -> None:
+        pass
+
+    ## Display the end of the game
+    def displayEnd(self) -> None:
+        pass

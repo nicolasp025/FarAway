@@ -23,7 +23,7 @@ class BoardClassical(Board):
         super().__init__()
 
 
-    ## Choose the number of players
+    ## Override
     def chooseNbPlayers(self) -> None:
         print("How many players do you want to play with ?")
         nbPlayers = int(input("Number of players should be between "+ str(super().MINIMUMPLAYERS) + " and " + str(super().MAXIMUMPLAYERS) + " : "))
@@ -45,7 +45,7 @@ class BoardClassical(Board):
                 self.players[i].addCardToHand(self.regionCards.pop(0))
                 
 
-    ## Choose the card to reveal
+    ## Override
     def chooseCardToReveal(self) -> None:
         print("----------------- Turn number "+str(self.nbTurns+1)+" -----------------\n")
 
@@ -80,7 +80,7 @@ class BoardClassical(Board):
             self.players = [t[0] for t in starting]
 
 
-    ## Choose the sanctuary card
+    ## Override
     def chooseSanctuaryCard(self) -> None:
         print("----------------- Choose the sanctuary card you want to add to your hand  ------------------- \n")
         ## Choose sanctuary card only if you can
@@ -110,7 +110,7 @@ class BoardClassical(Board):
                 print("\n")
 
 
-    ## Choose the region card
+    ## Override
     def chooseRegionCard(self) -> None:
         # Only if it is not the last turn
         if (self.nbTurns < Player.NBCARDSTOREVEAL-1):
