@@ -187,10 +187,26 @@ class BoardDisplay(Board):
         # If there is a right clic go to the next player so he can see his revealed cards
         if self.clic == 2:
             self.next(State.END)
-        
+
+        # Texts
+        textScore = " Scores :"
+        textSep = "___________"
+
+        # Display texts
+        dec = 700 - 100*len(self.players) # Offset for the display in height (depending of the number of players)
+        self.displayText(200, self.screen.get_width()/2-280, dec, textScore)
+        self.displayText(200, self.screen.get_width()/2-390, dec+30, textSep)
+
+        # Sort the results by points
+        dict = self.countFinalPoints()
+        dictSorted = {key: dict[key] for key in sorted(dict, key=dict.get, reverse=True)}
+
         # Display the scores
-        textPts = str(self.countFinalPoints())
-        self.displayText(110, self.screen.get_width()/2-self.nbJoueur*150 + 5, self.screen.get_height()-705, textPts)
+        i=0 
+        for pId, res in dictSorted.items():
+            textPts = "Player " + str(pId) + " : " + str(res) 
+            self.displayText(180, self.screen.get_width()/2-330, dec+220 + i*140, textPts)
+            i+=1
 
 
     ## Display the revealed cards for the actual player
