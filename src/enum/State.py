@@ -6,5 +6,6 @@ class State(Enum):
     REVEAL = 2
     SANCTUARY = 3
     REGION = 4
-    END = 5
+    COMPUTE = 5
+    END = 6
     

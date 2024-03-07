@@ -52,6 +52,8 @@ class BoardDisplay(Board):
 
         self.starting = []
 
+        self.scores = {}
+
     ## Override
     def chooseNbPlayers(self) -> None:
         nbJ = ChooseNbPlayer(self.screen, super().MAXIMUMPLAYERS, super().MINIMUMPLAYERS).display(self.nbJoueur, self.clic)
@@ -82,7 +84,7 @@ class BoardDisplay(Board):
     def chooseCardToReveal(self) -> None:
         # Display the text
         textr = "Choose the card you want to reveal :"
-        self.displayText(120, self.screen.get_width()/2-750, self.screen.get_height()/2-80, textr)
+        self.displayText(120, self.screenW/2-750, self.screenH - self.HEIGHTREGION*2.4, textr)
 
         # Display the actual player and the separator
         self.displayActualPlayer()
@@ -90,8 +92,8 @@ class BoardDisplay(Board):
         i=0
         for card in self.actualPlayer.hand:
             # Display the card
-            x = self.screen.get_width()/2 - 630 + i*(self.WIDTHREGION+100)
-            y = self.screen.get_height()/2+260
+            x = self.screenW/2 - 630 + i*(self.WIDTHREGION+100)
+            y = self.screenH - self.HEIGHTREGION*1.5
             card.dcard.display(x, y)  
 
             pos = pygame.mouse.get_pos()
@@ -122,17 +124,17 @@ class BoardDisplay(Board):
         if nbToAdd > 0:
             # Display the text
             texts = "Choose the sanctuary card you want :"
-            self.displayText(120, self.screen.get_width()/2-780, self.screen.get_height()/2-80, texts)
+            self.displayText(120, self.screenW/2-780, self.screenH - self.HEIGHTREGION*2.4, texts)
 
             # Display the actual player and the separator
             self.displayActualPlayer()
-            
+
             self.checkSanctuaryCards(nbToAdd)  # Check if there is enough sanctuary cards in the stack
             for i in range(nbToAdd):
                 # Display the card
                 card = self.sanctuaryCards[i]
                 x = (i+1)*(self.WIDTHSANCTUARY+20)-70
-                y = self.screen.get_height()/2+260
+                y = self.screenH - self.HEIGHTSANCTUARY*1.5
                 card.dcard.display(x, y)
 
                 pos = pygame.mouse.get_pos()
@@ -153,7 +155,7 @@ class BoardDisplay(Board):
                         self.next(State.REGION) # Go to next player or next state
                         break
         else:
-            # No sanctuary cards to add, go to next player or next state
+            # No sanctuary cards to add for this player, go to next player or next state
             self.next(State.REGION) 
 
 
@@ -161,16 +163,31 @@ class BoardDisplay(Board):
     def chooseRegionCard(self) -> None:
         # Display the text
         textr = "Choose the region card you want :"
-        self.displayText(120, self.screen.get_width()/2-700, self.screen.get_height()/2-80, textr)
+        self.displayText(120, self.screenW/2-700, self.screenH - self.HEIGHTREGION*2.4, textr)
 
         # Display the actual player and the separator
         self.displayActualPlayer()
 
-        for i in range(self.nbJoueur+1-self.cpt): # Display number of players plus one region cards
+        lgth = self.nbJoueur+1-self.cpt
+        for i in range(lgth): # Display number of players plus one region cards
             # Display the card
             card = self.regionCards[i]
-            x = i*(self.WIDTHREGION+5)
-            y = self.screen.get_height()/2+260
+
+            nbCardOnRow = lgth # Number of cards to display on the row
+            
+            # If there is too much card display them in 2 rows
+            if lgth > 4:
+                y = 0
+                if i < 4:
+                    y = self.screenH - self.HEIGHTREGION*2.14
+                    nbCardOnRow = 4
+                else:
+                    y = self.screenH - self.HEIGHTREGION*1.07
+                    nbCardOnRow = lgth - 4
+            else:
+                y = self.screenH - self.HEIGHTREGION*1.5
+            
+            x = self.screenW/2 - (nbCardOnRow*(self.WIDTHREGION+30))/2 + (i%4)*(self.WIDTHREGION+30)
             card.dcard.display(x, y)
 
             # Check the mouse position
@@ -205,18 +222,17 @@ class BoardDisplay(Board):
 
         # Display texts
         dec = 700 - 80*len(self.players) # Offset for the display in height (depending of the number of players)
-        self.displayText(200, self.screen.get_width()/2-280, dec, textScore)
-        self.displayText(200, self.screen.get_width()/2-390, dec+30, textSep)
+        self.displayText(200, self.screenW/2-280, dec, textScore)
+        self.displayText(200, self.screenW/2-390, dec+30, textSep)
 
         # Sort the results by points
-        dict = self.countFinalPoints()
-        dictSorted = {key: dict[key] for key in sorted(dict, key=dict.get, reverse=True)}
+        self.scores = {key: self.scores[key] for key in sorted(self.scores, key=self.scores.get, reverse=True)}
 
         # Display the scores
         i=0 
-        for pId, res in dictSorted.items():
+        for pId, res in self.scores.items():
             textPts = "Player " + str(pId) + " : " + str(res) 
-            self.displayText(180, self.screen.get_width()/2-330, dec+220 + i*140, textPts)
+            self.displayText(180, self.screenW/2-330, dec+220 + i*140, textPts)
             i+=1
 
 
@@ -256,32 +272,37 @@ class BoardDisplay(Board):
         l = len(self.actualPlayer.sanctuaryCards)
         for card in self.actualPlayer.sanctuaryCards:
             y = 70 
-            x = self.screen.get_width()/2 - (l*(self.WIDTHSANCTUARY+30))/2 + i*(self.WIDTHSANCTUARY+30)
+            x = self.screenW/2 - (l*(self.WIDTHSANCTUARY+30))/2 + i*(self.WIDTHSANCTUARY+30)
             card.dcard.display(x, y)
             i+=1
         
 
     ## Display some informations for the players
     def infoPlayers(self) -> None:
-        # Display the actual player and the turn number
-        textPl = "Actual Player : " + str(self.actualPlayer.id) + " | Turn number : "+str(self.nbTurns+1) + " | "
-        self.displayText(60, 5, 5, textPl) 
+        # Display the actual player, the turn number and the key bind
+        turn = " | "
+        if self.state == State.END:
+            turn += "Game is finished" 
+        else:
+            turn += "Turn number : "+str(self.nbTurns+1)
 
-        # Display the key bind and what it does
         textKeybind = "Press 's' to show your revealed cards"
-        self.displayText(60, self.screen.get_width()/3, 5, textKeybind) 
+
+        textPl = "Actual Player : " + str(self.actualPlayer.id) + turn + " | " + textKeybind
+
+        self.displayText(50, 5, 5, textPl) 
 
 
 
     ## Create a rectangle to permit the player to close the pygame window
     def forceExit(self) -> None:
         # Create and draw the rectangle
-        rect = pygame.Rect(self.screen.get_width()-50, 0, 50, 50)
+        rect = pygame.Rect(self.screenW-50, 0, 50, 50)
         pygame.draw.rect(self.screen, (255,0,0), rect)
 
         # Add a cross in the rectangle
         textCr = "x"
-        self.displayText(60, self.screen.get_width()-35, 2, textCr, (0,0,0))
+        self.displayText(60, self.screenW-35, 2, textCr, (0,0,0))
 
         # Check the mouse position and clic
         pos = pygame.mouse.get_pos()
@@ -304,9 +325,18 @@ class BoardDisplay(Board):
             if self.nbTurns < 7:
                 self.chooseRegionCard()
             else:
-                self.state = State.END
+                self.state = State.COMPUTE
+        elif self.state == State.COMPUTE:
+            self.computeScores()
         elif self.state == State.END:
             self.displayEnd()
+
+
+    ## Compute the final scores for each player
+    def computeScores(self) -> None:
+        # Get the final points for each player
+        self.scores = self.countFinalPoints()
+        self.state = State.END
 
 
     ## Display the text at the given coordonate
@@ -320,11 +350,11 @@ class BoardDisplay(Board):
     def displayActualPlayer(self):
         # Display the separator
         textSep = "__________________________"
-        self.displayText(100, self.screen.get_width()/2-500, self.screen.get_height()/2-150, textSep)
+        self.displayText(100, self.screenW/2-500, self.screenH - self.HEIGHTREGION*2.4 - 70, textSep)
 
         # Display the actual player
         textPl = "Actual player : " + str(self.actualPlayer.id)
-        self.displayText(120, self.screen.get_width()/2-320, self.screen.get_height()/2-180, textPl)
+        self.displayText(120, self.screenW/2-320, self.screenH - self.HEIGHTREGION*2.4 - 100, textPl)
 
     
 
@@ -348,10 +378,7 @@ class BoardDisplay(Board):
             background = pygame.image.load("./data/img/background.png")
             background = pygame.transform.scale(background, (self.screenW, self.screenH))
             self.screen.blit(background, (0, 0))
-
-
-            # Execute the right function corresponding to the state
-            self.execute()
+            
 
             # Check is exit is pressed
             self.forceExit()
@@ -359,12 +386,15 @@ class BoardDisplay(Board):
             # Check if the key bind is pressed and it is not the start
             if pygame.key.get_pressed()[pygame.K_s] and self.state != State.START:
                 self.displayRevealedCard()
+            else:
+                # Execute the right function corresponding to the state
+                self.execute()
 
             # Display some informations if it is not the start
             if self.state != State.START:
                 self.infoPlayers()
             
-            # Check is the left clic is up (This permits to only detect a clic when it up after being down)
+            # Check is the left clic is up (This permits to only detect a clic when it is up after being down)
             if self.clic == 2:
                 self.clic = 0
 

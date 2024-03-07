@@ -47,7 +47,7 @@ class RegionQuestDisplay(QuestDisplay):
 
             # Display the rectangle
             self.requireY = y-self.height*0.51
-            self.requireHeight = 160
+            self.requireHeight = self.height*0.46
             if len(l)==1:
                 self.requireX = x-(len(l)+1)*sizeImg-16
                 self.requireWidth = (len(l)+1)*sizeImg
