@@ -29,13 +29,15 @@ class BoardDisplay(Board):
     
     def __init__(self):
         pygame.init()
+
         info = pygame.display.Info()
         self.screenW = info.current_w
         self.screenH = info.current_h
+
         self.screen = pygame.display.set_mode((self.screenW, self.screenH), pygame.FULLSCREEN)
         pygame.display.set_caption("Projet - Far Away")
         self.clock = pygame.time.Clock()
-        super().__init__(self.screen)
+        super().__init__(self.screen, self.screenW, self.screenH)
 
         self.running = True
 
@@ -80,7 +82,7 @@ class BoardDisplay(Board):
     def chooseCardToReveal(self) -> None:
         # Display the text
         textr = "Choose the card you want to reveal :"
-        self.displayText(120, self.screen.get_width()/2-750, self.screen.get_height()/2+100, textr)
+        self.displayText(120, self.screen.get_width()/2-750, self.screen.get_height()/2-80, textr)
 
         # Display the actual player and the separator
         self.displayActualPlayer()
@@ -101,7 +103,7 @@ class BoardDisplay(Board):
 
                 # Check the mouse clic
                 if self.clic==2:
-                    n = self.actualPlayer.revealCard(i)
+                    n = self.actualPlayer.revealCard(i+1)
                     self.starting.append((self.actualPlayer, n))
 
                     # Go to next player or next state and change the list of player with the right order for next state
@@ -115,16 +117,16 @@ class BoardDisplay(Board):
 
     ## Override
     def chooseSanctuaryCard(self) -> None:
-        # Display the text
-        texts = "Choose the sanctuary card you want :"
-        self.displayText(120, self.screen.get_width()/2-780, self.screen.get_height()/2+100, texts)
-
-        # Display the actual player and the separator
-        self.displayActualPlayer()
-
         nbToAdd = self.actualPlayer.sanctuaryCardToAdd() # Number of sanctuary cards to choose between
     
         if nbToAdd > 0:
+            # Display the text
+            texts = "Choose the sanctuary card you want :"
+            self.displayText(120, self.screen.get_width()/2-780, self.screen.get_height()/2-80, texts)
+
+            # Display the actual player and the separator
+            self.displayActualPlayer()
+            
             self.checkSanctuaryCards(nbToAdd)  # Check if there is enough sanctuary cards in the stack
             for i in range(nbToAdd):
                 # Display the card
@@ -159,7 +161,7 @@ class BoardDisplay(Board):
     def chooseRegionCard(self) -> None:
         # Display the text
         textr = "Choose the region card you want :"
-        self.displayText(120, self.screen.get_width()/2-700, self.screen.get_height()/2+100, textr)
+        self.displayText(120, self.screen.get_width()/2-700, self.screen.get_height()/2-80, textr)
 
         # Display the actual player and the separator
         self.displayActualPlayer()
@@ -318,11 +320,11 @@ class BoardDisplay(Board):
     def displayActualPlayer(self):
         # Display the separator
         textSep = "__________________________"
-        self.displayText(100, self.screen.get_width()/2-500, self.screen.get_height()/2+30, textSep)
+        self.displayText(100, self.screen.get_width()/2-500, self.screen.get_height()/2-150, textSep)
 
         # Display the actual player
         textPl = "Actual player : " + str(self.actualPlayer.id)
-        self.displayText(120, self.screen.get_width()/2-320, self.screen.get_height()/2, textPl)
+        self.displayText(120, self.screen.get_width()/2-320, self.screen.get_height()/2-180, textPl)
 
     
 

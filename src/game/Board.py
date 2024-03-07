@@ -1,6 +1,7 @@
 import sys
 import json
 from random import shuffle
+import pygame
 
 sys.path.append("./src/player/")
 sys.path.append("./src/card/")
@@ -22,10 +23,15 @@ from SanctuaryCardDisplay import SanctuaryCardDisplay
 class Board:
 
     NBOFSANCTUARYCARDS = 45
+
+    # Default size (changed after)
     WIDTHSANCTUARY = 220
     HEIGHTSANCTUARY = 350
 
+
     NBOFREGIONCARDS = 68
+
+    # Default size (changed after)
     WIDTHREGION = 350
     HEIGHTREGION = 350
 
@@ -33,12 +39,19 @@ class Board:
     MAXIMUMPLAYERS = 6
 
 
-    def __init__(self, screen=None):
+    def __init__(self, screen=None, screenW=0, screenH=0):
 
         self.sanctuaryCardsUsed = []
         self.RegionCardRevealed = []
         self.players = []
         self.nbTurns = 0
+
+        # Set the width and height of the cards depending of the screen's sizes
+        self.WIDTHSANCTUARY = screenW*0.10
+        self.HEIGHTSANCTUARY = screenH*0.25
+
+        self.WIDTHREGION = screenH*0.25
+        self.HEIGHTREGION = screenH*0.25
             
         # Initializing the region cards
         self.regionCards = []
