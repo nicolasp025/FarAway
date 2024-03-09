@@ -208,6 +208,7 @@ class BoardDisplay(Board):
                         self.regionCards.pop(0) # Delete the region that left 
                         self.players.sort(key=lambda p : p.id)
                         self.actualPlayer = self.players[0]
+                        break # Stop the loop because the card has been chosen
                     
 
     ## Override
