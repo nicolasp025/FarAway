@@ -22,6 +22,7 @@ from SanctuaryCard import SanctuaryCard
 from ConditionModes import ConditionModes
 from RegionCardDisplay import RegionCardDisplay
 from SanctuaryCardDisplay import SanctuaryCardDisplay
+from CardDisplay import CardDisplay
 from ChooseNbPlayer import ChooseNbPlayer
 
 ## The class which represents the display of the game
@@ -103,7 +104,7 @@ class BoardDisplay(Board):
             if card.dcard.clickIn(pos):
                 # Add a larger border when the mouse is over the card
                 r = pygame.Rect(x, y, self.WIDTHREGION, self.HEIGHTREGION)
-                pygame.draw.rect(self.screen, (255,255,255), r, 7, border_radius=30)
+                pygame.draw.rect(self.screen, (255,255,255), r, 7, border_radius=CardDisplay.border_radius)
 
                 # Check the mouse clic
                 if self.clic==2:
@@ -144,7 +145,7 @@ class BoardDisplay(Board):
                 if card.dcard.clickIn(pos):
                     # Add a larger border when the mouse is over
                     r = pygame.Rect(x, y, self.WIDTHSANCTUARY, self.HEIGHTSANCTUARY)
-                    pygame.draw.rect(self.screen, (255,255,255), r, 7, border_radius=30)
+                    pygame.draw.rect(self.screen, (255,255,255), r, 7, border_radius=CardDisplay.border_radius)
 
                     # Check the mouse clic
                     if self.clic==2:
@@ -197,7 +198,7 @@ class BoardDisplay(Board):
             if card.dcard.clickIn(pos):
                 # Add a larger border when the mouse is over
                 r = pygame.Rect(x, y, self.WIDTHREGION, self.HEIGHTREGION)
-                pygame.draw.rect(self.screen, (255,255,255), r, 7, border_radius=30)
+                pygame.draw.rect(self.screen, (255,255,255), r, 7, border_radius=CardDisplay.border_radius)
 
                 # Check the click
                 if self.clic==2:
