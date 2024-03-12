@@ -47,7 +47,7 @@ class Board:
         self.nbTurns = 0
 
         # Set the width and height of the cards depending of the screen's sizes
-        self.WIDTHSANCTUARY = screenH*0.16
+        self.WIDTHSANCTUARY = screenH*0.2
         self.HEIGHTSANCTUARY = screenH*0.3
 
         self.WIDTHREGION = screenH*0.3
@@ -107,7 +107,7 @@ class Board:
                 
                 # Create the card and add it to the right stack
                 if type == 0:
-                    card = SanctuaryCard(id, tmpColor, quest, tmpStones, eval(line['night']), eval(line['map']))
+                    card = SanctuaryCard(id, tmpColor, quest, tmpStones, eval(line['day']), eval(line['map']))
                     self.sanctuaryCards.append(card)
                 else:
                     card = RegionCard(id, tmpColor, quest, tmpStones, eval(line['day']), eval(line['map']))
