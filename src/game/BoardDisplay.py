@@ -191,7 +191,7 @@ class BoardDisplay(Board):
             else:
                 y = self.screenH - self.HEIGHTREGION*1.5
             
-            x = self.screenW/2 - (nbCardOnRow*(self.WIDTHREGION+self.WIDTHREGION*0.25))/2 + (i%4)*(self.WIDTHREGION+self.WIDTHREGION*0.25)
+            x = self.screenW/2 - (nbCardOnRow*(self.WIDTHREGION+self.WIDTHREGION*0.25))/2*0.95 + (i%4)*(self.WIDTHREGION+self.WIDTHREGION*0.25)
             card.dcard.display(x, y)
 
             # Check the mouse position
@@ -297,7 +297,7 @@ class BoardDisplay(Board):
         textPl = "Actual Player : " + str(self.actualPlayer.id) + turn + " | " + textKeybind
 
         sizePol = self.sizePol//2
-        self.displayText(sizePol, sizePol*12.16, sizePol*0.4, textPl) 
+        self.displayText(sizePol, sizePol*12.4, sizePol*0.6, textPl) 
 
 
 

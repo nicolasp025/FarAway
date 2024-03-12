@@ -14,7 +14,7 @@ class RegionQuestDisplay(QuestDisplay):
     def __init__(self, quest, screen, cardWidth:int, cardHeight:int):
         super().__init__(quest, screen, cardWidth, cardHeight)
         # Setup police
-        self.policeSize = int(self.width*0.15)
+        self.policeSize = int(self.width*0.14)
         self.police = pygame.font.Font(None, self.policeSize)
         size = (self.width*0.17)
         self.pointsSize = (size, size)
@@ -40,7 +40,7 @@ class RegionQuestDisplay(QuestDisplay):
             col = (newr, newg, newb)
 
             # Set the color of the border
-            f2 = 0.9
+            f2 = 0.6
             newr = min(int(r * f2), 255)
             newg = min(int(g * f2), 255)
             newb = min(int(b * f2), 255)
@@ -48,28 +48,21 @@ class RegionQuestDisplay(QuestDisplay):
 
             # Display the rectangle
             self.requireY = y-self.height*0.55
-            self.requireHeight = self.height*0.46
-            if len(l)==1:
-                self.requireX = x-(len(l)+1)*sizeImg
-                self.requireWidth = (len(l)+1)*sizeImg - self.width * 0.03
-                r = pygame.Rect(self.requireX, self.requireY, self.requireWidth, self.requireHeight)
-            else:
-                self.requireX = x-(len(l)+1)*sizeImg + self.width * 0.02
-                self.requireWidth = (len(l)+1)*sizeImg - self.width * 0.055
-                r = pygame.Rect(self.requireX, self.requireY, self.requireWidth, self.requireHeight)
+            self.requireHeight = sizeImg*1.5
+            self.requireX = x-(len(l)+1)*sizeImg + self.width * 0.02
+            self.requireWidth = (len(l)+1)*sizeImg - self.width * 0.055
+            r = pygame.Rect(self.requireX, self.requireY, self.requireWidth, self.requireHeight)
             pygame.draw.rect(self.screen, col, r, border_radius=10)
-            pygame.draw.rect(self.screen, col2, r, 2, border_radius=10)
+            pygame.draw.rect(self.screen, col2, r, 3, border_radius=10)
 
             # Display the stones
-            addOn = -8 if len(l)==1 else 0
+            addOn = -self.width*0.01 if len(l)==1 else 0
             i = 1
             for img_stone in Stones.stonesToImage(l, sizeImg):
-                self.screen.blit(img_stone, (x-sizeImg*i-25+addOn, self.requireY + self.height*0.02))
+                self.screen.blit(img_stone, (x-sizeImg*i-self.width*0.065+addOn, self.requireY + self.height*0.02))
                 i += 1
-
-            self.displayPointsWithRequire(self.requireX, self.requireY, self.requireWidth, self.requireHeight)
-        else:
-            self.displayPointsWithoutRequire(x, y)
+                
+        self.displayPoints(x, y)
         
 
     ## Display the condition of the quest
@@ -111,68 +104,53 @@ class RegionQuestDisplay(QuestDisplay):
     def displayColorCondition(self, x, y):
         i=0
         max = len(self.quest.condition) # The number of color to display
-        imgSize = 40
+        imgSize = self.width*0.1
         colorImages = Colors.colorsToImage(self.quest.condition, imgSize)
 
         # Display the image for all color within the condition 
         for color in colorImages:
             if i==0:
-                self.screen.blit(color, (x-self.width*0.63, y-self.height*0.19))
+                self.screen.blit(color, (x-self.width*0.56, y-self.height*0.21))
             else:
-                self.screen.blit(color, (x-self.width*0.63-(i*imgSize)-20, y-self.height*0.19)) 
+                self.screen.blit(color, (x-self.width*0.56-(i*imgSize)-imgSize*0.5, y-self.height*0.21)) 
             i+=1
             
             # Separate the next image representing a color
             if i != max:
-                tmpPol = pygame.font.Font(None, self.policeSize + 45)
+                tmpPol = pygame.font.Font(None, int(self.policeSize * 1.6))
                 texte_surface = tmpPol.render("/", True, (0,0,0))
                 r = texte_surface.get_rect()
-                r.center = (x-self.width*0.63-i*10, y-self.height*0.13)
+                r.center = (x-self.width*0.49-i*self.width*0.1, y-self.height*0.15)
                 self.screen.blit(texte_surface, r)
     
     def displaySomeColorCondition(self, x, y):
         # Display all colors
         i=0
-        ImgSize = 40
+        ImgSize = self.height*0.1
         colorImages = Colors.colorsToImage(self.quest.condition, ImgSize)
         for color in colorImages:
             if i%2==0:
-                self.screen.blit(color, (x-self.width*0.63-i*22, y-self.height*0.13))
+                self.screen.blit(color, (x-self.width*0.55-i*self.width*0.055, y-self.height*0.15))
             else:
-                self.screen.blit(color, (x-self.width*0.63-(i-1)*22, y-self.height*0.13-43))
+                self.screen.blit(color, (x-self.width*0.55-(i-1)*self.width*0.055, y-self.height*0.15-ImgSize*1.1))
             i+=1
 
     def displayEqual(self, x, y):
         # If there is any condition display the equal
         if self.quest.conditionMode != ConditionModes.NOTHING: 
             text_eg = self.police.render("=", True, (0,0,0))
-            self.screen.blit(text_eg, (x-self.width*0.47, self.pointsCoords[1]+(self.pointsSize[1]/6)))
-    
-    def displayPointsWithRequire(self, x, y, width, height):
-        # Setup the image for the background of the points and display it
-        img_pt = pygame.image.load("./data/img/points.png")
-        img_pt = pygame.transform.scale(img_pt, self.pointsSize)
-        spaceX = (width-self.pointsSize[0])//2
-        spaceY = 0.58*height
-        self.pointsCoords = (x + spaceX, y + spaceY)
-        self.screen.blit(img_pt, self.pointsCoords)
+            self.screen.blit(text_eg, (x-self.width*0.4, self.pointsCoords[1]+(self.pointsSize[1]/6)))
 
-        # Display the points
-        texte_surface = self.police.render(str(self.quest.points), True, (0,0,0))
-        r = texte_surface.get_rect()
-        spaceBetween = 30
-        r.center = (x + spaceX + spaceBetween, y + spaceY + spaceBetween) 
-        self.screen.blit(texte_surface, r)
+    def displayPoints(self, x, y):
+        if (self.quest.points > 0):
+            # Setup the image for the background of the points and display it
+            img_pt = pygame.image.load("./data/img/points.png")
+            img_pt = pygame.transform.scale(img_pt, self.pointsSize)
+            self.pointsCoords = (x-self.width*0.3, y-self.height*0.24)
+            self.screen.blit(img_pt, self.pointsCoords)
 
-    def displayPointsWithoutRequire(self, x, y):
-        # Setup the image for the background of the points and display it
-        img_pt = pygame.image.load("./data/img/points.png")
-        img_pt = pygame.transform.scale(img_pt, self.pointsSize)
-        self.pointsCoords = (x-self.width*0.375, y-self.height*0.22)
-        self.screen.blit(img_pt, self.pointsCoords)
-
-        # Display the points
-        texte_surface = self.police.render(str(self.quest.points), True, (0,0,0))
-        r = texte_surface.get_rect()
-        r.center = (x-self.width*0.29, y-self.height*0.13)
-        self.screen.blit(texte_surface, r)
+            # Display the points
+            texte_surface = self.police.render(str(self.quest.points), True, (0,0,0))
+            r = texte_surface.get_rect()
+            r.center = (x-self.width*0.218, y-self.height*0.15)
+            self.screen.blit(texte_surface, r)
