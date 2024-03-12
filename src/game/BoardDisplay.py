@@ -54,6 +54,8 @@ class BoardDisplay(Board):
 
         self.scores = {}
 
+        self.sizePol = self.screenW//18
+
     ## Override
     def chooseNbPlayers(self) -> None:
         nbJ = ChooseNbPlayer(self.screen, super().MAXIMUMPLAYERS, super().MINIMUMPLAYERS).display(self.nbJoueur, self.clic)
@@ -84,7 +86,7 @@ class BoardDisplay(Board):
     def chooseCardToReveal(self) -> None:
         # Display the text
         textr = "Choose the card you want to reveal :"
-        self.displayText(120, self.screenW/2-750, self.screenH - self.HEIGHTREGION*2.4, textr)
+        self.displayText(self.sizePol, self.screenW/2, self.screenH - self.HEIGHTREGION*2.4, textr)
 
         # Display the actual player and the separator
         self.displayActualPlayer()
@@ -124,7 +126,7 @@ class BoardDisplay(Board):
         if nbToAdd > 0:
             # Display the text
             texts = "Choose the sanctuary card you want :"
-            self.displayText(120, self.screenW/2-780, self.screenH - self.HEIGHTREGION*2.4, texts)
+            self.displayText(self.sizePol, self.screenW/2, self.screenH - self.HEIGHTREGION*2.4, texts)
 
             # Display the actual player and the separator
             self.displayActualPlayer()
@@ -163,7 +165,7 @@ class BoardDisplay(Board):
     def chooseRegionCard(self) -> None:
         # Display the text
         textr = "Choose the region card you want :"
-        self.displayText(120, self.screenW/2-700, self.screenH - self.HEIGHTREGION*2.4, textr)
+        self.displayText(self.sizePol, self.screenW/2, self.screenH - self.HEIGHTREGION*2.4, textr)
 
         # Display the actual player and the separator
         self.displayActualPlayer()
@@ -344,18 +346,18 @@ class BoardDisplay(Board):
     def displayText(self, sizePol:int, x:int, y:int, text:str, colTxt:tuple[int, int, int]=(255,255,255), pol:str=None) -> None:
         police = pygame.font.Font(pol, sizePol)
         texte_surface = police.render(text, True, colTxt)
-        self.screen.blit(texte_surface, (x, y))  
+        self.screen.blit(texte_surface, (x-texte_surface.get_width()/2, y-texte_surface.get_height()/2))  
         
     
     ## Display actual player with a separator
     def displayActualPlayer(self):
         # Display the separator
         textSep = "__________________________"
-        self.displayText(100, self.screenW/2-500, self.screenH - self.HEIGHTREGION*2.4 - 70, textSep)
+        self.displayText(self.sizePol-10, self.screenW/2, self.screenH - self.HEIGHTREGION*2.7, textSep)
 
         # Display the actual player
         textPl = "Actual player : " + str(self.actualPlayer.id)
-        self.displayText(120, self.screenW/2-320, self.screenH - self.HEIGHTREGION*2.4 - 100, textPl)
+        self.displayText(self.sizePol, self.screenW/2, self.screenH - self.HEIGHTREGION*2.8, textPl)
 
     
 
