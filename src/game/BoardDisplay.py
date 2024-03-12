@@ -257,7 +257,7 @@ class BoardDisplay(Board):
 
         # Text region cards
         textr = "Region cards :"
-        self.displayText(sizePol, sizePol*3.2, self.HEIGHTSANCTUARY + self.HEIGHTREGION*0.8, textr) 
+        self.displayText(sizePol, sizePol*2.5, self.HEIGHTSANCTUARY + self.HEIGHTREGION*0.8, textr) 
 
         # Display region cards
         i=0
