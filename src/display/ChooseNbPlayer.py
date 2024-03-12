@@ -49,6 +49,20 @@ class ChooseNbPlayer:
         textT = "Choose the number of players :"
         textVal = "Validate"
 
+        # Display the text
+        textet_surface = polTxt.render(textT, True, col)  
+        self.screen.blit(textet_surface, (midW-495, midH-195))
+
+        # Display the button and the text within
+        coor = (self.screenW*0.44, self.screenH*0.7)
+        textev_surface = polTxt.render(textVal, True, col)  
+        self.screen.blit(textev_surface, coor)
+
+        # Rectangle to create a button for the validation
+        rect = textev_surface.get_rect()
+        rect.topleft = coor
+        pygame.draw.rect(self.screen, col, rect, 2)
+
         # Change the number of players depending of the clic
         nbJ = nbJoueur
         if clic==2:
@@ -65,19 +79,5 @@ class ChooseNbPlayer:
         # Display the number of player
         texte_surface = polNbPl.render(text, True, col)  
         self.screen.blit(texte_surface, (midW-75, midH-35))
-
-        # Display the text
-        textet_surface = polTxt.render(textT, True, col)  
-        self.screen.blit(textet_surface, (midW-495, midH-195))
-
-        # Display the button and the text within
-        coor = (self.screenW*0.44, self.screenH*0.7)
-        textev_surface = polTxt.render(textVal, True, col)  
-        self.screen.blit(textev_surface, coor)
-
-        # Rectangle to create a button for the validation
-        rect = textev_surface.get_rect()
-        rect.topleft = coor
-        pygame.draw.rect(self.screen, col, rect, 2)
 
         return False, nbJ
