@@ -95,7 +95,8 @@ class BoardDisplay(Board):
         i=0
         for card in self.actualPlayer.hand:
             # Display the card
-            x = self.screenW/2 - 630 + i*(self.WIDTHREGION+100)
+            cardAndEc = self.WIDTHREGION + self.WIDTHREGION*0.25
+            x = self.screenW/2 - (1.5*cardAndEc)*0.94 + i*cardAndEc
             y = self.screenH - self.HEIGHTREGION*1.5
             card.dcard.display(x, y)  
 
@@ -248,15 +249,15 @@ class BoardDisplay(Board):
         self.screen.blit(background, (0, 0))
 
         # Size police
-        sizePol = 60
+        sizePol = self.sizePol//2
 
         # Text sanctuary cards
         texts = "Sanctuary cards :"
-        self.displayText(sizePol, 10, 85+self.HEIGHTSANCTUARY/2, texts)
+        self.displayText(sizePol, sizePol*3.2, self.HEIGHTSANCTUARY*0.7, texts)
 
         # Text region cards
         textr = "Region cards :"
-        self.displayText(sizePol, 10, self.HEIGHTSANCTUARY + 105 + self.HEIGHTREGION/2, textr) 
+        self.displayText(sizePol, sizePol*3.2, self.HEIGHTSANCTUARY + self.HEIGHTREGION*0.8, textr) 
 
         # Display region cards
         i=0
@@ -295,7 +296,7 @@ class BoardDisplay(Board):
         textPl = "Actual Player : " + str(self.actualPlayer.id) + turn + " | " + textKeybind
 
         sizePol = self.sizePol//2
-        self.displayText(sizePol, sizePol*12.4, sizePol/2, textPl) 
+        self.displayText(sizePol, sizePol*12.3, sizePol/2, textPl) 
 
 
 
