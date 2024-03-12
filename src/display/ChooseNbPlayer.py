@@ -58,7 +58,7 @@ class ChooseNbPlayer:
 
         # Display the button and the text within
         textev_surface = polTxt.render(textVal, True, col)  
-        coor = (midW-textev_surface.get_width()/2, midH-textev_surface.get_height()/2 + self.screenH*0.3)
+        coor = (midW-textev_surface.get_width()/2, midH-textev_surface.get_height()/2 + self.screenH*0.25)
         self.screen.blit(textev_surface, coor)
 
         # Rectangle to create a button for the validation
