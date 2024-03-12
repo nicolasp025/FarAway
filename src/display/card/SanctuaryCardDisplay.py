@@ -12,6 +12,9 @@ from CardDisplay import CardDisplay
 ## The class which represent the display of the sanctuary card
 class SanctuaryCardDisplay(CardDisplay):
 
+    night_width_coef        = 0.25
+    night_height_coef       = 0.35
+
     def __init__(self, card, screen, width:int, height:int):
         super().__init__(card, screen, width, height)
         self.iconSize = 70
