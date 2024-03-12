@@ -226,9 +226,10 @@ class BoardDisplay(Board):
         textSep = "___________"
 
         # Display texts
-        dec = 700 - 80*len(self.players) # Offset for the display in height (depending of the number of players)
-        self.displayText(200, self.screenW/2-280, dec, textScore)
-        self.displayText(200, self.screenW/2-390, dec+30, textSep)
+        dec = self.screenH*0.5 - self.screenH*0.05*len(self.players) # Offset for the display in height (depending of the number of players)
+        sizePol = int(self.sizePol*1.6)
+        self.displayText(sizePol, self.screenW*0.5, dec, textScore)
+        self.displayText(sizePol, self.screenW*0.5, dec+self.screenH*0.04, textSep)
 
         # Sort the results by points
         self.scores = {key: self.scores[key] for key in sorted(self.scores, key=self.scores.get, reverse=True)}
@@ -237,7 +238,7 @@ class BoardDisplay(Board):
         i=0 
         for pId, res in self.scores.items():
             textPts = "Player " + str(pId) + " : " + str(res) 
-            self.displayText(180, self.screenW/2-330, dec+220 + i*140, textPts)
+            self.displayText(sizePol, self.screenW/2, dec + self.screenH*0.15 + i*self.screenH*0.1, textPts)
             i+=1
 
 
@@ -296,7 +297,7 @@ class BoardDisplay(Board):
         textPl = "Actual Player : " + str(self.actualPlayer.id) + turn + " | " + textKeybind
 
         sizePol = self.sizePol//2
-        self.displayText(sizePol, sizePol*12.3, sizePol/2, textPl) 
+        self.displayText(sizePol, sizePol*12.15, sizePol*0.4, textPl) 
 
 
 
