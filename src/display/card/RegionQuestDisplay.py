@@ -14,14 +14,15 @@ class RegionQuestDisplay(QuestDisplay):
     def __init__(self, quest, screen, cardWidth:int, cardHeight:int):
         super().__init__(quest, screen, cardWidth, cardHeight)
         # Setup police
-        self.policeSize = 50
+        self.policeSize = int(self.width*0.15)
         self.police = pygame.font.Font(None, self.policeSize)
-        self.pointsSize = (60, 60)
+        size = (self.width*0.17)
+        self.pointsSize = (size, size)
 
     ## Display the require of the quest
     def requireDisplay(self, x:int, y:int, color:tuple[int, int, int]) -> None:
         l = []
-        sizeImg = 35
+        sizeImg = self.width*0.12
 
         # Create a list with all the stones required
         for key in self.quest.require:
@@ -46,15 +47,15 @@ class RegionQuestDisplay(QuestDisplay):
             col2 = (newr, newg, newb)
 
             # Display the rectangle
-            self.requireY = y-self.height*0.51
+            self.requireY = y-self.height*0.55
             self.requireHeight = self.height*0.46
             if len(l)==1:
-                self.requireX = x-(len(l)+1)*sizeImg-16
-                self.requireWidth = (len(l)+1)*sizeImg
+                self.requireX = x-(len(l)+1)*sizeImg
+                self.requireWidth = (len(l)+1)*sizeImg - self.width * 0.03
                 r = pygame.Rect(self.requireX, self.requireY, self.requireWidth, self.requireHeight)
             else:
-                self.requireX = x-(len(l)+1)*sizeImg
-                self.requireWidth = (len(l)+1)*sizeImg-15
+                self.requireX = x-(len(l)+1)*sizeImg + self.width * 0.02
+                self.requireWidth = (len(l)+1)*sizeImg - self.width * 0.055
                 r = pygame.Rect(self.requireX, self.requireY, self.requireWidth, self.requireHeight)
             pygame.draw.rect(self.screen, col, r, border_radius=10)
             pygame.draw.rect(self.screen, col2, r, 2, border_radius=10)
@@ -63,7 +64,7 @@ class RegionQuestDisplay(QuestDisplay):
             addOn = -8 if len(l)==1 else 0
             i = 1
             for img_stone in Stones.stonesToImage(l, sizeImg):
-                self.screen.blit(img_stone, (x-sizeImg*i-25+addOn, y-self.height*0.49))
+                self.screen.blit(img_stone, (x-sizeImg*i-25+addOn, self.requireY + self.height*0.02))
                 i += 1
 
             self.displayPointsWithRequire(self.requireX, self.requireY, self.requireWidth, self.requireHeight)

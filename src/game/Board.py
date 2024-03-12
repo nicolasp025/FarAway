@@ -47,11 +47,11 @@ class Board:
         self.nbTurns = 0
 
         # Set the width and height of the cards depending of the screen's sizes
-        self.WIDTHSANCTUARY = screenW*0.10
-        self.HEIGHTSANCTUARY = screenH*0.25
+        self.WIDTHSANCTUARY = screenH*0.16
+        self.HEIGHTSANCTUARY = screenH*0.3
 
-        self.WIDTHREGION = screenH*0.25
-        self.HEIGHTREGION = screenH*0.25
+        self.WIDTHREGION = screenH*0.3
+        self.HEIGHTREGION = screenH*0.3
             
         # Initializing the region cards
         self.regionCards = []
