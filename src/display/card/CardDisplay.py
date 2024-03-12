@@ -32,9 +32,9 @@ class CardDisplay():
         self.banner_width = width
         self.banner_height = 0.11 * height
 
-        if self.card.map:
-            self.map_width = self.width * CardDisplay.map_size_coef
+        if self.card.map: 
             self.map_height = self.height * CardDisplay.map_size_coef
+            self.map_width = self.map_height
         self.stone_size = (width + height)/2 * CardDisplay.stone_size_coef
 
         self.stone_offset = height * CardDisplay.stone_offset_coef
