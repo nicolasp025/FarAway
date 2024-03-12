@@ -13,6 +13,8 @@ class ChooseNbPlayer:
         
     def __init__(self, screen, max:int, min:int):
         self.screen = screen
+        self.screenW = screen.get_width()
+        self.screenH = screen.get_height()
         self.maxJ = max
         self.minJ = min
 
@@ -22,7 +24,7 @@ class ChooseNbPlayer:
     def display(self, nbJoueur:int, clic:tuple[int, int]) -> tuple[bool, int]:
         midW = self.screen.get_width()/2   # screen's middle width
         midH = self.screen.get_height()/2  # screen's middle height
-        ecart = 200                        # the offset between the middle and the triangles
+        ecart = self.screenW*0.1           # the offset between the middle and the triangles
         col = (255,255,255)
 
         # Triangle 1
@@ -36,15 +38,12 @@ class ChooseNbPlayer:
         tr2.draw(self.screen, col)
         
         # Size of polices
-        sizePolNbPl = 400
-        sizePolTxt = 100
+        sizePolNbPl = self.screenW//5
+        sizePolTxt = self.screenW//21
 
         # Polices
         polNbPl = pygame.font.Font(None, sizePolNbPl)
         polTxt = pygame.font.Font(None, sizePolTxt)
-
-        # Rectangle to create a button for the validation
-        rect = pygame.Rect(midW-140, midH+300, 290, 70)
         
         # Texts
         textT = "Choose the number of players :"
@@ -72,8 +71,13 @@ class ChooseNbPlayer:
         self.screen.blit(textet_surface, (midW-495, midH-195))
 
         # Display the button and the text within
-        pygame.draw.rect(self.screen, col, rect, 2)
+        coor = (self.screenW*0.44, self.screenH*0.7)
         textev_surface = polTxt.render(textVal, True, col)  
-        self.screen.blit(textev_surface, (rect.x + 5, rect.y + 5))
+        self.screen.blit(textev_surface, coor)
+
+        # Rectangle to create a button for the validation
+        rect = textev_surface.get_rect()
+        rect.topleft = coor
+        pygame.draw.rect(self.screen, col, rect, 2)
 
         return False, nbJ
