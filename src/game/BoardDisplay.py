@@ -294,7 +294,8 @@ class BoardDisplay(Board):
 
         textPl = "Actual Player : " + str(self.actualPlayer.id) + turn + " | " + textKeybind
 
-        self.displayText(50, 5, 5, textPl) 
+        sizePol = self.sizePol-70
+        self.displayText(sizePol, self.screenW*0.28, sizePol/2, textPl) 
 
 
 
@@ -306,7 +307,8 @@ class BoardDisplay(Board):
 
         # Add a cross in the rectangle
         textCr = "x"
-        self.displayText(60, self.screenW-35, 2, textCr, (0,0,0))
+        sizePol = self.sizePol-60
+        self.displayText(sizePol, self.screenW-sizePol*0.4, sizePol*0.4, textCr, (0,0,0))
 
         # Check the mouse position and clic
         pos = pygame.mouse.get_pos()
