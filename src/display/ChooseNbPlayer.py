@@ -28,12 +28,14 @@ class ChooseNbPlayer:
         col = (255,255,255)
 
         # Triangle 1
-        points_triangle1 = [(midW+ecart, midH), (midW+ecart, midH+180), (midW+180+ecart, midH+90)]
+        dec1 = self.screenH*0.16
+        dec2 = self.screenH*0.08
+        points_triangle1 = [(midW+ecart, midH), (midW+ecart, midH+dec1), (midW+dec1+ecart, midH+dec2)]
         tr1 = Triangle(points_triangle1)
         tr1.draw(self.screen, col)
 
         # Triangle 2
-        points_triangle2 = [(midW-ecart, midH), (midW-ecart, midH+180), (midW-180-ecart, midH+90)]
+        points_triangle2 = [(midW-ecart, midH), (midW-ecart, midH+dec1), (midW-dec1-ecart, midH+dec2)]
         tr2 = Triangle(points_triangle2)
         tr2.draw(self.screen, col)
         
@@ -51,11 +53,12 @@ class ChooseNbPlayer:
 
         # Display the text
         textet_surface = polTxt.render(textT, True, col)  
-        self.screen.blit(textet_surface, (midW-495, midH-195))
+        coor = (midW-textet_surface.get_width()/2, midH-self.screenH*0.12-textet_surface.get_height()/2)
+        self.screen.blit(textet_surface, coor)
 
         # Display the button and the text within
-        coor = (self.screenW*0.44, self.screenH*0.7)
         textev_surface = polTxt.render(textVal, True, col)  
+        coor = (midW-textev_surface.get_width()/2, midH-textev_surface.get_height()/2 + self.screenH*0.3)
         self.screen.blit(textev_surface, coor)
 
         # Rectangle to create a button for the validation
@@ -78,6 +81,7 @@ class ChooseNbPlayer:
 
         # Display the number of player
         texte_surface = polNbPl.render(text, True, col)  
-        self.screen.blit(texte_surface, (midW-75, midH-35))
+        coor = (midW-texte_surface.get_width()/2, midH-texte_surface.get_height()/2+self.screenH*0.08)
+        self.screen.blit(texte_surface, coor)
 
         return False, nbJ
