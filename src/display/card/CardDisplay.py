@@ -15,10 +15,11 @@ from SanctuaryQuestDisplay import SanctuaryQuestDisplay
 ## Class that displays a card
 class CardDisplay():
 
-    border_radius=20
-    banner_Ypos_coef = 0.6
-
-    map_coef = 0.1
+    border_radius       = 20
+    banner_Ypos_coef    = 0.6
+    map_size_coef       = 0.17
+    stone_size_coef     = 0.15
+    stone_offset_coef   = 0.05
 
 
     def __init__(self, card, screen, width, height):
@@ -31,21 +32,20 @@ class CardDisplay():
         self.banner_width = width
         self.banner_height = 0.11 * height
 
-        
+        if self.card.map:
+            self.map_width = self.width * CardDisplay.map_size_coef
+            self.map_height = self.height * CardDisplay.map_size_coef
+        self.stone_size = (width + height)/2 * CardDisplay.stone_size_coef
 
+        self.stone_offset = height * CardDisplay.stone_offset_coef
 
-
-
-    ## Get the coordinates of the map
-    def getMapCoords(self, x:int, y:int) -> tuple[int, int]:
-        return (x+self.width*0.25, y+10)
 
 
     ## Display the map
     def displayMap(self, x:int, y:int) -> None:
         if self.card.map:
             img_map = pygame.image.load("./data/img/map.png")
-            img_map = pygame.transform.scale(img_map, (70, 70))
+            img_map = pygame.transform.scale(img_map, (self.map_width, self.map_height))
             self.screen.blit(img_map, self.getMapCoords(x, y))
 
 
@@ -86,10 +86,10 @@ class CardDisplay():
 
     ## Display the stones of the card
     def displayStones(self, x:int, y:int) -> None:
-        images = Stones.stonesToImage(self.card.stones, 60)
+        images = Stones.stonesToImage(self.card.stones, self.stone_size)
         last_x = 0
         for img in images:
-            self.screen.blit(img, (x+self.width-img.get_width()+last_x-10, y+10))
+            self.screen.blit(img, (x+self.width-img.get_width()+last_x-self.stone_offset, y+self.stone_offset))
             last_x -= img.get_width()
     
 
