@@ -17,6 +17,7 @@ class CardDisplay():
 
     border_radius       = 20
     banner_Ypos_coef    = 0.6
+    banner_height_coef  = 0.11
     map_size_coef       = 0.17
     stone_size_coef     = 0.15
     stone_offset_coef   = 0.05
@@ -30,7 +31,7 @@ class CardDisplay():
         self.rect = None
 
         self.banner_width = width
-        self.banner_height = 0.11 * height
+        self.banner_height = CardDisplay.banner_height_coef * height
 
         if self.card.map: 
             self.map_height = self.height * CardDisplay.map_size_coef
@@ -38,7 +39,6 @@ class CardDisplay():
         self.stone_size = (width + height)/2 * CardDisplay.stone_size_coef
 
         self.stone_offset = height * CardDisplay.stone_offset_coef
-
 
 
     ## Display the map
