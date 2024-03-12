@@ -294,8 +294,8 @@ class BoardDisplay(Board):
 
         textPl = "Actual Player : " + str(self.actualPlayer.id) + turn + " | " + textKeybind
 
-        sizePol = self.sizePol-70
-        self.displayText(sizePol, self.screenW*0.28, sizePol/2, textPl) 
+        sizePol = self.sizePol//2
+        self.displayText(sizePol, sizePol*12.4, sizePol/2, textPl) 
 
 
 
@@ -307,7 +307,7 @@ class BoardDisplay(Board):
 
         # Add a cross in the rectangle
         textCr = "x"
-        sizePol = self.sizePol-60
+        sizePol = self.sizePol//2
         self.displayText(sizePol, self.screenW-sizePol*0.4, sizePol*0.4, textCr, (0,0,0))
 
         # Check the mouse position and clic
