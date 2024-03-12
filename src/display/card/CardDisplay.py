@@ -15,12 +15,23 @@ from SanctuaryQuestDisplay import SanctuaryQuestDisplay
 ## Class that displays a card
 class CardDisplay():
 
+    border_radius=20
+    banner_Ypos_coef = 0.6
+    
+
     def __init__(self, card, screen, width, height):
         self.card = card
         self.screen = screen
         self.width = width
         self.height = height
         self.rect = None
+
+        self.banner_width = width
+        self.banner_height = 0.11 * height
+
+        
+
+
 
 
     ## Get the coordinates of the map
@@ -67,8 +78,8 @@ class CardDisplay():
     ## Display the banner of the card
     def displayBanner(self, x:int, y:int) -> None:
         img = pygame.image.load("./data/img/"+Colors.toStringLower(self.card.color)+"_banner.png")
-        img = pygame.transform.scale(img, (self.width, 35))
-        self.screen.blit(img, (x, y+(self.height/3)*2-15))
+        img = pygame.transform.scale(img, (self.banner_width, self.banner_height))
+        self.screen.blit(img, (x, y + self.height * CardDisplay.banner_Ypos_coef))
 
 
     ## Display the stones of the card
@@ -83,8 +94,8 @@ class CardDisplay():
     ## Display the card
     def display(self, x:int, y:int) -> None:
         (col1, col2), rect1, rect2 = self.backgroundColor(x, y)
-        pygame.draw.rect(self.screen, col1, rect1, border_radius=30) 
-        pygame.draw.rect(self.screen, col2, rect2, border_radius=30) 
+        pygame.draw.rect(self.screen, col1, rect1, border_radius=CardDisplay.border_radius) 
+        pygame.draw.rect(self.screen, col2, rect2, border_radius=CardDisplay.border_radius) 
 
         self.displayStones(x, y)
 
@@ -97,7 +108,7 @@ class CardDisplay():
 
         # Display a border around the card
         r = pygame.Rect(x, y, self.width, self.height)
-        pygame.draw.rect(self.screen, (255,255,255), r, 3, border_radius=30)
+        pygame.draw.rect(self.screen, (255,255,255), r, 3, border_radius=CardDisplay.border_radius)
         
         self.displayMap(x, y)
         
