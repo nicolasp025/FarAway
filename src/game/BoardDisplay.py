@@ -307,11 +307,6 @@ class BoardDisplay(Board):
         rect = pygame.Rect(self.screenW-50, 0, 50, 50)
         pygame.draw.rect(self.screen, (255,0,0), rect)
 
-        # Add a cross in the rectangle
-        textCr = "x"
-        sizePol = self.sizePol//2
-        self.displayText(sizePol, self.screenW-sizePol*0.4, sizePol*0.4, textCr, (0,0,0))
-
         # Check the mouse position and clic
         pos = pygame.mouse.get_pos()
         if rect.collidepoint(pos[0], pos[1]) and self.clic == 1:
