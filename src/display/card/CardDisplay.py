@@ -17,7 +17,9 @@ class CardDisplay():
 
     border_radius=20
     banner_Ypos_coef = 0.6
-    
+
+    map_coef = 0.1
+
 
     def __init__(self, card, screen, width, height):
         self.card = card
@@ -63,13 +65,13 @@ class CardDisplay():
 
         colors = None, None
         if self.card.color == Colors.GREEN:
-            colors =  (144, 238, 144), (34, 139, 34)
+            colors = (144, 238, 144), (34, 139, 34)
         elif self.card.color == Colors.RED:
-            colors =  (255, 100, 70), (100, 0, 0)
+            colors = (255, 100, 70), (100, 0, 0)
         elif self.card.color ==  Colors.BLUE:
-            colors =  (135, 206, 250), (0, 0, 139)
+            colors = (135, 206, 250), (0, 0, 139)
         elif self.card.color == Colors.YELLOW:
-            colors =  (255, 255, 102), (255, 215, 0)
+            colors = (255, 255, 102), (255, 215, 0)
         elif self.card.color == Colors.GRAY:
             colors = (192, 192, 192), (128, 128, 128)
         return colors, rect1, rect2
