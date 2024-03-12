@@ -137,7 +137,7 @@ class BoardDisplay(Board):
             for i in range(nbToAdd):
                 # Display the card
                 card = self.sanctuaryCards[i]
-                x = (i+1)*(self.WIDTHSANCTUARY+20)-70
+                x = self.screenW/2 - (nbToAdd*(self.WIDTHSANCTUARY+self.WIDTHSANCTUARY*0.25))/2 + i*(self.WIDTHSANCTUARY+self.WIDTHSANCTUARY*0.25)
                 y = self.screenH - self.HEIGHTSANCTUARY*1.5
                 card.dcard.display(x, y)
 
@@ -191,7 +191,7 @@ class BoardDisplay(Board):
             else:
                 y = self.screenH - self.HEIGHTREGION*1.5
             
-            x = self.screenW/2 - (nbCardOnRow*(self.WIDTHREGION+30))/2 + (i%4)*(self.WIDTHREGION+30)
+            x = self.screenW/2 - (nbCardOnRow*(self.WIDTHREGION+self.WIDTHREGION*0.25))/2 + (i%4)*(self.WIDTHREGION+self.WIDTHREGION*0.25)
             card.dcard.display(x, y)
 
             # Check the mouse position
@@ -238,7 +238,7 @@ class BoardDisplay(Board):
         i=0 
         for pId, res in self.scores.items():
             textPts = "Player " + str(pId) + " : " + str(res) 
-            self.displayText(sizePol, self.screenW/2, dec + self.screenH*0.15 + i*self.screenH*0.1, textPts)
+            self.displayText(sizePol, self.screenW/2, dec + self.screenH*0.18 + i*self.screenH*0.1, textPts)
             i+=1
 
 
@@ -297,7 +297,7 @@ class BoardDisplay(Board):
         textPl = "Actual Player : " + str(self.actualPlayer.id) + turn + " | " + textKeybind
 
         sizePol = self.sizePol//2
-        self.displayText(sizePol, sizePol*12.15, sizePol*0.4, textPl) 
+        self.displayText(sizePol, sizePol*12.16, sizePol*0.4, textPl) 
 
 
 
