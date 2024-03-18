@@ -29,38 +29,58 @@ class RegionQuestDisplay(QuestDisplay):
             for i in range(self.quest.require.get(key)):
                 l.append(key)
 
+        r, g, b = color
+
+        # Set the color of the rectangle
+        f1 = 1.1
+        newr = min(int(r * f1), 255)
+        newg = min(int(g * f1), 255)
+        newb = min(int(b * f1), 255)
+        col = (newr, newg, newb)
+
+        # Set the color of the border
+        f2 = 0.6
+        newr = min(int(r * f2), 255)
+        newg = min(int(g * f2), 255)
+        newb = min(int(b * f2), 255)
+        col2 = (newr, newg, newb)
+
         if len(l) > 0:
-            r, g, b = color
+            # Display the rectangle for the require
+            requireY = y-self.height*0.55
+            requireHeight = sizeImg*1.5
+            requireX = x-(len(l)+1)*sizeImg + self.width * 0.02
+            requireWidth = (len(l)+1)*sizeImg - self.width * 0.055
+            r1 = pygame.Rect(requireX, requireY, requireWidth, requireHeight)
+            pygame.draw.rect(self.screen, col, r1, border_radius=10)
+            pygame.draw.rect(self.screen, col2, r1, 3, border_radius=10)
 
-            # Set the color of the rectangle
-            f1 = 1.1
-            newr = min(int(r * f1), 255)
-            newg = min(int(g * f1), 255)
-            newb = min(int(b * f1), 255)
-            col = (newr, newg, newb)
-
-            # Set the color of the border
-            f2 = 0.6
-            newr = min(int(r * f2), 255)
-            newg = min(int(g * f2), 255)
-            newb = min(int(b * f2), 255)
-            col2 = (newr, newg, newb)
-
-            # Display the rectangle
-            self.requireY = y-self.height*0.55
-            self.requireHeight = sizeImg*1.5
-            self.requireX = x-(len(l)+1)*sizeImg + self.width * 0.02
-            self.requireWidth = (len(l)+1)*sizeImg - self.width * 0.055
-            r = pygame.Rect(self.requireX, self.requireY, self.requireWidth, self.requireHeight)
-            pygame.draw.rect(self.screen, col, r, border_radius=10)
-            pygame.draw.rect(self.screen, col2, r, 3, border_radius=10)
 
             # Display the stones
             addOn = -self.width*0.01 if len(l)==1 else 0
             i = 1
             for img_stone in Stones.stonesToImage(l, sizeImg):
-                self.screen.blit(img_stone, (x-sizeImg*i-self.width*0.065+addOn, self.requireY + self.height*0.02))
+                self.screen.blit(img_stone, (x-sizeImg*i-self.width*0.065+addOn, requireY + self.height*0.02))
                 i += 1
+
+        if self.quest.points != 0:
+            # Display the rectangle for the quest
+            rY = y-self.height*0.275
+            rHeight = self.height*0.25
+            rX = 0 
+            rWidth = 0
+            if self.quest.conditionMode == ConditionModes.NOTHING:
+                rWidth = self.width*0.27
+                rX = x - self.width*0.35
+            elif self.quest.conditionMode == ConditionModes.SOMECOLOR or self.quest.conditionMode == ConditionModes.COLOR:
+                rX = x-self.width*0.77
+                rWidth = self.width*0.72
+            else:
+                rX = x-self.width*0.67
+                rWidth = self.width*0.62
+            r2 = pygame.Rect(rX, rY, rWidth, rHeight)
+            pygame.draw.rect(self.screen, col, r2, border_radius=50)
+            pygame.draw.rect(self.screen, col2, r2, 3, border_radius=50)
                 
         self.displayPoints(x, y)
         
@@ -86,20 +106,23 @@ class RegionQuestDisplay(QuestDisplay):
     
     def displayNightCondition(self, x, y):
         # Load and display the night image
-        img_day = pygame.image.load("./data/img/night.png")
-        img_day = pygame.transform.scale(img_day, (60, 60))
-        self.screen.blit(img_day, (x-self.width*0.67, y-self.height*0.22))
+        img_night = pygame.image.load("./data/img/night.png")
+        sizeNight = self.width*0.15
+        img_night = pygame.transform.scale(img_night, (sizeNight, sizeNight))
+        self.screen.blit(img_night, (x-self.width*0.59, y-self.height*0.23))
 
     def displayMapCondition(self, x, y):
         # Load and display the map image
         img_map = pygame.image.load("./data/img/map.png")
-        img_map = pygame.transform.scale(img_map, (60, 60))
-        self.screen.blit(img_map, (x-self.width*0.67, y-self.height*0.22))
+        sizeMap = self.width*0.15
+        img_map = pygame.transform.scale(img_map, (sizeMap, sizeMap))
+        self.screen.blit(img_map, (x-self.width*0.59, y-self.height*0.23))
     
     def displayStoneCondition(self, x, y):
         # Load and display the image of the stone within the condition
-        stoneImages = Stones.stonesToImage(self.quest.condition, 50)
-        self.screen.blit(stoneImages[0], (x-self.width*0.65, y-self.height*0.2))
+        sizeStone = self.width*0.13
+        stoneImages = Stones.stonesToImage(self.quest.condition, sizeStone)
+        self.screen.blit(stoneImages[0], (x-self.width*0.58, y-self.height*0.22))
 
     def displayColorCondition(self, x, y):
         i=0
@@ -132,7 +155,7 @@ class RegionQuestDisplay(QuestDisplay):
             if i%2==0:
                 self.screen.blit(color, (x-self.width*0.55-i*self.width*0.055, y-self.height*0.15))
             else:
-                self.screen.blit(color, (x-self.width*0.55-(i-1)*self.width*0.055, y-self.height*0.15-ImgSize*1.1))
+                self.screen.blit(color, (x-self.width*0.55-(i-1)*self.width*0.055, y-self.height*0.15-ImgSize*1.09))
             i+=1
 
     def displayEqual(self, x, y):
