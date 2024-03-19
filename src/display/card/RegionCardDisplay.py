@@ -35,7 +35,7 @@ class RegionCardDisplay(CardDisplay):
             
         if self.card.day:
             self.id_posX_coef *= 1.1
-        self.id_posY_coef = 0.38
+        self.id_posY_coef = 0.39
         self.id_posX = self.day_width * self.id_posX_coef
         self.id_posY = self.day_height * self.id_posY_coef
 

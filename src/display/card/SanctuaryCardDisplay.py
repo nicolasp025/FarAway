@@ -15,15 +15,24 @@ class SanctuaryCardDisplay(CardDisplay):
     night_width_coef        = 0.33
     night_height_coef       = 0.21
     night_pos_coef          = 0.015
+    map_night_posX_coef     = 0.35
+    map_day_posX_coef       = 0.06
+    map_posY_coef           = 0.04
+
 
     def __init__(self, card, screen, width:int, height:int):
         super().__init__(card, screen, width, height)
-        self.iconSize = 70
 
         self.night_width = width * SanctuaryCardDisplay.night_width_coef
         self.night_height = height * SanctuaryCardDisplay.night_height_coef
         self.night_posX = width * SanctuaryCardDisplay.night_pos_coef
         self.night_posY = height * SanctuaryCardDisplay.night_pos_coef
+
+        if not self.card.day:
+            self.map_posX = SanctuaryCardDisplay.map_night_posX_coef * width
+        else :
+            self.map_posX = SanctuaryCardDisplay.map_day_posX_coef * width
+        self.map_posY = SanctuaryCardDisplay.map_posY_coef * height
 
 
     ## Display the night icon
@@ -35,9 +44,7 @@ class SanctuaryCardDisplay(CardDisplay):
 
     ## Get the coordinate of the map image
     def getMapCoords(self, x:int, y:int) -> tuple[int, int]:
-        if not self.card.day:
-            return (x+self.iconSize+10, y+5)
-        return (x+10, y+5)
+        return (x+self.map_posX, y+self.map_posY)
 
 
     ## Display the sanctuary card

@@ -15,7 +15,7 @@ from SanctuaryQuestDisplay import SanctuaryQuestDisplay
 ## Class that displays a card
 class CardDisplay():
 
-    border_radius       = 20
+    border_radius       = -1
     banner_Ypos_coef    = 0.6
     banner_height_coef  = 0.11
     map_size_coef       = 0.17
@@ -36,9 +36,12 @@ class CardDisplay():
         if self.card.map: 
             self.map_height = self.height * CardDisplay.map_size_coef
             self.map_width = self.map_height
+            
         self.stone_size = (width + height)/2 * CardDisplay.stone_size_coef
-
         self.stone_offset = height * CardDisplay.stone_offset_coef
+
+        if CardDisplay.border_radius == -1:
+            CardDisplay.border_radius = int(0.04 * (width + height))
 
 
     ## Display the map
