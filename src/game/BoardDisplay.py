@@ -254,11 +254,11 @@ class BoardDisplay(Board):
 
         # Text sanctuary cards
         texts = "Sanctuary cards :"
-        self.displayText(sizePol, sizePol*3.2, self.HEIGHTSANCTUARY*0.7, texts)
+        rect_sanc = self.displayText(sizePol, sizePol*3.2, self.HEIGHTSANCTUARY*0.7, texts)
 
         # Text region cards
         textr = "Region cards :"
-        self.displayText(sizePol, sizePol*2.5, self.HEIGHTSANCTUARY + self.HEIGHTREGION*0.8, textr) 
+        rect_reg = self.displayText(sizePol, sizePol*2.5, self.HEIGHTSANCTUARY + self.HEIGHTREGION*0.8, textr) 
 
         # Display region cards
         i=0
@@ -269,7 +269,7 @@ class BoardDisplay(Board):
                 y = self.HEIGHTSANCTUARY*1.2 + self.HEIGHTREGION
             else :
                 y = self.HEIGHTSANCTUARY*1.1
-            x = (i%4)*(self.WIDTHREGION*1.1) + (self.WIDTHREGION*0.7)
+            x = (i%4)*(self.WIDTHREGION*1.1) + rect_reg.width*1.05
             card.dcard.display(x, y)
             i+=1
 
@@ -342,11 +342,12 @@ class BoardDisplay(Board):
         self.state = State.END
 
 
-    ## Display the text at the given coordonate
-    def displayText(self, sizePol:int, x:int, y:int, text:str, colTxt:tuple[int, int, int]=(255,255,255), pol:str=None) -> None:
+    ## Display the text at the given coordonate and return the rectangle where the text is 
+    def displayText(self, sizePol:int, x:int, y:int, text:str, colTxt:tuple[int, int, int]=(255,255,255), pol:str=None) -> pygame.Rect:
         police = pygame.font.Font(pol, sizePol)
         texte_surface = police.render(text, True, colTxt)
         self.screen.blit(texte_surface, (x-texte_surface.get_width()/2, y-texte_surface.get_height()/2))  
+        return texte_surface.get_rect()
         
     
     ## Display actual player with a separator
