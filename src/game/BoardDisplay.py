@@ -266,10 +266,10 @@ class BoardDisplay(Board):
             y = 0
             # Display the cards in 2 different rows
             if i > 3:
-                y = 140 + self.HEIGHTSANCTUARY + self.HEIGHTREGION
+                y = self.HEIGHTSANCTUARY*1.2 + self.HEIGHTREGION
             else :
-                y = self.HEIGHTSANCTUARY + 110
-            x = (i%4)*(self.WIDTHREGION+30) + (self.WIDTHREGION*0.95)
+                y = self.HEIGHTSANCTUARY*1.1
+            x = (i%4)*(self.WIDTHREGION*1.1) + (self.WIDTHREGION*0.7)
             card.dcard.display(x, y)
             i+=1
 
@@ -277,8 +277,8 @@ class BoardDisplay(Board):
         i=0
         l = len(self.actualPlayer.sanctuaryCards)
         for card in self.actualPlayer.sanctuaryCards:
-            y = 70 
-            x = self.screenW/2 - (l*(self.WIDTHSANCTUARY+30))/2 + i*(self.WIDTHSANCTUARY+30)
+            y = self.HEIGHTSANCTUARY*0.05
+            x = self.screenW/2 - (l*(self.WIDTHSANCTUARY*1.1))/2 + i*(self.WIDTHSANCTUARY*1.1)
             card.dcard.display(x, y)
             i+=1
         
