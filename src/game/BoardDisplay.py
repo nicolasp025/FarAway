@@ -183,10 +183,10 @@ class BoardDisplay(Board):
             if lgth > 4:
                 y = 0
                 if i < 4:
-                    y = self.screenH - self.HEIGHTREGION*2.14
+                    y = self.screenH - self.HEIGHTREGION*2.25
                     nbCardOnRow = 4
                 else:
-                    y = self.screenH - self.HEIGHTREGION*1.07
+                    y = self.screenH - self.HEIGHTREGION*1.2
                     nbCardOnRow = lgth - 4
             else:
                 y = self.screenH - self.HEIGHTREGION*1.5
@@ -227,7 +227,7 @@ class BoardDisplay(Board):
 
         # Display texts
         dec = self.screenH*0.5 - self.screenH*0.05*len(self.players) # Offset for the display in height (depending of the number of players)
-        sizePol = int(self.sizePol*1.6)
+        sizePol = int(self.sizePol*1.2)
         self.displayText(sizePol, self.screenW*0.5, dec, textScore)
         self.displayText(sizePol, self.screenW*0.5, dec+self.screenH*0.04, textSep)
 
@@ -238,7 +238,7 @@ class BoardDisplay(Board):
         i=0 
         for pId, res in self.scores.items():
             textPts = "Player " + str(pId) + " : " + str(res) 
-            self.displayText(sizePol, self.screenW/2, dec + self.screenH*0.18 + i*self.screenH*0.1, textPts)
+            self.displayText(sizePol, self.screenW/2, dec + self.screenH*0.18 + i*self.screenH*0.08, textPts)
             i+=1
 
 
@@ -297,7 +297,7 @@ class BoardDisplay(Board):
         textPl = "Actual Player : " + str(self.actualPlayer.id) + turn + " | " + textKeybind
 
         sizePol = self.sizePol//2
-        self.displayText(sizePol, sizePol*12.4, sizePol*0.6, textPl) 
+        self.displayText(sizePol, sizePol*12.4, self.screenH - sizePol*0.4, textPl) 
 
 
 
@@ -353,13 +353,29 @@ class BoardDisplay(Board):
     def displayActualPlayer(self):
         # Display the separator
         textSep = "__________________________"
-        self.displayText(self.sizePol-10, self.screenW/2, self.screenH - self.HEIGHTREGION*2.7, textSep)
+        self.displayText(self.sizePol-10, self.screenW/2, self.screenH - self.HEIGHTREGION*2.6, textSep)
 
         # Display the actual player
         textPl = "Actual player : " + str(self.actualPlayer.id)
-        self.displayText(self.sizePol, self.screenW/2, self.screenH - self.HEIGHTREGION*2.8, textPl)
+        self.displayText(self.sizePol, self.screenW/2, self.screenH - self.HEIGHTREGION*2.64, textPl)
 
-    
+
+    ## Display the stack of the regions cards and the sanctuary cards
+    def displayStacks(self) -> None:
+        coef_dec_card = 0.001
+        x_stack_reg = self.screenW*0.26
+        x_stack_sanc = self.screenW*0.55
+        mid = 0.5
+        gray = (200,200,200)
+        white = (255,255,255)
+        for i in range(len(self.regionCards)):
+            r_reg = pygame.Rect(x_stack_reg + i*self.WIDTHREGION*coef_dec_card, -self.HEIGHTREGION*mid - i*self.HEIGHTREGION*coef_dec_card, self.WIDTHREGION, self.HEIGHTREGION)
+            pygame.draw.rect(self.screen, gray, r_reg, border_radius=CardDisplay.border_radius)
+            pygame.draw.rect(self.screen, white, r_reg, 1, border_radius=CardDisplay.border_radius)
+        for i in range(len(self.sanctuaryCards)):
+            r_sanc = pygame.Rect(x_stack_sanc + i*self.WIDTHREGION*coef_dec_card, -self.HEIGHTSANCTUARY*mid - i*self.HEIGHTREGION*coef_dec_card, self.WIDTHSANCTUARY, self.HEIGHTSANCTUARY)
+            pygame.draw.rect(self.screen, gray, r_sanc, border_radius=CardDisplay.border_radius)
+            pygame.draw.rect(self.screen, white, r_sanc, 1, border_radius=CardDisplay.border_radius)
 
     ## Play the game
     def play(self) -> None:
@@ -385,6 +401,10 @@ class BoardDisplay(Board):
 
             # Check is exit is pressed
             self.forceExit()
+
+            if self.state != State.START and self.state != State.END:
+                # Display the stacks
+                self.displayStacks()
 
             # Check if the key bind is pressed and it is not the start
             if pygame.key.get_pressed()[pygame.K_s] and self.state != State.START:
