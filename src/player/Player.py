@@ -19,6 +19,7 @@ class Player:
         self.revealedCards = []
         self.sanctuaryCards = []
         self.id = id
+        self.pseudo = ""
     
     
     def addCardToHand(self, x):
@@ -37,7 +38,8 @@ class Player:
             return
         self.sanctuaryCards.append(x)
 
-
+    def addPseudo(self, pseudo:str) -> None:
+        self.pseudo = pseudo
     
     def revealCard(self, index): #The index choosed cannot be 0 (starting at 1)
         if index <= 0 or index > len(self.hand):

@@ -1,6 +1,7 @@
 import sys
 import json
 import pygame
+import pygame_textinput
 from random import shuffle
 import time
 
@@ -57,6 +58,8 @@ class BoardDisplay(Board):
 
         self.sizePol = self.screenW//18
 
+        self.pseudo = ""
+
     ## Override
     def chooseNbPlayers(self) -> None:
         nbJ = ChooseNbPlayer(self.screen, super().MAXIMUMPLAYERS, super().MINIMUMPLAYERS).display(self.nbJoueur, self.clic)
@@ -68,7 +71,30 @@ class BoardDisplay(Board):
                     card = self.regionCards.pop(0)
                     self.players[i-1].addCardToHand(card)
             self.actualPlayer = self.players[self.cpt]
-            self.state = State.REVEAL
+            self.state = State.PSEUDO
+
+    ## Choose the pseudo of the player
+    def enterPseudo(self) -> str:
+        police = pygame.font.Font(None, self.sizePol)
+        texte_saisie = police.render("Player "+str(self.actualPlayer.id)+", Choose your pseudo : " + self.pseudo, True, (255,255,255))
+        rect_texte = texte_saisie.get_rect()
+        rect_texte.center = (self.screenW // 2, self.screenH // 2)
+        self.screen.blit(texte_saisie, rect_texte)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    if (self.pseudo != ""):
+                        self.actualPlayer.addPseudo(self.pseudo)
+                        self.pseudo = ""
+                        self.next(State.REVEAL)
+                elif event.key == pygame.K_BACKSPACE:
+                    self.pseudo = self.pseudo[:-1]
+                else:
+                    self.pseudo += event.unicode
+
 
     ## Change the actual player and, if it has to, to the next state
     def next(self, state) -> bool:
@@ -294,7 +320,7 @@ class BoardDisplay(Board):
 
         textKeybind = "Press 's' to show your revealed cards"
 
-        textPl = "Actual Player : " + str(self.actualPlayer.id) + turn + " | " + textKeybind
+        textPl = "Actual Player : " + str(self.actualPlayer.pseudo) + turn + " | " + textKeybind
 
         sizePol = self.sizePol//2
         self.displayText(sizePol, sizePol*12.4, self.screenH - sizePol*0.4, textPl) 
@@ -309,7 +335,7 @@ class BoardDisplay(Board):
 
         # Check the mouse position and clic
         pos = pygame.mouse.get_pos()
-        if rect.collidepoint(pos[0], pos[1]) and self.clic == 1:
+        if rect.collidepoint(pos[0], pos[1]) and self.clic == 2:
             self.running = False
 
 
@@ -319,6 +345,8 @@ class BoardDisplay(Board):
             self.state = State.END
         if self.state == State.START:
             self.chooseNbPlayers()
+        elif self.state == State.PSEUDO:
+            self.enterPseudo()
         elif self.state == State.REVEAL:
             self.chooseCardToReveal()
         elif self.state == State.SANCTUARY:
@@ -357,7 +385,7 @@ class BoardDisplay(Board):
         self.displayText(self.sizePol-10, self.screenW/2, self.screenH - self.HEIGHTREGION*2.6, textSep)
 
         # Display the actual player
-        textPl = "Actual player : " + str(self.actualPlayer.id)
+        textPl = "Actual player : " + str(self.actualPlayer.pseudo)
         self.displayText(self.sizePol, self.screenW/2, self.screenH - self.HEIGHTREGION*2.64, textPl)
 
 
@@ -403,19 +431,19 @@ class BoardDisplay(Board):
             # Check is exit is pressed
             self.forceExit()
 
-            if self.state != State.START and self.state != State.END:
+            if self.state != State.START and self.state != State.END and self.state != State.PSEUDO:
                 # Display the stacks
                 self.displayStacks()
 
             # Check if the key bind is pressed and it is not the start
-            if pygame.key.get_pressed()[pygame.K_s] and self.state != State.START:
+            if pygame.key.get_pressed()[pygame.K_s] and self.state != State.START and self.state != State.PSEUDO:
                 self.displayRevealedCard()
             else:
                 # Execute the right function corresponding to the state
                 self.execute()
 
             # Display some informations if it is not the start
-            if self.state != State.START:
+            if self.state != State.START and self.state != State.PSEUDO:
                 self.infoPlayers()
             
             # Check is the left clic is up (This permits to only detect a clic when it is up after being down)
