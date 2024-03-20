@@ -11,18 +11,56 @@ from QuestDisplay import QuestDisplay
 ## The class to represent the display of a region quest card
 class RegionQuestDisplay(QuestDisplay):
 
-    def __init__(self, quest, screen, cardWidth:int, cardHeight:int):
-        super().__init__(quest, screen, cardWidth, cardHeight)
+    font_size_coef                  = 0.14
+    imgPoints_size_coef             = 0.17
+
+    require_imgSize_coef            = 0.12
+    require_color1_coef             = 1.1
+    require_color2_coef             = 0.6
+    require_posY_coef               = 0.55
+    require_posX_coef               = 0.02
+    require_width_coef              = 0.055
+    require_borderRadius_coef       = 0.06
+    require_stone_posX_coef         = 0.065
+    require_stone_posY_coef         = 0.02
+
+    quest_background_posY_coef      = 0.275
+    quest_background_height_coef    = 0.25
+    quest_background_posX_coef      = 0.67
+    quest_background_width_coef     = 0.62
+
+    nothing_background_width_coef   = 0.27
+    nothing_background_posX_coef    = 0.35
+
+    color_background_posX_coef      = 0.77
+    color_background_width_coef     = 0.72
+
+    night_size_coef                 = 0.15
+    night_posX_coef                 = 0.59
+    night_posY_coef                 = 0.23
+    
+    map_size_coef                   = 0.15
+    map_posX_coef                   = 0.59
+    map_posY_coef                   = 0.23
+
+    stone_size_coef                 = 0.13
+    stone_posX_coef                 = 0.58
+    stone_posY_coef                 = 0.22
+
+    color_size_coef                 = 0.1
+
+    def __init__(self, quest, screen, width:int, height:int):
+        super().__init__(quest, screen, width, height)
         # Setup police
-        self.policeSize = int(self.width*0.14)
+        self.policeSize = int(self.width*RegionQuestDisplay.font_size_coef)
         self.police = pygame.font.Font(None, self.policeSize)
-        size = (self.width*0.17)
-        self.pointsSize = (size, size)
+        tmpSize = width*RegionQuestDisplay.imgPoints_size_coef
+        self.pointsSize = (tmpSize, tmpSize)
 
     ## Display the require of the quest
     def requireDisplay(self, x:int, y:int, color:tuple[int, int, int]) -> None:
         l = []
-        sizeImg = self.width*0.12
+        sizeImg = self.width*RegionQuestDisplay.require_imgSize_coef
 
         # Create a list with all the stones required
         for key in self.quest.require:
@@ -32,52 +70,52 @@ class RegionQuestDisplay(QuestDisplay):
         r, g, b = color
 
         # Set the color of the rectangle
-        f1 = 1.1
-        newr = min(int(r * f1), 255)
-        newg = min(int(g * f1), 255)
-        newb = min(int(b * f1), 255)
+        newr = min(int(r * RegionQuestDisplay.require_color1_coef), 255)
+        newg = min(int(g * RegionQuestDisplay.require_color1_coef), 255)
+        newb = min(int(b * RegionQuestDisplay.require_color1_coef), 255)
         col = (newr, newg, newb)
 
         # Set the color of the border
-        f2 = 0.6
-        newr = min(int(r * f2), 255)
-        newg = min(int(g * f2), 255)
-        newb = min(int(b * f2), 255)
+        newr = min(int(r * RegionQuestDisplay.require_color2_coef), 255)
+        newg = min(int(g * RegionQuestDisplay.require_color2_coef), 255)
+        newb = min(int(b * RegionQuestDisplay.require_color2_coef), 255)
         col2 = (newr, newg, newb)
 
         if len(l) > 0:
             # Display the rectangle for the require
-            requireY = y-self.height*0.55
+            requireY = y-self.height*RegionQuestDisplay.require_posY_coef
             requireHeight = sizeImg*1.5
-            requireX = x-(len(l)+1)*sizeImg + self.width * 0.02
-            requireWidth = (len(l)+1)*sizeImg - self.width * 0.055
+            requireX = x-(len(l)+1)*sizeImg + self.width * RegionQuestDisplay.require_posX_coef
+            requireWidth = (len(l)+1)*sizeImg - self.width * RegionQuestDisplay.require_width_coef
             r1 = pygame.Rect(requireX, requireY, requireWidth, requireHeight)
-            pygame.draw.rect(self.screen, col, r1, border_radius=10)
-            pygame.draw.rect(self.screen, col2, r1, 3, border_radius=10)
 
+            tmpRadius = int(RegionQuestDisplay.require_borderRadius_coef * (requireHeight + requireWidth))
+            pygame.draw.rect(self.screen, col, r1, border_radius=tmpRadius)
+            pygame.draw.rect(self.screen, col2, r1, 3, border_radius=tmpRadius)
 
             # Display the stones
             addOn = -self.width*0.01 if len(l)==1 else 0
             i = 1
             for img_stone in Stones.stonesToImage(l, sizeImg):
-                self.screen.blit(img_stone, (x-sizeImg*i-self.width*0.065+addOn, requireY + self.height*0.02))
+                tmpX = x-sizeImg*i-self.width*RegionQuestDisplay.require_stone_posX_coef+addOn
+                tmpY = requireY + self.height*RegionQuestDisplay.require_stone_posY_coef
+                self.screen.blit(img_stone, (tmpX, tmpY))
                 i += 1
 
         if self.quest.points != 0:
-            # Display the rectangle for the quest
-            rY = y-self.height*0.275
-            rHeight = self.height*0.25
-            rX = 0 
-            rWidth = 0
+            # Display the background of the quest
+            rY = y-self.height*RegionQuestDisplay.quest_background_posY_coef
+            rHeight = self.height*RegionQuestDisplay.quest_background_height_coef
             if self.quest.conditionMode == ConditionModes.NOTHING:
-                rWidth = self.width*0.27
-                rX = x - self.width*0.35
+                rWidth = self.width*RegionQuestDisplay.nothing_background_width_coef
+                rX = x - self.width*RegionQuestDisplay.nothing_background_posX_coef
             elif self.quest.conditionMode == ConditionModes.SOMECOLOR or self.quest.conditionMode == ConditionModes.COLOR:
-                rX = x-self.width*0.77
-                rWidth = self.width*0.72
+                rX = x-self.width*RegionQuestDisplay.color_background_posX_coef
+                rWidth = self.width*RegionQuestDisplay.color_background_width_coef
             else:
-                rX = x-self.width*0.67
-                rWidth = self.width*0.62
+                rX = x-self.width*RegionQuestDisplay.quest_background_posX_coef
+                rWidth = self.width*RegionQuestDisplay.quest_background_width_coef
+
             r2 = pygame.Rect(rX, rY, rWidth, rHeight)
             pygame.draw.rect(self.screen, col, r2, border_radius=50)
             pygame.draw.rect(self.screen, col2, r2, 3, border_radius=50)
@@ -107,27 +145,33 @@ class RegionQuestDisplay(QuestDisplay):
     def displayNightCondition(self, x, y):
         # Load and display the night image
         img_night = pygame.image.load("./data/img/night.png")
-        sizeNight = self.width*0.15
-        img_night = pygame.transform.scale(img_night, (sizeNight, sizeNight))
-        self.screen.blit(img_night, (x-self.width*0.59, y-self.height*0.23))
+        nightSize = self.width * RegionQuestDisplay.night_size_coef
+        img_night = pygame.transform.scale(img_night, (nightSize, nightSize))
+        tmpX = x - self.width * RegionQuestDisplay.night_posX_coef
+        tmpY = y - self.height * RegionQuestDisplay.night_posY_coef
+        self.screen.blit(img_night, (tmpX, tmpY))
 
     def displayMapCondition(self, x, y):
         # Load and display the map image
         img_map = pygame.image.load("./data/img/map.png")
-        sizeMap = self.width*0.15
+        sizeMap = self.width*RegionQuestDisplay.map_size_coef
         img_map = pygame.transform.scale(img_map, (sizeMap, sizeMap))
-        self.screen.blit(img_map, (x-self.width*0.59, y-self.height*0.23))
+        tmpX = x - self.width * RegionQuestDisplay.map_posX_coef
+        tmpY = y - self.height * RegionQuestDisplay.map_posY_coef
+        self.screen.blit(img_map, (tmpX, tmpY))
     
     def displayStoneCondition(self, x, y):
         # Load and display the image of the stone within the condition
-        sizeStone = self.width*0.13
+        sizeStone = self.width * RegionQuestDisplay.stone_size_coef
         stoneImages = Stones.stonesToImage(self.quest.condition, sizeStone)
-        self.screen.blit(stoneImages[0], (x-self.width*0.58, y-self.height*0.22))
+        tmpX = x - self.width * RegionQuestDisplay.stone_posX_coef
+        tmpY = y - self.height * RegionQuestDisplay.stone_posY_coef
+        self.screen.blit(stoneImages[0], (tmpX, tmpY))
 
     def displayColorCondition(self, x, y):
         i=0
         max = len(self.quest.condition) # The number of color to display
-        imgSize = self.width*0.1
+        imgSize = self.width * RegionQuestDisplay.color_size_coef
         colorImages = Colors.colorsToImage(self.quest.condition, imgSize)
 
         # Display the image for all color within the condition 
