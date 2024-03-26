@@ -4,6 +4,7 @@ import pygame
 import pygame_textinput
 from random import shuffle
 import time
+import math
 
 sys.path.append("./src/player/")
 sys.path.append("./src/card/")
@@ -29,6 +30,9 @@ from ChooseNbPlayer import ChooseNbPlayer
 ## The class which represents the display of the game
 class BoardDisplay(Board):
     
+    MAXPSEUDO = 16
+    SPEED = 25
+
     def __init__(self):
         pygame.init()
 
@@ -60,6 +64,10 @@ class BoardDisplay(Board):
 
         self.pseudo = ""
 
+        self.animation = True
+        self.x_anim = []
+        self.y_anim = []
+
     ## Override
     def chooseNbPlayers(self) -> None:
         nbJ = ChooseNbPlayer(self.screen, super().MAXIMUMPLAYERS, super().MINIMUMPLAYERS).display(self.nbJoueur, self.clic)
@@ -70,6 +78,8 @@ class BoardDisplay(Board):
                 for j in range(3):
                     card = self.regionCards.pop(0)
                     self.players[i-1].addCardToHand(card)
+                    self.x_anim = [self.screenW*0.26 for i in range(self.nbJoueur+1)]
+                    self.y_anim = [-self.HEIGHTREGION*0.5 for i in range(self.nbJoueur+1)]
             self.actualPlayer = self.players[self.cpt]
             self.state = State.PSEUDO
 
@@ -80,6 +90,8 @@ class BoardDisplay(Board):
         rect_texte = texte_saisie.get_rect()
         rect_texte.center = (self.screenW // 2, self.screenH // 2)
         self.screen.blit(texte_saisie, rect_texte)
+        
+        ## Get the key pressed
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -93,7 +105,9 @@ class BoardDisplay(Board):
                 elif event.key == pygame.K_BACKSPACE:
                     self.pseudo = self.pseudo[:-1]
                 else:
-                    self.pseudo += event.unicode
+                    if len(self.pseudo) < self.MAXPSEUDO:
+                        if event.unicode.isalpha() or event.unicode.isdigit():
+                            self.pseudo += event.unicode
 
 
     ## Change the actual player and, if it has to, to the next state
@@ -150,7 +164,7 @@ class BoardDisplay(Board):
     ## Override
     def chooseSanctuaryCard(self) -> None:
         nbToAdd = self.actualPlayer.sanctuaryCardToAdd() # Number of sanctuary cards to choose between
-    
+
         if nbToAdd > 0:
             # Display the text
             texts = "Choose the sanctuary card you want :"
@@ -189,6 +203,52 @@ class BoardDisplay(Board):
             self.next(State.REGION) 
 
 
+    ## Animation for region cards
+    def animateRegionCard(self, lgth:int) -> None:
+        pos_init = [(self.x_anim[i], self.y_anim[i]) for i in range(lgth)]
+        pos_final = [self.calculateCoordinate(i, lgth) for i in range(lgth)]
+
+        dist_max = [math.sqrt((x1 - x2)**2 + (y1 - y2)**2) for (x1, y1), (x2, y2) in zip(pos_init, pos_final)]
+
+        tmp_max = max(dist_max) / self.SPEED
+
+        speed_x = [(x2 - x1) / tmp_max for (x1, _), (x2, _) in zip(pos_init, pos_final)]
+        speed_y = [(y2 - y1) / tmp_max for (_, y1), (_, y2) in zip(pos_init, pos_final)]
+
+        gray = (200,200,200)
+        white = (255,255,255)
+        rectangle = [pygame.Rect(x, y, self.WIDTHREGION, self.HEIGHTREGION) for x, y in pos_init]
+        for rect in rectangle:
+            pygame.draw.rect(self.screen, gray, rect, border_radius=CardDisplay.border_radius)
+            pygame.draw.rect(self.screen, white, rect, 1, border_radius=CardDisplay.border_radius)
+           
+        for i in range(lgth):
+            self.x_anim[i] += speed_x[i]
+            self.y_anim[i] += speed_y[i]
+            
+        if min(speed_y) <= 0:
+            self.animation = False
+
+       
+    def calculateCoordinate(self, i:int, lgth:int) -> tuple[int, int]:
+        nbCardOnRow = lgth # Number of cards to display on the row
+        
+        # If there is too much card display them in 2 rows
+        if lgth > 4:
+            y = 0
+            if i < 4:
+                y = self.screenH - self.HEIGHTREGION*2.25
+                nbCardOnRow = 4
+            else:
+                y = self.screenH - self.HEIGHTREGION*1.2
+                nbCardOnRow = lgth - 4
+        else:
+            y = self.screenH - self.HEIGHTREGION*1.5
+        
+        x = self.screenW/2 - (nbCardOnRow*(self.WIDTHREGION+self.WIDTHREGION*0.25))/2*0.95 + (i%4)*(self.WIDTHREGION+self.WIDTHREGION*0.25)
+        return (x, y)
+
+
     ## Override
     def chooseRegionCard(self) -> None:
         # Display the text
@@ -199,46 +259,36 @@ class BoardDisplay(Board):
         self.displayActualPlayer()
 
         lgth = self.nbJoueur+1-self.cpt
-        for i in range(lgth): # Display number of players plus one region cards
-            # Display the card
-            card = self.regionCards[i]
 
-            nbCardOnRow = lgth # Number of cards to display on the row
-            
-            # If there is too much card display them in 2 rows
-            if lgth > 4:
-                y = 0
-                if i < 4:
-                    y = self.screenH - self.HEIGHTREGION*2.25
-                    nbCardOnRow = 4
-                else:
-                    y = self.screenH - self.HEIGHTREGION*1.2
-                    nbCardOnRow = lgth - 4
-            else:
-                y = self.screenH - self.HEIGHTREGION*1.5
-            
-            x = self.screenW/2 - (nbCardOnRow*(self.WIDTHREGION+self.WIDTHREGION*0.25))/2*0.95 + (i%4)*(self.WIDTHREGION+self.WIDTHREGION*0.25)
-            card.dcard.display(x, y)
+        if self.animation:
+            self.animateRegionCard(lgth)
+        else: 
+            for i in range(lgth): # Display number of players plus one region cards
+                # Display the card
+                card = self.regionCards[i]
 
-            # Check the mouse position
-            pos = pygame.mouse.get_pos()
-            if card.dcard.clickIn(pos):
-                # Add a larger border when the mouse is over
-                r = pygame.Rect(x, y, self.WIDTHREGION, self.HEIGHTREGION)
-                pygame.draw.rect(self.screen, (255,255,255), r, 7, border_radius=CardDisplay.border_radius)
+                x, y = self.calculateCoordinate(i, lgth)
+                card.dcard.display(x, y)
 
-                # Check the click
-                if self.clic==2:
-                    # Add the card to the player hand
-                    self.actualPlayer.addCardToHand(self.regionCards.pop(i))
+                # Check the mouse position
+                pos = pygame.mouse.get_pos()
+                if card.dcard.clickIn(pos):
+                    # Add a larger border when the mouse is over
+                    r = pygame.Rect(x, y, self.WIDTHREGION, self.HEIGHTREGION)
+                    pygame.draw.rect(self.screen, (255,255,255), r, 7, border_radius=CardDisplay.border_radius)
 
-                    # Go the next player or next state and put back the player in order of their id 
-                    if self.next(State.REVEAL):
-                        self.nbTurns += 1
-                        self.regionCards.pop(0) # Delete the region that left 
-                        self.players.sort(key=lambda p : p.id)
-                        self.actualPlayer = self.players[0]
-                        break # Stop the loop because the card has been chosen
+                    # Check the click
+                    if self.clic==2:
+                        # Add the card to the player hand
+                        self.actualPlayer.addCardToHand(self.regionCards.pop(i))
+
+                        # Go the next player or next state and put back the player in order of their id 
+                        if self.next(State.REVEAL):
+                            self.nbTurns += 1
+                            self.regionCards.pop(0) # Delete the region that left 
+                            self.players.sort(key=lambda p : p.id)
+                            self.actualPlayer = self.players[0]
+                            break # Stop the loop because the card has been chosen
                     
 
     ## Override
@@ -323,7 +373,7 @@ class BoardDisplay(Board):
         textPl = "Actual Player : " + str(self.actualPlayer.pseudo) + turn + " | " + textKeybind
 
         sizePol = self.sizePol//2
-        self.displayText(sizePol, sizePol*12.4, self.screenH - sizePol*0.4, textPl) 
+        self.displayText(sizePol, self.screenW//2, self.screenH - sizePol*0.4, textPl) 
 
 
 
