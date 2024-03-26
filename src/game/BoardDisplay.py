@@ -78,10 +78,14 @@ class BoardDisplay(Board):
                 for j in range(3):
                     card = self.regionCards.pop(0)
                     self.players[i-1].addCardToHand(card)
-                    self.x_anim = [self.screenW*0.26 for i in range(self.nbJoueur+1)]
-                    self.y_anim = [-self.HEIGHTREGION*0.5 for i in range(self.nbJoueur+1)]
+                    self.setupAnimationCoordinates()
             self.actualPlayer = self.players[self.cpt]
             self.state = State.PSEUDO
+
+    ## Setup the coordinates for the animation
+    def setupAnimationCoordinates(self, len:int=0) -> None:
+        self.x_anim = [[self.screenW*0.26, self.screenW*0.55] for i in range(max(len, self.nbJoueur+1))]
+        self.y_anim = [[-self.HEIGHTREGION*0.5, -self.HEIGHTSANCTUARY*0.5] for i in range(max(len, self.nbJoueur+1))]
 
     ## Choose the pseudo of the player
     def enterPseudo(self) -> str:
@@ -174,39 +178,56 @@ class BoardDisplay(Board):
             self.displayActualPlayer()
 
             self.checkSanctuaryCards(nbToAdd)  # Check if there is enough sanctuary cards in the stack
-            for i in range(nbToAdd):
-                # Display the card
-                card = self.sanctuaryCards[i]
-                x = self.screenW/2 - (nbToAdd*(self.WIDTHSANCTUARY+self.WIDTHSANCTUARY*0.25))/2 + i*(self.WIDTHSANCTUARY+self.WIDTHSANCTUARY*0.25)
-                y = self.screenH - self.HEIGHTSANCTUARY*1.5
-                card.dcard.display(x, y)
 
-                pos = pygame.mouse.get_pos()
-                # Check the mouse position
-                if card.dcard.clickIn(pos):
-                    # Add a larger border when the mouse is over
-                    r = pygame.Rect(x, y, self.WIDTHSANCTUARY, self.HEIGHTSANCTUARY)
-                    pygame.draw.rect(self.screen, (255,255,255), r, 7, border_radius=CardDisplay.border_radius)
+            if self.animation:
+                self.animateCard(nbToAdd, 1)
+            else:
+                for i in range(nbToAdd):
+                    # Display the card
+                    card = self.sanctuaryCards[i]
+                    x, y = self.calculateCoordinateSanctuary(i, nbToAdd)
+                    card.dcard.display(x, y)
 
-                    # Check the mouse clic
-                    if self.clic==2:
-                        # Add the selected card to the player's sanctuary cards
-                        self.actualPlayer.addCardToSanctuaryCards(self.sanctuaryCards.pop(i))
+                    pos = pygame.mouse.get_pos()
+                    # Check the mouse position
+                    if card.dcard.clickIn(pos):
+                        # Add a larger border when the mouse is over
+                        r = pygame.Rect(x, y, self.WIDTHSANCTUARY, self.HEIGHTSANCTUARY)
+                        pygame.draw.rect(self.screen, (255,255,255), r, 7, border_radius=CardDisplay.border_radius)
 
-                        # Add the other ones showed before to the stack for used ones
-                        for j in range(nbToAdd-1):
-                            self.sanctuaryCardsUsed.append(self.sanctuaryCards.pop(0))
-                        self.next(State.REGION) # Go to next player or next state
-                        break
+                        # Check the mouse clic
+                        if self.clic==2:
+                            # Add the selected card to the player's sanctuary cards
+                            self.actualPlayer.addCardToSanctuaryCards(self.sanctuaryCards.pop(i))
+
+                            # Add the other ones showed before to the stack for used ones
+                            for j in range(nbToAdd-1):
+                                self.sanctuaryCardsUsed.append(self.sanctuaryCards.pop(0))
+                            self.next(State.REGION) # Go to next player or next state
+                            self.animation = True # Activate the animation
+                            break
         else:
             # No sanctuary cards to add for this player, go to next player or next state
             self.next(State.REGION) 
 
 
-    ## Animation for region cards
-    def animateRegionCard(self, lgth:int) -> None:
-        pos_init = [(self.x_anim[i], self.y_anim[i]) for i in range(lgth)]
-        pos_final = [self.calculateCoordinate(i, lgth) for i in range(lgth)]
+    ## Calculate the coordinate for the sanctuary cards
+    def calculateCoordinateSanctuary(self, i:int, nbToAdd:int) -> tuple[int, int]:
+        x = self.screenW/2 - (nbToAdd*(self.WIDTHSANCTUARY+self.WIDTHSANCTUARY*0.25))/2 + i*(self.WIDTHSANCTUARY+self.WIDTHSANCTUARY*0.25)
+        y = self.screenH - self.HEIGHTSANCTUARY*1.5
+        return (x, y)
+    
+    ## Animation for the type of cards given (0 for region cards, 1 for sanctuary cards)
+    def animateCard(self, lgth:int, type_card:int) -> None:
+        if lgth > len(self.x_anim):
+            self.setupAnimationCoordinates(lgth)
+        pos_init = [(self.x_anim[i][type_card], self.y_anim[i][type_card]) for i in range(lgth)]
+
+        pos_final = []
+        if type_card == 0:
+            pos_final = [self.calculateCoordinateRegion(i, lgth) for i in range(lgth)]
+        else:
+            pos_final = [self.calculateCoordinateSanctuary(i, lgth) for i in range(lgth)]
 
         dist_max = [math.sqrt((x1 - x2)**2 + (y1 - y2)**2) for (x1, y1), (x2, y2) in zip(pos_init, pos_final)]
 
@@ -217,20 +238,25 @@ class BoardDisplay(Board):
 
         gray = (200,200,200)
         white = (255,255,255)
-        rectangle = [pygame.Rect(x, y, self.WIDTHREGION, self.HEIGHTREGION) for x, y in pos_init]
+        rectangle = []
+        if type_card == 0:
+            rectangle = [pygame.Rect(x, y, self.WIDTHREGION, self.HEIGHTREGION) for x, y in pos_init]
+        else:
+            rectangle = [pygame.Rect(x, y, self.WIDTHSANCTUARY, self.HEIGHTSANCTUARY) for x, y in pos_init]
         for rect in rectangle:
             pygame.draw.rect(self.screen, gray, rect, border_radius=CardDisplay.border_radius)
             pygame.draw.rect(self.screen, white, rect, 1, border_radius=CardDisplay.border_radius)
            
         for i in range(lgth):
-            self.x_anim[i] += speed_x[i]
-            self.y_anim[i] += speed_y[i]
+            self.x_anim[i][type_card] += speed_x[i]
+            self.y_anim[i][type_card] += speed_y[i]
             
         if min(speed_y) <= 0:
             self.animation = False
+            self.setupAnimationCoordinates()
 
-       
-    def calculateCoordinate(self, i:int, lgth:int) -> tuple[int, int]:
+    ## Calculate the coordinate for the region cards
+    def calculateCoordinateRegion(self, i:int, lgth:int) -> tuple[int, int]:
         nbCardOnRow = lgth # Number of cards to display on the row
         
         # If there is too much card display them in 2 rows
@@ -261,13 +287,13 @@ class BoardDisplay(Board):
         lgth = self.nbJoueur+1-self.cpt
 
         if self.animation:
-            self.animateRegionCard(lgth)
+            self.animateCard(lgth, 0)
         else: 
             for i in range(lgth): # Display number of players plus one region cards
                 # Display the card
                 card = self.regionCards[i]
 
-                x, y = self.calculateCoordinate(i, lgth)
+                x, y = self.calculateCoordinateRegion(i, lgth)
                 card.dcard.display(x, y)
 
                 # Check the mouse position
@@ -288,6 +314,7 @@ class BoardDisplay(Board):
                             self.regionCards.pop(0) # Delete the region that left 
                             self.players.sort(key=lambda p : p.id)
                             self.actualPlayer = self.players[0]
+                            self.animation = True # Activate the animation
                             break # Stop the loop because the card has been chosen
                     
 
