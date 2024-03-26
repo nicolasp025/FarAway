@@ -48,6 +48,8 @@ class RegionQuestDisplay(QuestDisplay):
     stone_posY_coef                 = 0.22
 
     color_size_coef                 = 0.1
+    color_posX_coef                 = 0.56
+    color_posY_coef                 = 0.21
 
     def __init__(self, quest, screen, width:int, height:int):
         super().__init__(quest, screen, width, height)
@@ -56,6 +58,14 @@ class RegionQuestDisplay(QuestDisplay):
         self.police = pygame.font.Font(None, self.policeSize)
         tmpSize = width*RegionQuestDisplay.imgPoints_size_coef
         self.pointsSize = (tmpSize, tmpSize)
+
+        self.display_methods = {
+            ConditionModes.NIGHT: self.displayNightCondition,
+            ConditionModes.MAP: self.displayMapCondition,
+            ConditionModes.STONE: self.displayStoneCondition,
+            ConditionModes.COLOR: self.displayColorCondition,
+            ConditionModes.SOMECOLOR: self.displaySomeColorCondition
+        }
 
     ## Display the require of the quest
     def requireDisplay(self, x:int, y:int, color:tuple[int, int, int]) -> None:
@@ -127,19 +137,8 @@ class RegionQuestDisplay(QuestDisplay):
     def conditionDisplay(self, x:int, y:int) -> None:
 
         # Set the images and text to display depending of the condition mode
-        if self.quest.points != 0:
-            
-            if self.quest.conditionMode == ConditionModes.NIGHT:
-                self.displayNightCondition(x, y)
-            elif self.quest.conditionMode == ConditionModes.MAP:
-                self.displayMapCondition(x, y)
-            elif self.quest.conditionMode == ConditionModes.STONE:
-                self.displayStoneCondition(x, y)
-            elif self.quest.conditionMode == ConditionModes.COLOR:
-                self.displayColorCondition(x, y)
-            elif self.quest.conditionMode == ConditionModes.SOMECOLOR:
-                self.displaySomeColorCondition(x, y)
-
+        if self.quest.points != 0 and self.quest.conditionMode != ConditionModes.NOTHING:
+            self.display_methods[self.quest.conditionMode](x, y)
             self.displayEqual(x, y)
     
     def displayNightCondition(self, x, y):
@@ -177,9 +176,9 @@ class RegionQuestDisplay(QuestDisplay):
         # Display the image for all color within the condition 
         for color in colorImages:
             if i==0:
-                self.screen.blit(color, (x-self.width*0.56, y-self.height*0.21))
+                self.screen.blit(color, (x-self.width*RegionQuestDisplay.color_posX_coef, y-self.height*RegionQuestDisplay.color_posY_coef))
             else:
-                self.screen.blit(color, (x-self.width*0.56-(i*imgSize)-imgSize*0.5, y-self.height*0.21)) 
+                self.screen.blit(color, (x-self.width*RegionQuestDisplay.color_posX_coef-(i*imgSize)-imgSize/2, y-self.height*RegionQuestDisplay.color_posY_coef)) 
             i+=1
             
             # Separate the next image representing a color
