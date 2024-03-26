@@ -31,7 +31,7 @@ from ChooseNbPlayer import ChooseNbPlayer
 class BoardDisplay(Board):
     
     MAXPSEUDO = 16
-    SPEED = 25
+    SPEED = 50
 
     def __init__(self):
         pygame.init()
@@ -72,21 +72,25 @@ class BoardDisplay(Board):
     def chooseNbPlayers(self) -> None:
         nbJ = ChooseNbPlayer(self.screen, super().MAXIMUMPLAYERS, super().MINIMUMPLAYERS).display(self.nbJoueur, self.clic)
         self.nbJoueur = nbJ[1]
+        self.setupAnimationCoordinates(True, 3)
         if nbJ[0]:
             for i in range(1,self.nbJoueur+1):
                 self.players.append(Player(i))
                 for j in range(3):
                     card = self.regionCards.pop(0)
                     self.players[i-1].addCardToHand(card)
-                    self.setupAnimationCoordinates()
             self.actualPlayer = self.players[self.cpt]
             self.state = State.PSEUDO
 
     ## Setup the coordinates for the animation
-    def setupAnimationCoordinates(self, len:int=0) -> None:
-        self.x_anim = [[self.screenW*0.26, self.screenW*0.55] for i in range(max(len, self.nbJoueur+1))]
-        self.y_anim = [[-self.HEIGHTREGION*0.5, -self.HEIGHTSANCTUARY*0.5] for i in range(max(len, self.nbJoueur+1))]
-
+    def setupAnimationCoordinates(self, reveal:bool=False, len:int=0) -> None:
+        if reveal:
+            self.x_anim = [[self.screenW//2 - self.WIDTHREGION//2, self.screenW//2 - self.WIDTHSANCTUARY//2] for i in range(len)]
+            self.y_anim = [[self.screenH - self.HEIGHTREGION//2, self.screenH - self.HEIGHTSANCTUARY//2] for i in range(len)]
+        else:
+            self.x_anim = [[self.screenW*0.26, self.screenW*0.55] for i in range(max(len, self.nbJoueur+1))]
+            self.y_anim = [[-self.HEIGHTREGION*0.5, -self.HEIGHTSANCTUARY*0.5] for i in range(max(len, self.nbJoueur+1))]
+ 
     ## Choose the pseudo of the player
     def enterPseudo(self) -> str:
         police = pygame.font.Font(None, self.sizePol)
@@ -133,36 +137,43 @@ class BoardDisplay(Board):
         textr = "Choose the card you want to reveal :"
         self.displayText(self.sizePol, self.screenW/2, self.screenH - self.HEIGHTREGION*2.4, textr)
 
-        # Display the actual player and the separator
-        self.displayActualPlayer()
+        if self.animation:
+            self.animateCard(len(self.actualPlayer.hand), 0)
+            # Display the actual player and the separator
+            self.displayActualPlayer()
+        else:
+            # Display the actual player and the separator
+            self.displayActualPlayer()
+            i=0
+            for card in self.actualPlayer.hand:
+                # Display the card
+                cardAndEc = self.WIDTHREGION + self.WIDTHREGION*0.25
+                x = self.screenW/2 - (1.5*cardAndEc)*0.94 + i*cardAndEc
+                y = self.screenH - self.HEIGHTREGION*1.5
+                card.dcard.display(x, y)  
 
-        i=0
-        for card in self.actualPlayer.hand:
-            # Display the card
-            cardAndEc = self.WIDTHREGION + self.WIDTHREGION*0.25
-            x = self.screenW/2 - (1.5*cardAndEc)*0.94 + i*cardAndEc
-            y = self.screenH - self.HEIGHTREGION*1.5
-            card.dcard.display(x, y)  
+                pos = pygame.mouse.get_pos()
+                # Check the mouse position
+                if card.dcard.clickIn(pos):
+                    # Add a larger border when the mouse is over the card
+                    r = pygame.Rect(x, y, self.WIDTHREGION, self.HEIGHTREGION)
+                    pygame.draw.rect(self.screen, (255,255,255), r, 7, border_radius=CardDisplay.border_radius)
 
-            pos = pygame.mouse.get_pos()
-            # Check the mouse position
-            if card.dcard.clickIn(pos):
-                # Add a larger border when the mouse is over the card
-                r = pygame.Rect(x, y, self.WIDTHREGION, self.HEIGHTREGION)
-                pygame.draw.rect(self.screen, (255,255,255), r, 7, border_radius=CardDisplay.border_radius)
+                    # Check the mouse clic
+                    if self.clic==2:
+                        n = self.actualPlayer.revealCard(i+1)
+                        self.starting.append((self.actualPlayer, n))
 
-                # Check the mouse clic
-                if self.clic==2:
-                    n = self.actualPlayer.revealCard(i+1)
-                    self.starting.append((self.actualPlayer, n))
 
-                    # Go to next player or next state and change the list of player with the right order for next state
-                    if self.next(State.SANCTUARY):
-                        self.starting.sort(key=lambda x : x[1])
-                        self.players = [t[0] for t in self.starting]
-                        self.starting = []
-                        self.actualPlayer = self.players[0]
-            i+=1
+                        self.animation = True # Activate the animation
+                        # Go to next player or next state and change the list of player with the right order for next state
+                        if self.next(State.SANCTUARY):
+                            self.starting.sort(key=lambda x : x[1])
+                            self.players = [t[0] for t in self.starting]
+                            self.starting = []
+                            self.actualPlayer = self.players[0]
+                            self.setupAnimationCoordinates()
+                i+=1
             
 
     ## Override
@@ -174,14 +185,17 @@ class BoardDisplay(Board):
             texts = "Choose the sanctuary card you want :"
             self.displayText(self.sizePol, self.screenW/2, self.screenH - self.HEIGHTREGION*2.4, texts)
 
-            # Display the actual player and the separator
-            self.displayActualPlayer()
+            
 
             self.checkSanctuaryCards(nbToAdd)  # Check if there is enough sanctuary cards in the stack
 
             if self.animation:
                 self.animateCard(nbToAdd, 1)
+                # Display the actual player and the separator
+                self.displayActualPlayer()
             else:
+                # Display the actual player and the separator
+                self.displayActualPlayer()
                 for i in range(nbToAdd):
                     # Display the card
                     card = self.sanctuaryCards[i]
@@ -220,7 +234,7 @@ class BoardDisplay(Board):
     ## Animation for the type of cards given (0 for region cards, 1 for sanctuary cards)
     def animateCard(self, lgth:int, type_card:int) -> None:
         if lgth > len(self.x_anim):
-            self.setupAnimationCoordinates(lgth)
+            self.setupAnimationCoordinates(False, lgth)
         pos_init = [(self.x_anim[i][type_card], self.y_anim[i][type_card]) for i in range(lgth)]
 
         pos_final = []
@@ -247,13 +261,20 @@ class BoardDisplay(Board):
             pygame.draw.rect(self.screen, gray, rect, border_radius=CardDisplay.border_radius)
             pygame.draw.rect(self.screen, white, rect, 1, border_radius=CardDisplay.border_radius)
            
+
         for i in range(lgth):
             self.x_anim[i][type_card] += speed_x[i]
             self.y_anim[i][type_card] += speed_y[i]
+
             
-        if min(speed_y) <= 0:
-            self.animation = False
-            self.setupAnimationCoordinates()
+        if self.state != State.REVEAL:
+            if min(speed_y) <= 0:
+                self.animation = False
+                self.setupAnimationCoordinates()
+        else:
+            if min(speed_y) >= 0:
+                self.animation = False
+                self.setupAnimationCoordinates(True, len(self.actualPlayer.hand))
 
     ## Calculate the coordinate for the region cards
     def calculateCoordinateRegion(self, i:int, lgth:int) -> tuple[int, int]:
@@ -281,14 +302,15 @@ class BoardDisplay(Board):
         textr = "Choose the region card you want :"
         self.displayText(self.sizePol, self.screenW/2, self.screenH - self.HEIGHTREGION*2.4, textr)
 
-        # Display the actual player and the separator
-        self.displayActualPlayer()
-
         lgth = self.nbJoueur+1-self.cpt
 
         if self.animation:
             self.animateCard(lgth, 0)
+            # Display the actual player and the separator
+            self.displayActualPlayer()
         else: 
+            # Display the actual player and the separator
+            self.displayActualPlayer()
             for i in range(lgth): # Display number of players plus one region cards
                 # Display the card
                 card = self.regionCards[i]
@@ -315,6 +337,7 @@ class BoardDisplay(Board):
                             self.players.sort(key=lambda p : p.id)
                             self.actualPlayer = self.players[0]
                             self.animation = True # Activate the animation
+                            self.setupAnimationCoordinates(True, len(self.actualPlayer.hand))
                             break # Stop the loop because the card has been chosen
                     
 
@@ -340,7 +363,7 @@ class BoardDisplay(Board):
         # Display the scores
         i=0 
         for pId, res in self.scores.items():
-            textPts = "Player " + str(pId) + " : " + str(res) 
+            textPts = "Player " + [player for player in self.players if player.id == pId][0].pseudo + " : " + str(res) 
             self.displayText(sizePol, self.screenW/2, dec + self.screenH*0.18 + i*self.screenH*0.08, textPts)
             i+=1
 
