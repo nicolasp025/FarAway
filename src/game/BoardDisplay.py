@@ -32,39 +32,58 @@ class BoardDisplay(Board):
     
     MAXPSEUDO = 16
     SPEED = 50
+    
+    default_number_of_players = 2
 
     def __init__(self):
         pygame.init()
 
+        # Get the screen's informations
         info = pygame.display.Info()
         self.screenW = info.current_w
         self.screenH = info.current_h
 
+        # Set the screen
         self.screen = pygame.display.set_mode((self.screenW, self.screenH), pygame.FULLSCREEN)
         pygame.display.set_caption("Projet - Far Away")
         self.clock = pygame.time.Clock()
+
         super().__init__(self.screen, self.screenW, self.screenH)
 
-        self.running = True
+        # Set the running variable to True for the play method
+        self.running = True 
 
-        self.nbJoueur = 2
+        # Number of players (default 2)
+        self.nbJoueur = self.default_number_of_players
     
+        # State of the game (set to start for the beginning)
         self.state = State.START
 
+        # State of the clic (0 for nothing, 1 for down, 2 for up)
         self.clic = 0
 
+        # Actual player
         self.actualPlayer = None
+
+        # Counter for the players
         self.cpt = 0
 
+        # List that will be used to sort the players for the next state
         self.starting = []
 
+        # Scores of the players
         self.scores = {}
 
+        # Size of the police 
         self.sizePol = self.screenW//18
 
+        # Pseudo of the player
         self.pseudo = ""
 
+        # Animation for the cards (true when the cards are moving)
         self.animation = True
+
+        # Coordinates for the animation (actual x and y for each card)
         self.x_anim = []
         self.y_anim = []
 
@@ -72,18 +91,21 @@ class BoardDisplay(Board):
     def chooseNbPlayers(self) -> None:
         nbJ = ChooseNbPlayer(self.screen, super().MAXIMUMPLAYERS, super().MINIMUMPLAYERS).display(self.nbJoueur, self.clic)
         self.nbJoueur = nbJ[1]
-        self.setupAnimationCoordinates(True, 3)
         if nbJ[0]:
             for i in range(1,self.nbJoueur+1):
                 self.players.append(Player(i))
+                # Add 3 cards to the hand of each player
                 for j in range(3):
                     card = self.regionCards.pop(0)
                     self.players[i-1].addCardToHand(card)
             self.actualPlayer = self.players[self.cpt]
             self.state = State.PSEUDO
+            # setup the coordinates for the animation 
+            self.setupAnimationCoordinates(True, len(self.actualPlayer.hand))
 
     ## Setup the coordinates for the animation
     def setupAnimationCoordinates(self, reveal:bool=False, len:int=0) -> None:
+        # Set the coordinates for the animation depending of the state
         if reveal:
             self.x_anim = [[self.screenW//2 - self.WIDTHREGION//2, self.screenW//2 - self.WIDTHSANCTUARY//2] for i in range(len)]
             self.y_anim = [[self.screenH - self.HEIGHTREGION//2, self.screenH - self.HEIGHTSANCTUARY//2] for i in range(len)]
@@ -106,19 +128,22 @@ class BoardDisplay(Board):
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
+                    # Check if the pseudo is not empty
                     if (self.pseudo != ""):
                         self.actualPlayer.addPseudo(self.pseudo)
                         self.pseudo = ""
                         self.next(State.REVEAL)
                 elif event.key == pygame.K_BACKSPACE:
+                    # Delete the last character
                     self.pseudo = self.pseudo[:-1]
                 else:
+                    # Add the character to the pseudo
                     if len(self.pseudo) < self.MAXPSEUDO:
                         if event.unicode.isalpha() or event.unicode.isdigit():
                             self.pseudo += event.unicode
 
 
-    ## Change the actual player and, if it has to, to the next state
+    ## Change the actual player and, if it has to, the next state
     def next(self, state) -> bool:
         self.cpt += 1
         # Check if the actual player is the last
@@ -162,12 +187,14 @@ class BoardDisplay(Board):
                     # Check the mouse clic
                     if self.clic==2:
                         n = self.actualPlayer.revealCard(i+1)
-                        self.starting.append((self.actualPlayer, n))
 
+                        # Add the player and the number of the card revealed
+                        self.starting.append((self.actualPlayer, n))
 
                         self.animation = True # Activate the animation
                         # Go to next player or next state and change the list of player with the right order for next state
                         if self.next(State.SANCTUARY):
+                            # Sort the players by the card revealed's number
                             self.starting.sort(key=lambda x : x[1])
                             self.players = [t[0] for t in self.starting]
                             self.starting = []
@@ -184,8 +211,6 @@ class BoardDisplay(Board):
             # Display the text
             texts = "Choose the sanctuary card you want :"
             self.displayText(self.sizePol, self.screenW/2, self.screenH - self.HEIGHTREGION*2.4, texts)
-
-            
 
             self.checkSanctuaryCards(nbToAdd)  # Check if there is enough sanctuary cards in the stack
 
@@ -233,45 +258,58 @@ class BoardDisplay(Board):
     
     ## Animation for the type of cards given (0 for region cards, 1 for sanctuary cards)
     def animateCard(self, lgth:int, type_card:int) -> None:
+        # Check if there is enough coordinates for the size lgth
         if lgth > len(self.x_anim):
             self.setupAnimationCoordinates(False, lgth)
+
+        # Get the initial position of the cards
         pos_init = [(self.x_anim[i][type_card], self.y_anim[i][type_card]) for i in range(lgth)]
 
         pos_final = []
+
+        # Get the final position of the cards
         if type_card == 0:
             pos_final = [self.calculateCoordinateRegion(i, lgth) for i in range(lgth)]
         else:
             pos_final = [self.calculateCoordinateSanctuary(i, lgth) for i in range(lgth)]
 
+        # Get the maximum distance between the initial and final position
         dist_max = [math.sqrt((x1 - x2)**2 + (y1 - y2)**2) for (x1, y1), (x2, y2) in zip(pos_init, pos_final)]
 
         tmp_max = max(dist_max) / self.SPEED
 
+        # Get the speed for each card (all this calculation is to have the cards to arrive at the same time)
         speed_x = [(x2 - x1) / tmp_max for (x1, _), (x2, _) in zip(pos_init, pos_final)]
         speed_y = [(y2 - y1) / tmp_max for (_, y1), (_, y2) in zip(pos_init, pos_final)]
 
         gray = (200,200,200)
         white = (255,255,255)
         rectangle = []
+
+        # Get all the rectangles (which represents the cards)
         if type_card == 0:
             rectangle = [pygame.Rect(x, y, self.WIDTHREGION, self.HEIGHTREGION) for x, y in pos_init]
         else:
             rectangle = [pygame.Rect(x, y, self.WIDTHSANCTUARY, self.HEIGHTSANCTUARY) for x, y in pos_init]
+
+        # Draw the rectangles
         for rect in rectangle:
             pygame.draw.rect(self.screen, gray, rect, border_radius=CardDisplay.border_radius)
             pygame.draw.rect(self.screen, white, rect, 1, border_radius=CardDisplay.border_radius)
            
-
+        # Move the cards for next frame
         for i in range(lgth):
             self.x_anim[i][type_card] += speed_x[i]
             self.y_anim[i][type_card] += speed_y[i]
 
-            
+        # Check if the cards are arrived
         if self.state != State.REVEAL:
+            # The cards should getting down (0, 0 is a the top left corner of the screen)
             if min(speed_y) <= 0:
                 self.animation = False
                 self.setupAnimationCoordinates()
         else:
+            # The cards should getting up (0, 0 is a the top left corner of the screen)
             if min(speed_y) >= 0:
                 self.animation = False
                 self.setupAnimationCoordinates(True, len(self.actualPlayer.hand))
@@ -380,7 +418,7 @@ class BoardDisplay(Board):
 
         # Text sanctuary cards
         texts = "Sanctuary cards :"
-        rect_sanc = self.displayText(sizePol, sizePol*3.2, self.HEIGHTSANCTUARY*0.7, texts)
+        self.displayText(sizePol, sizePol*3.2, self.HEIGHTSANCTUARY*0.7, texts)
 
         # Text region cards
         textr = "Region cards :"
@@ -497,12 +535,18 @@ class BoardDisplay(Board):
         mid = 0.5
         gray = (200,200,200)
         white = (255,255,255)
+
+        # Display the stack of the region cards
         for i in range(len(self.regionCards)):
             r_reg = pygame.Rect(x_stack_reg + i*self.WIDTHREGION*coef_dec_card, -self.HEIGHTREGION*mid - i*self.HEIGHTREGION*coef_dec_card, self.WIDTHREGION, self.HEIGHTREGION)
+            # Draw two rectangles, one inside the other to have a border
             pygame.draw.rect(self.screen, gray, r_reg, border_radius=CardDisplay.border_radius)
             pygame.draw.rect(self.screen, white, r_reg, 1, border_radius=CardDisplay.border_radius)
+
+        # Display the stack of the sanctuary cards
         for i in range(len(self.sanctuaryCards)):
             r_sanc = pygame.Rect(x_stack_sanc + i*self.WIDTHREGION*coef_dec_card, -self.HEIGHTSANCTUARY*mid - i*self.HEIGHTREGION*coef_dec_card, self.WIDTHSANCTUARY, self.HEIGHTSANCTUARY)
+            # Draw two rectangles, one inside the other to have a border
             pygame.draw.rect(self.screen, gray, r_sanc, border_radius=CardDisplay.border_radius)
             pygame.draw.rect(self.screen, white, r_sanc, 1, border_radius=CardDisplay.border_radius)
 
@@ -522,12 +566,11 @@ class BoardDisplay(Board):
                 elif event.type == pygame.MOUSEBUTTONUP and event.button == 1 and self.clic == 1:
                     self.clic = 2
 
-            # fill the screen with a color to wipe away anything from last frame
+            # fill the screen with the background to wipe away anything from last frame
             background = pygame.image.load("./data/img/background.png")
             background = pygame.transform.scale(background, (self.screenW, self.screenH))
             self.screen.blit(background, (0, 0))
             
-
             # Check is exit is pressed
             self.forceExit()
 
