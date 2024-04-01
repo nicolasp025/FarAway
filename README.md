@@ -56,20 +56,27 @@ Enfin, à la fin des 8 tours, les points sont comptés en fonction des quêtes d
 ##### Avancement du projet
 - Développement de l'architecture du projet et des structures de données à l'aide d'un diagramme UML.
 
-- Début du développement des cartes et des quêtes, des joueurs, et enfin de plateau de jeu.
+- Début du développement des cartes et des quêtes, des joueurs, et enfin du plateau de jeu.
 
 - En parrallèle, développement de tests unitaires.
 
 - Finalisation de la première version jouable sur le terminal avec un affichage simple et correction des bugs.
 
-- Création de tests simulant un scénario d'usage du jeu (simulation de plusieurs tours de jeu).
+- Création de tests simulant un scénario d'usage du jeu (simulation sur plusieurs tours de jeu).
 
 - Début du développement de l'interface graphique, principalement apprentissage de la bibliothèque PyGame.
 
-- Représentation graphique des cartes, ajout de l'intéractivité, boucles de jeu, information sur l'état de la partie, etc...
+- Représentation graphique des cartes, ajout de l'intéractivité, boucle de jeu, information sur l'état de la partie, etc...
 
 - Amélioration de l'affichage (fond d'écran, visualisation lors du survol d'une carte, scores, etc..)
 
 - Correction de l'affichage en fonction de la taille de l'écran.
 
 - Ajout de l'affichage des pioches ainsi que l'animation des cartes.
+
+
+
+##### Possibles améliorations
+- Affichage plus intelligent (charger chaque objet / image dans des variables au début du jeu afin d'éviter le chargement à chaque frame).
+
+- Animation lors du comptage des points.
