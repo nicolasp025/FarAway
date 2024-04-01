@@ -50,6 +50,14 @@ class SanctuaryQuestDisplay(QuestDisplay):
         self.policeSize = int(SanctuaryQuestDisplay.font_size_coef * (width + height))
         self.police = pygame.font.Font(None, self.policeSize)
 
+        self.display_methods = {
+            ConditionModes.NIGHT: self.displayNightCondition,
+            ConditionModes.MAP: self.displayMapCondition,
+            ConditionModes.STONE: self.displayStoneCondition,
+            ConditionModes.COLOR: self.displayColorCondition,
+            ConditionModes.SOMECOLOR: self.displaySomeColorCondition
+        }
+
     ## Display the quest
     def display(self, x:int, y:int) -> None:
         self.conditionDisplay(x+self.width, y+self.height)
@@ -57,25 +65,11 @@ class SanctuaryQuestDisplay(QuestDisplay):
     ## Display the condition of the quest
     def conditionDisplay(self, x:int, y:int) -> None:
         if self.quest.points==0:
-            return
-
-        if self.quest.conditionMode == ConditionModes.NIGHT:
-            self.displayNightCondition(x, y)
-
-        elif self.quest.conditionMode == ConditionModes.MAP:
-            self.displayMapCondition(x, y)
-
-        elif self.quest.conditionMode == ConditionModes.STONE:
-            self.displayStoneCondition(x, y)
-
-        elif self.quest.conditionMode == ConditionModes.COLOR:
-            self.displayColorCondition(x, y)
-
-        elif self.quest.conditionMode == ConditionModes.SOMECOLOR:
-            self.displaySomeColorCondition(x, y)
-
-        self.displayEqual(x, y)
-        self.displayPoints(x, y)
+            self.displayPoints(x, y)
+            if self.quest.conditionMode != ConditionModes.NOTHING:
+                self.display_methods[self.quest.conditionMode](x, y)
+                self.displayEqual(x, y)       
+            
 
     def displayNightCondition(self, x:int, y:int) -> None:
         # Load and display the night icon

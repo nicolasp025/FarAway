@@ -30,7 +30,7 @@ class CardDisplay():
     }
 
 
-    def __init__(self, card, screen, width, height):
+    def __init__(self, card, screen, width:int, height:int):
         self.card = card
         self.screen = screen
         self.width = width

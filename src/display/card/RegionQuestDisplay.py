@@ -135,13 +135,12 @@ class RegionQuestDisplay(QuestDisplay):
 
     ## Display the condition of the quest
     def conditionDisplay(self, x:int, y:int) -> None:
-
         # Set the images and text to display depending of the condition mode
         if self.quest.points != 0 and self.quest.conditionMode != ConditionModes.NOTHING:
             self.display_methods[self.quest.conditionMode](x, y)
             self.displayEqual(x, y)
     
-    def displayNightCondition(self, x, y):
+    def displayNightCondition(self, x:int, y:int) -> None:
         # Load and display the night image
         img_night = pygame.image.load("./data/img/night.png")
         nightSize = self.width * RegionQuestDisplay.night_size_coef
@@ -150,7 +149,7 @@ class RegionQuestDisplay(QuestDisplay):
         tmpY = y - self.height * RegionQuestDisplay.night_posY_coef
         self.screen.blit(img_night, (tmpX, tmpY))
 
-    def displayMapCondition(self, x, y):
+    def displayMapCondition(self, x:int, y:int) -> None:
         # Load and display the map image
         img_map = pygame.image.load("./data/img/map.png")
         sizeMap = self.width*RegionQuestDisplay.map_size_coef
@@ -159,7 +158,7 @@ class RegionQuestDisplay(QuestDisplay):
         tmpY = y - self.height * RegionQuestDisplay.map_posY_coef
         self.screen.blit(img_map, (tmpX, tmpY))
     
-    def displayStoneCondition(self, x, y):
+    def displayStoneCondition(self, x:int, y:int) -> None:
         # Load and display the image of the stone within the condition
         sizeStone = self.width * RegionQuestDisplay.stone_size_coef
         stoneImages = Stones.stonesToImage(self.quest.condition, sizeStone)
@@ -167,7 +166,7 @@ class RegionQuestDisplay(QuestDisplay):
         tmpY = y - self.height * RegionQuestDisplay.stone_posY_coef
         self.screen.blit(stoneImages[0], (tmpX, tmpY))
 
-    def displayColorCondition(self, x, y):
+    def displayColorCondition(self, x:int, y:int) -> None:
         i=0
         max = len(self.quest.condition) # The number of color to display
         imgSize = self.width * RegionQuestDisplay.color_size_coef
@@ -189,7 +188,7 @@ class RegionQuestDisplay(QuestDisplay):
                 r.center = (x-self.width*0.49-i*self.width*0.1, y-self.height*0.15)
                 self.screen.blit(texte_surface, r)
     
-    def displaySomeColorCondition(self, x, y):
+    def displaySomeColorCondition(self, x:int, y:int) -> None:
         # Display all colors
         i=0
         ImgSize = self.height*0.1
@@ -201,13 +200,13 @@ class RegionQuestDisplay(QuestDisplay):
                 self.screen.blit(color, (x-self.width*0.55-(i-1)*self.width*0.055, y-self.height*0.15-ImgSize*1.09))
             i+=1
 
-    def displayEqual(self, x, y):
+    def displayEqual(self, x:int, y:int) -> None:
         # If there is any condition display the equal
         if self.quest.conditionMode != ConditionModes.NOTHING: 
             text_eg = self.police.render("=", True, (0,0,0))
             self.screen.blit(text_eg, (x-self.width*0.4, self.pointsCoords[1]+(self.pointsSize[1]/6)))
 
-    def displayPoints(self, x, y):
+    def displayPoints(self, x:int, y:int) -> None:
         if (self.quest.points > 0):
             # Setup the image for the background of the points and display it
             img_pt = pygame.image.load("./data/img/points.png")
