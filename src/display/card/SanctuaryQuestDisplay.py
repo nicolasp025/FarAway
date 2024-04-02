@@ -64,7 +64,7 @@ class SanctuaryQuestDisplay(QuestDisplay):
 
     ## Display the condition of the quest
     def conditionDisplay(self, x:int, y:int) -> None:
-        if self.quest.points==0:
+        if self.quest.points!=0:
             self.displayPoints(x, y)
             if self.quest.conditionMode != ConditionModes.NOTHING:
                 self.display_methods[self.quest.conditionMode](x, y)
