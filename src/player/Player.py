@@ -5,10 +5,6 @@ sys.path.append("./src/card")
 from RegionCard import RegionCard
 from SanctuaryCard import SanctuaryCard
 
-
-
-
-
 class Player:
     
     NBCARDSINHAND = 3

@@ -22,14 +22,12 @@ from SanctuaryCardDisplay import SanctuaryCardDisplay
 ## The class which represents the board of the game
 class Board:
 
+    NBOFREGIONCARDS = 68
     NBOFSANCTUARYCARDS = 45
 
     # Default size (changed after)
     WIDTHSANCTUARY = 220
     HEIGHTSANCTUARY = 350
-
-
-    NBOFREGIONCARDS = 68
 
     # Default size (changed after)
     WIDTHREGION = 350
