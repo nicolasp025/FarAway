@@ -20,16 +20,15 @@ class Colors(Enum):
     ## Get the string representation of the color
     @classmethod
     def toString(self, cls:Enum) -> str:
-        if cls == Colors.GRAY:
-            return "Gray"
-        elif cls == Colors.RED:
-            return "Red"
-        elif cls == Colors.BLUE:
-            return "Blue"
-        elif cls == Colors.GREEN:
-            return "Green"
-        elif cls == Colors.YELLOW:
-            return "Yellow"
+        tmp = {
+            Colors.GRAY: "Gray",
+            Colors.RED: "Red",
+            Colors.BLUE: "Blue",
+            Colors.GREEN: "Green",
+            Colors.YELLOW: "Yellow"
+        }
+        if cls in tmp:
+            return tmp[cls]
         else:
             raise ValueError("Invalid color.")
 
@@ -37,16 +36,15 @@ class Colors(Enum):
     ## Get the string representation of the color in lower case
     @classmethod
     def toStringLower(self, cls:Enum) -> str:
-        if cls == Colors.GRAY:
-            return "gray"
-        elif cls == Colors.RED:
-            return "red"
-        elif cls == Colors.BLUE:
-            return "blue"
-        elif cls == Colors.GREEN:
-            return "green"
-        elif cls == Colors.YELLOW:
-            return "yellow"
+        tmp = {
+            Colors.GRAY: "gray",
+            Colors.RED: "red",
+            Colors.BLUE: "blue",
+            Colors.GREEN: "green",
+            Colors.YELLOW: "yellow"
+        }
+        if cls in tmp:
+            return tmp[cls]
         else:
             raise ValueError("Invalid color.")
 

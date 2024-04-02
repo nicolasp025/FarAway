@@ -18,26 +18,28 @@ class Stones(Enum):
     ## Get the string representation of the stone
     @classmethod
     def toString(self, stone:Enum) -> str:
-        if stone == Stones.SAPPHIRE:
-            return "Sapphire"
-        elif stone == Stones.RUBY:
-            return "Ruby"
-        elif stone == Stones.EMERALD:
-            return "Emerald"
+        tmp = {
+            Stones.SAPPHIRE: "Sapphire",
+            Stones.RUBY: "Ruby",
+            Stones.EMERALD: "Emerald"
+        }
+        if stone in tmp:
+            return tmp[stone]
         else:
             raise ValueError("Invalid color.")
     
     ## Get the string representation of the stone in lower case
     @classmethod
     def toStringLower(self, stone:Enum) -> str:
-        if stone == Stones.SAPPHIRE:
-            return "sapphire"
-        elif stone == Stones.RUBY:
-            return "ruby"
-        elif stone == Stones.EMERALD:
-            return "emerald"
+        tmp = {
+            Stones.SAPPHIRE: "sapphire",
+            Stones.RUBY: "ruby",
+            Stones.EMERALD: "emerald"
+        }
+        if stone in tmp:
+            return tmp[stone]
         else:
-            raise ValueError("Invalid stone.")
+            raise ValueError("Invalid color.")
 
     ## Get the images corresponding to the stones
     @classmethod
