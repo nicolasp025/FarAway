@@ -12,7 +12,7 @@ https://lucid.app/lucidchart/f1e853e6-7e75-4ef3-9053-b722b3483ab9/edit?invitatio
 
 ## Exécution :
 
-Les commandes doivent être exécutées depuis le repertoire `projet-far-away`, pour exécuter le main : `make game` pour jouer depuis le terminal et `make` pour avoir une interface graphique (utilisation recommandé). Pour l'exécution des tests veuillez utilisez : `make tests` afin d'exécuter tout les tests à la suite.
+Les commandes doivent être exécutées depuis le repertoire principal, pour exécuter le main : `make game` pour jouer depuis le terminal et `make` pour avoir une interface graphique (utilisation recommandée). Pour l'exécution des tests veuillez utilisez : `make tests` afin d'exécuter tout les tests à la suite.
 
 
 ## Structure de données :
@@ -21,7 +21,7 @@ Les commandes doivent être exécutées depuis le repertoire `projet-far-away`, 
 - Utilisation de fichiers json afin de créer chaque carte region et sanctuaire.
 
 ## Algorithmie :
-- Comptage des points (à l'aide d'un dictionnaire)
+- Comptage des points (à l'aide d'un dictionnaire et d'une mise à jour dynamique des points)
 - Conséquence de l'action d'un joueur (détermination du nombre de cartes sanctuaires piochés par le joueur par exemple)
 - Boucle de jeu
 
