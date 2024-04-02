@@ -80,3 +80,5 @@ Enfin, à la fin des 8 tours, les points sont comptés en fonction des quêtes d
 - Affichage plus intelligent (charger chaque objet / image dans des variables au début du jeu afin d'éviter le chargement à chaque frame).
 
 - Animation lors du comptage des points.
+
+- Refactoring.

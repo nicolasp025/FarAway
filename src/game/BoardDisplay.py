@@ -30,9 +30,16 @@ from ChooseNbPlayer import ChooseNbPlayer
 ## The class which represents the display of the game
 class BoardDisplay(Board):
     
+    # The size max for the pseudo
     MAXPSEUDO = 16
+
+    # The speed for the animation
     SPEED = 50
-    
+
+    # Number of frames max for the animation
+    NBFRAMESMAX = 4
+
+    # The default number of players
     default_number_of_players = 2
 
     def __init__(self):
@@ -86,6 +93,16 @@ class BoardDisplay(Board):
         # Coordinates for the animation (actual x and y for each card)
         self.x_anim = []
         self.y_anim = []
+
+        # Temporary score
+        self.tmpScore = 0
+
+        # The number of the player that have their scores displayed
+        self.nbPlScores = 0
+
+        # Number of frames passed for the next animation frame
+        self.nbFramesPassed = 0
+
 
     ## Override
     def chooseNbPlayers(self) -> None:
@@ -378,13 +395,8 @@ class BoardDisplay(Board):
                             self.setupAnimationCoordinates(True, len(self.actualPlayer.hand))
                             break # Stop the loop because the card has been chosen
                     
-
     ## Override
     def displayEnd(self) -> None:
-        # If there is a right clic go to the next player so he can see his revealed cards
-        if self.clic == 2:
-            self.next(State.END)
-
         # Texts
         textScore = " Scores :"
         textSep = "___________"
@@ -395,15 +407,52 @@ class BoardDisplay(Board):
         self.displayText(sizePol, self.screenW*0.5, dec, textScore)
         self.displayText(sizePol, self.screenW*0.5, dec+self.screenH*0.04, textSep)
 
-        # Sort the results by points
-        self.scores = {key: self.scores[key] for key in sorted(self.scores, key=self.scores.get, reverse=True)}
+        # Display the scores one by one with an animation
+        if self.animation == True:
 
-        # Display the scores
-        i=0 
-        for pId, res in self.scores.items():
-            textPts = "Player " + [player for player in self.players if player.id == pId][0].pseudo + " : " + str(res) 
-            self.displayText(sizePol, self.screenW/2, dec + self.screenH*0.18 + i*self.screenH*0.08, textPts)
-            i+=1
+            # Display the scores
+            self.nbPlScores
+            for i in range(self.nbPlScores+1):
+
+                # Get the id and the res of the player
+                pId, res = list(self.scores.items())[self.nbJoueur - (i+1)]
+
+
+                tmp_res = 0
+                if i == self.nbPlScores:
+                    # Animation for the scores (increase the score by 1 each NBFRAMESMAX frame)
+                    self.nbFramesPassed += 1
+                    tmp_res = self.tmpScore
+                    if self.nbFramesPassed == self.NBFRAMESMAX:
+                        self.tmpScore += 1
+                        self.nbFramesPassed = 0
+
+                    # Do the animation for the next player in scores
+                    if self.tmpScore == res:
+                        self.tmpScore = 0
+                        self.nbPlScores += 1
+                else:
+                    tmp_res = res
+
+                # Display the score of the player
+                textPts = [player for player in self.players if player.id == pId][0].pseudo + " : " + str(tmp_res) + " points"
+                self.displayText(sizePol, self.screenW/2, dec + self.screenH*0.18 + (self.nbJoueur - (i+1))*self.screenH*0.08, textPts)
+            
+            # The animation for each player is finished
+            if self.nbPlScores == self.nbJoueur:
+                self.animation = False
+
+        else:
+            # Display the scores normally
+            i=0 
+            for pId, res in self.scores.items():
+                textPts = [player for player in self.players if player.id == pId][0].pseudo + " : " + str(res) + " points"
+                self.displayText(sizePol, self.screenW/2, dec + self.screenH*0.18 + i*self.screenH*0.08, textPts)
+                i+=1
+
+            # If there is a right clic go to the next player so he can see his revealed cards
+            if self.clic == 2:
+                self.next(State.END)
 
 
     ## Display the revealed cards for the actual player
@@ -445,6 +494,29 @@ class BoardDisplay(Board):
             x = self.screenW/2 - (l*(self.WIDTHSANCTUARY*1.1))/2 + i*(self.WIDTHSANCTUARY*1.1)
             card.dcard.display(x, y)
             i+=1
+
+
+    ## Display the revealed cards for the actual player
+    def displayCardToChooseLater(self) -> None:
+        # Fill the screen to only show the revealed cards        
+        background = pygame.image.load("./data/img/background.png")
+        background = pygame.transform.scale(background, (self.screenW, self.screenH))
+        self.screen.blit(background, (0, 0))
+
+        # Size police
+        sizePol = self.sizePol
+
+        # Text sanctuary cards
+        texts = "The region cards to choose in the next round :"
+        self.displayText(sizePol, self.screenW//2, self.screenH//4, texts)
+
+        lgth = self.nbJoueur+1
+        for i in range(lgth): # Display number of players plus one region cards
+            # Display the card
+            card = self.regionCards[i]
+
+            x, y = self.calculateCoordinateRegion(i, lgth)
+            card.dcard.display(x, y)
         
 
     ## Display some informations for the players
@@ -456,12 +528,19 @@ class BoardDisplay(Board):
         else:
             turn += "Turn number : "+str(self.nbTurns+1)
 
-        textKeybind = "Press 's' to show your revealed cards"
+        # Text for the keybinds
+        textKeybindd = ""
+        if self.state == State.REVEAL: # keybind only needed for the reveal state
+            textKeybindd = " | Press 'd' to show the cards you will have to choose"
+        textKeybinds = "Press 's' to show your revealed cards"
+        textKeyBind_all = textKeybinds + textKeybindd
 
-        textPl = "Actual Player : " + str(self.actualPlayer.pseudo) + turn + " | " + textKeybind
+        textPl = "Actual Player : " + str(self.actualPlayer.pseudo) + turn 
 
         sizePol = self.sizePol//2
-        self.displayText(sizePol, self.screenW//2, self.screenH - sizePol*0.4, textPl) 
+        # Display on two different lines
+        self.displayText(sizePol, self.screenW//2, self.screenH - sizePol*1.1, textPl) 
+        self.displayText(sizePol, self.screenW//2, self.screenH - sizePol*0.3, textKeyBind_all)
 
 
 
@@ -505,6 +584,9 @@ class BoardDisplay(Board):
     def computeScores(self) -> None:
         # Get the final points for each player
         self.scores = self.countFinalPoints()
+        # Sort the results by points
+        self.scores = {key: self.scores[key] for key in sorted(self.scores, key=self.scores.get, reverse=True)}
+        self.animation = True
         self.state = State.END
 
 
@@ -581,6 +663,8 @@ class BoardDisplay(Board):
             # Check if the key bind is pressed and it is not the start
             if pygame.key.get_pressed()[pygame.K_s] and self.state != State.START and self.state != State.PSEUDO:
                 self.displayRevealedCard()
+            elif pygame.key.get_pressed()[pygame.K_d] and self.state == State.REVEAL:
+                self.displayCardToChooseLater()
             else:
                 # Execute the right function corresponding to the state
                 self.execute()
