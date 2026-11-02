@@ -1,87 +1,115 @@
-# Projet Far Away
+<div align="center">
 
-## Nicolas Potel - Nathan Signouret
+# Faraway
 
-#### Règles du jeu :
-https://www.play-in.com/pdf/rules_games/faraway_-_regles_fr.pdf
+**A digital adaptation of the *Faraway* card game, built in Python with Pygame.**
 
+![Python](https://img.shields.io/badge/Python-3.13-3776AB?logo=python&logoColor=white)
+![Pygame](https://img.shields.io/badge/Pygame-2.6-2E7D32)
+![Players](https://img.shields.io/badge/Players-2--6-C2571A)
 
-#### UML :
-https://lucid.app/lucidchart/f1e853e6-7e75-4ef3-9053-b722b3483ab9/edit?invitationId=inv_6565462c-3992-430f-b5cd-513f6364a41f
+![Choosing a card to reveal](docs/screenshots/reveal.png)
 
-## Installation des modules
-Pour jouer à Far Away, il vous faudra 2 modules de Python, que vous pouvez installer avec les commandes : ```pip install pygame``` et ```pip install pygame-textinput```.
+</div>
 
+## About
 
-## Exécution :
+This project is inspired by [**Faraway**](https://www.play-in.com/pdf/rules_games/faraway_-_regles_fr.pdf), the tabletop card game designed by Johannes Goupy and Corentin Lebrat and published by Catch Up Games. It recreates the game's rules for 2 to 6 players sharing one computer, with a full-screen graphical interface and a terminal mode.
 
-Les commandes doivent être exécutées depuis le repertoire principal, pour exécuter le main : `make game` pour jouer depuis le terminal et `make` pour avoir une interface graphique (utilisation recommandée). Pour l'exécution des tests veuillez utilisez : `make tests` afin d'exécuter tout les tests à la suite.
+It was built as a duo by **Nicolas Potel** and **Nathan Signouret** as a student project, from the UML design to the game logic, the unit tests and the Pygame interface.
 
+> This is an unofficial project, not affiliated with or endorsed by the authors or publisher of the original game.
 
-## Structure de données :
-- Listes (Les cartes disponibles sur le plateau, les cartes sanctuaires des joueurs, ...)
-- Dictionnaires afin de stocker les ressources de chaques cartes retournées lors du comptage des points.
-- Utilisation de fichiers json afin de créer chaque carte region et sanctuaire.
+## Features
 
-## Algorithmie :
-- Comptage des points (à l'aide d'un dictionnaire et d'une mise à jour dynamique des points)
-- Conséquence de l'action d'un joueur (détermination du nombre de cartes sanctuaires piochés par le joueur par exemple)
-- Boucle de jeu
+- All 68 region cards and 45 sanctuary cards, loaded from JSON files
+- Full game loop over 8 turns, with final scoring
+- Graphical interface with card animations, hover highlights and an animated score reveal
+- Display that adapts to the screen resolution
+- Terminal mode for playing without the graphical interface
+- Unit tests, including simulated multi-turn game scenarios
 
+## How the game works
 
-## Cahier des charges :
-Jeu avec interface graphique (ou jouable sur le terminal) représentant le plateau de jeu, les cartes (sur le plateau et celles des joueurs) ainsi que les pioches.
-Reproduction fidèle des règles du jeu.
-Représentation des cartes par des objets, de même pour les joueurs et le plateau.
+A game lasts 8 turns, and each turn has three phases:
 
+1. **Reveal:** each player plays one of the 3 region cards in their hand.
+2. **Sanctuary:** a player whose new card has a higher number than their previous one draws sanctuary cards and keeps one. They choose from one card, plus one for each map on their cards.
+3. **Region:** players take turns picking a new region card from the shared row, starting with the player who revealed the lowest number.
 
-##### PyGame
-Nous avons décidé d'utiliser la bibliothèque Pygame en Python afin de développer la partie graphique de ce projet pour plusieurs raisons. Tout d'abord, cette bibliothèque est largement utilisée pour le développement de jeux et de programmes interactifs, ce qui signifie que sa documentation est bien développée et que de nombreux exemples sont disponibles sur internet.
+The twist comes at the end: region cards are scored **in reverse order**, from the last one played to the first. Each card can only use the resources revealed after it, so what you play early depends on what you plan to play later.
 
-De plus, sa facilité d'utilisation nous a permis de nous concentrer davantage sur la programmation que sur la compréhension de Pygame elle-même. Elle nous a également permis de charger des images que nous avons souvent utilisées pour respecter au mieux les cartes de jeu physiques, ainsi que de créer des formes géométriques, d'afficher du texte et de permettre à l'utilisateur d'entrer du texte.
+## Screenshots
 
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/menu.png" alt="Player selection menu"><br><sub>Choosing the number of players</sub></td>
+    <td width="50%"><img src="docs/screenshots/region.png" alt="Choosing a region card"><br><sub>Picking a region card from the shared row</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/sanctuary.png" alt="Choosing a sanctuary card"><br><sub>Keeping one sanctuary card</sub></td>
+    <td width="50%"><img src="docs/screenshots/upcoming.png" alt="Preview of the upcoming region cards"><br><sub>Previewing the next region cards</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/tableau.png" alt="A player's final tableau"><br><sub>A player's tableau at the end of the game</sub></td>
+    <td width="50%"><img src="docs/screenshots/scores.png" alt="Final scores"><br><sub>Final scores</sub></td>
+  </tr>
+</table>
 
-##### Déroulement d'une partie (simplifié)
-Une partie se déroule en 8 tours.
+## Getting started
 
-Chaque tour se déroule en 3 phases :
-- Chaque joueur choisit une carte parmi celles de sa main et la révèle.
+Tested with Python 3.13 and Pygame 2.6.1. Run all commands from the root of the repository.
 
-- Chaque joueur peut choisir une carte sanctuaire si la carte région précédemment révélée est inférieure à celle qui vient d'être révélée.
+```bash
+git clone git@github.com:nicolasp025/faraway.git
+cd faraway
 
-- Chaque joueur choisit une carte à ajouter à sa main.
+python3 -m venv .venv
+source .venv/bin/activate
+pip install pygame pygame-textinput
+```
 
-Enfin, à la fin des 8 tours, les points sont comptés en fonction des quêtes de chaque carte.
+| Command | Action |
+| --- | --- |
+| `make` | Start the game with the graphical interface (recommended) |
+| `make game` | Start the game in the terminal |
+| `make tests` | Run the unit tests |
 
+## Controls
 
+The graphical interface opens in full screen.
 
+| Input | Action |
+| --- | --- |
+| Left click | Select a card or button |
+| Hold `S` | Show your revealed cards |
+| Hold `D` | Preview the region cards available next round (during the reveal phase) |
+| Red square, top-right corner | Quit the game |
 
-##### Avancement du projet
-- Développement de l'architecture du projet et des structures de données à l'aide d'un diagramme UML.
+## Project structure
 
-- Début du développement des cartes et des quêtes, des joueurs, et enfin du plateau de jeu.
+```text
+├── data/            Card definitions (JSON) and images
+├── src/
+│   ├── card/        Cards and quests
+│   ├── display/     Pygame rendering of the cards and menus
+│   ├── enum/        Colors, stones, game states and condition modes
+│   ├── game/        Shared board logic, terminal and graphical versions
+│   ├── main/        Entry point
+│   └── player/      Player state
+├── test/            Unit tests
+└── Makefile
+```
 
-- En parrallèle, développement de tests unitaires.
+`Board` holds the logic shared by both modes, such as card setup and scoring. `BoardClassical` and `BoardDisplay` build on it for the terminal and the Pygame interface.
 
-- Finalisation de la première version jouable sur le terminal avec un affichage simple et correction des bugs.
+## Possible improvements
 
-- Création de tests simulant un scénario d'usage du jeu (simulation sur plusieurs tours de jeu).
+- Load images once at startup instead of on every frame
+- Add a more detailed scoring animation, card by card
+- Refactor the display code
 
-- Début du développement de l'interface graphique, principalement apprentissage de la bibliothèque PyGame.
+## Authors
 
-- Représentation graphique des cartes, ajout de l'intéractivité, boucle de jeu, information sur l'état de la partie, etc...
-
-- Amélioration de l'affichage (fond d'écran, visualisation lors du survol d'une carte, scores, etc..)
-
-- Correction de l'affichage en fonction de la taille de l'écran.
-
-- Ajout de l'affichage des pioches ainsi que l'animation des cartes.
-
-
-
-##### Possibles améliorations
-- Affichage plus intelligent (charger chaque objet / image dans des variables au début du jeu afin d'éviter le chargement à chaque frame).
-
-- Animation lors du comptage des points.
-
-- Refactoring.
+- **Nicolas Potel**
+- **Nathan Signouret**
